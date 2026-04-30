@@ -1,0 +1,38 @@
+[
+  {
+    "iata": "LH",
+    "icao": "DLH",
+    "name": "Lufthansa",
+    "country": "DE"
+  },
+  {
+    "iata": "BA",
+    "icao": "BAW",
+    "name": "British Airways",
+    "country": "GB"
+  },
+  {
+    "iata": "AF",
+    "icao": "AFR",
+    "name": "Air France",
+    "country": "FR"
+  },
+  {
+    "iata": "UA",
+    "icao": "UAL",
+    "name": "United Airlines",
+    "country": "US"
+  },
+  {
+    "iata": "AA",
+    "icao": "AAL",
+    "name": "American Airlines",
+    "country": "US"
+  },
+  {
+    "iata": "JL",
+    "icao": "JAL",
+    "name": "Japan Airlines",
+    "country": "JP"
+  }
+]

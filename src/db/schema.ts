@@ -38,6 +38,7 @@ export const locations = sqliteTable(
     icao: text('icao'),
     ibnr: text('ibnr'),
     unlocode: text('unlocode'),
+    isSystemSeed: integer('is_system_seed', { mode: 'boolean' }).notNull().default(false),
     ...timestamps,
   },
   (table) => [
@@ -49,28 +50,39 @@ export const locations = sqliteTable(
   ],
 );
 
-export const operators = sqliteTable('operators', {
-  id: text('id').primaryKey().$defaultFn(uuid),
-  name: text('name').notNull(),
-  code: text('code'),
-  modes: text('modes', { mode: 'json' })
-    .$type<TransportMode[]>()
-    .notNull()
-    .$defaultFn(() => []),
-  country: text('country'),
-  logoPath: text('logo_path'),
-  ...timestamps,
-});
+export const operators = sqliteTable(
+  'operators',
+  {
+    id: text('id').primaryKey().$defaultFn(uuid),
+    name: text('name').notNull(),
+    code: text('code'),
+    modes: text('modes', { mode: 'json' })
+      .$type<TransportMode[]>()
+      .notNull()
+      .$defaultFn(() => []),
+    country: text('country'),
+    logoPath: text('logo_path'),
+    isSystemSeed: integer('is_system_seed', { mode: 'boolean' }).notNull().default(false),
+    ...timestamps,
+  },
+  (table) => [index('operators_code_idx').on(table.code)],
+);
 
-export const vehicles = sqliteTable('vehicles', {
-  id: text('id').primaryKey().$defaultFn(uuid),
-  mode: text('mode').$type<TransportMode>().notNull(),
-  category: text('category'),
-  manufacturer: text('manufacturer'),
-  model: text('model'),
-  capacity: integer('capacity'),
-  ...timestamps,
-});
+export const vehicles = sqliteTable(
+  'vehicles',
+  {
+    id: text('id').primaryKey().$defaultFn(uuid),
+    mode: text('mode').$type<TransportMode>().notNull(),
+    code: text('code'),
+    category: text('category'),
+    manufacturer: text('manufacturer'),
+    model: text('model'),
+    capacity: integer('capacity'),
+    isSystemSeed: integer('is_system_seed', { mode: 'boolean' }).notNull().default(false),
+    ...timestamps,
+  },
+  (table) => [index('vehicles_code_idx').on(table.code)],
+);
 
 export const journeys = sqliteTable(
   'journeys',

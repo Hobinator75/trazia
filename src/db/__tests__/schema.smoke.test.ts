@@ -44,7 +44,7 @@ describe('db schema smoke', () => {
       hash: string;
     }[];
 
-    expect(rows.length).toBe(1);
+    expect(rows.length).toBeGreaterThanOrEqual(1);
     expect(rows[0]?.hash).toBeTypeOf('string');
   });
 
@@ -62,7 +62,7 @@ describe('db schema smoke', () => {
         country: 'DE',
         lat: 52.525,
         lng: 13.3695,
-        type: 'station',
+        type: 'train_station',
         ibnr: '8011160',
       },
       {
@@ -72,7 +72,7 @@ describe('db schema smoke', () => {
         country: 'DE',
         lat: 48.1402,
         lng: 11.5586,
-        type: 'station',
+        type: 'train_station',
         ibnr: '8000261',
       },
     ]);

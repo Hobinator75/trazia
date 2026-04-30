@@ -1,0 +1,44 @@
+[
+  {
+    "code": "B738",
+    "manufacturer": "Boeing",
+    "model": "737-800",
+    "category": "narrowbody",
+    "capacity": 189
+  },
+  {
+    "code": "B77W",
+    "manufacturer": "Boeing",
+    "model": "777-300ER",
+    "category": "widebody",
+    "capacity": 396
+  },
+  {
+    "code": "A320",
+    "manufacturer": "Airbus",
+    "model": "A320",
+    "category": "narrowbody",
+    "capacity": 180
+  },
+  {
+    "code": "A21N",
+    "manufacturer": "Airbus",
+    "model": "A321neo",
+    "category": "narrowbody",
+    "capacity": 244
+  },
+  {
+    "code": "A359",
+    "manufacturer": "Airbus",
+    "model": "A350-900",
+    "category": "widebody",
+    "capacity": 325
+  },
+  {
+    "code": "B789",
+    "manufacturer": "Boeing",
+    "model": "787-9 Dreamliner",
+    "category": "widebody",
+    "capacity": 296
+  }
+]

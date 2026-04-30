@@ -1,6 +1,6 @@
 export type TransportMode = 'flight' | 'train' | 'car' | 'ship';
 
-export type LocationKind = 'airport' | 'station' | 'port' | 'address';
+export type LocationKind = 'airport' | 'train_station' | 'port' | 'address';
 
 export type OperatorKind = 'airline' | 'railway' | 'shipping' | 'rental';
 
