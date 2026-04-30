@@ -1,4 +1,4 @@
-import { haversineDistanceKm, type LatLng } from '@/lib/geo';
+import { haversineDistance, type LatLng } from '@/lib/geo';
 
 export interface RouteSegment {
   from: LatLng;
@@ -10,6 +10,6 @@ export function buildGreatCircleSegment(from: LatLng, to: LatLng): RouteSegment 
   return {
     from,
     to,
-    distanceKm: haversineDistanceKm(from, to),
+    distanceKm: haversineDistance(from, to),
   };
 }

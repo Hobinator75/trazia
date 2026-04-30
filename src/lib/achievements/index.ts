@@ -1,16 +1,30 @@
-import type { AchievementUnlock, Journey } from '@/db/schema';
-
-export interface AchievementEvaluationContext {
-  journeys: Journey[];
-  unlocks: AchievementUnlock[];
-}
-
-export interface AchievementUpdate {
-  achievementId: string;
-  progress: number;
-  unlocked: boolean;
-}
-
-export function evaluateAchievements(_ctx: AchievementEvaluationContext): AchievementUpdate[] {
-  return [];
-}
+export {
+  __setAchievementsCatalogForTesting,
+  evaluateAll,
+  evaluateOne,
+  loadAchievements,
+} from './engine';
+export type {
+  Achievement,
+  AchievementContext,
+  AchievementUnlock,
+  CabinClassRule,
+  CountRule,
+  DateMatchRule,
+  DifferentCountRule,
+  DistanceTotalRule,
+  GeoCondition,
+  GeoConditionRule,
+  MonthCompleteRule,
+  OperatorLoyaltyRule,
+  OperatorSetRule,
+  Rule,
+  RouteRepeatRule,
+  RuleType,
+  SeasonCompleteRule,
+  SingleJourneyDistanceRule,
+  SingleJourneyDurationRule,
+  TimeWindowRule,
+  UnlockResult,
+  VehicleCategoryRule,
+} from './types';
