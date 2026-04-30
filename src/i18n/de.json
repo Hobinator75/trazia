@@ -1,0 +1,12 @@
+{
+  "app": {
+    "name": "Trazia",
+    "tagline": "Deine Reisen, kartiert."
+  },
+  "tabs": {
+    "journeys": "Reisen",
+    "globe": "Globus",
+    "stats": "Statistik",
+    "settings": "Einstellungen"
+  }
+}

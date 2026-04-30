@@ -1,0 +1,12 @@
+{
+  "app": {
+    "name": "Trazia",
+    "tagline": "Your journeys, mapped."
+  },
+  "tabs": {
+    "journeys": "Journeys",
+    "globe": "Globe",
+    "stats": "Stats",
+    "settings": "Settings"
+  }
+}
