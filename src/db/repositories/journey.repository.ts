@@ -5,7 +5,7 @@ import { journeys, type Journey, type NewJourney } from '@/db/schema';
 
 export const journeyRepository = {
   async list(): Promise<Journey[]> {
-    return db.select().from(journeys).orderBy(desc(journeys.departedAt));
+    return db.select().from(journeys).orderBy(desc(journeys.date));
   },
 
   async getById(id: string): Promise<Journey | undefined> {

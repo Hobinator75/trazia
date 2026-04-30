@@ -1,22 +1,26 @@
 import { eq } from 'drizzle-orm';
 
 import { db } from '@/db/client';
-import { achievements, type Achievement, type NewAchievement } from '@/db/schema';
+import { achievementUnlocks, type AchievementUnlock, type NewAchievementUnlock } from '@/db/schema';
 
-export const achievementRepository = {
-  async list(): Promise<Achievement[]> {
-    return db.select().from(achievements);
+export const achievementUnlockRepository = {
+  async list(): Promise<AchievementUnlock[]> {
+    return db.select().from(achievementUnlocks);
   },
 
-  async getByCode(code: string): Promise<Achievement | undefined> {
-    const rows = await db.select().from(achievements).where(eq(achievements.code, code)).limit(1);
+  async getByAchievementId(achievementId: string): Promise<AchievementUnlock | undefined> {
+    const rows = await db
+      .select()
+      .from(achievementUnlocks)
+      .where(eq(achievementUnlocks.achievementId, achievementId))
+      .limit(1);
     return rows[0];
   },
 
-  async upsert(value: NewAchievement): Promise<void> {
+  async upsert(value: NewAchievementUnlock): Promise<void> {
     await db
-      .insert(achievements)
+      .insert(achievementUnlocks)
       .values(value)
-      .onConflictDoUpdate({ target: achievements.code, set: value });
+      .onConflictDoUpdate({ target: achievementUnlocks.achievementId, set: value });
   },
 };

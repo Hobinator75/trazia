@@ -1,15 +1,11 @@
+import { count } from 'drizzle-orm';
+
 import { db } from '@/db/client';
-import { achievements, locations, operators } from '@/db/schema';
+import { operators } from '@/db/schema';
 
 export async function runInitialSeed(): Promise<void> {
-  const [{ count: operatorCount }] = (await db
-    .select({ count: operators.id })
-    .from(operators)
-    .limit(1)) as unknown as [{ count: number | null }];
+  const [row] = await db.select({ value: count() }).from(operators);
+  if ((row?.value ?? 0) > 0) return;
 
-  if (operatorCount != null) return;
-
-  await db.insert(operators).values([]);
-  await db.insert(locations).values([]);
-  await db.insert(achievements).values([]);
+  // Seed payloads will be loaded from src/data/static/ once that pipeline lands.
 }

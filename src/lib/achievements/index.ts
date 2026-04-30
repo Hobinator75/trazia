@@ -1,12 +1,12 @@
-import type { Achievement, Journey } from '@/db/schema';
+import type { AchievementUnlock, Journey } from '@/db/schema';
 
 export interface AchievementEvaluationContext {
   journeys: Journey[];
-  achievements: Achievement[];
+  unlocks: AchievementUnlock[];
 }
 
 export interface AchievementUpdate {
-  code: string;
+  achievementId: string;
   progress: number;
   unlocked: boolean;
 }
