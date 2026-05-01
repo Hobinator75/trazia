@@ -2,9 +2,9 @@ import { ScrollView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Markdown } from '@/components/ui/Markdown';
-import { PRIVACY_POLICY_DE } from '@/lib/legal/content';
+import { TERMS_DE } from '@/lib/legal/content';
 
-export default function PrivacyScreen() {
+export default function TermsScreen() {
   const insets = useSafeAreaInsets();
   return (
     <ScrollView
@@ -15,7 +15,7 @@ export default function PrivacyScreen() {
         paddingBottom: insets.bottom + 32,
       }}
     >
-      <Markdown source={PRIVACY_POLICY_DE} />
+      <Markdown source={TERMS_DE} />
     </ScrollView>
   );
 }
