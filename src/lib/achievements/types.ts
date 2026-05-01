@@ -116,11 +116,25 @@ export type Rule =
 
 export type RuleType = Rule['type'];
 
+export type AchievementTier = 'bronze' | 'silver' | 'gold' | 'platinum' | 'hidden' | 'premium';
+
+export type AchievementCategory =
+  | 'milestones'
+  | 'geography'
+  | 'distance'
+  | 'airlines'
+  | 'aircraft'
+  | 'hidden'
+  | 'premium';
+
 export interface Achievement {
   id: string;
   title: string;
   description: string;
   hidden?: boolean;
+  premium?: boolean;
+  tier?: AchievementTier;
+  category?: AchievementCategory;
   rule: Rule;
   reward?: { points?: number };
 }

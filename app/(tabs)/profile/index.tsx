@@ -1,7 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { Pressable, ScrollView, Switch, Text, View } from 'react-native';
 
+import { colors } from '@/theme/colors';
 import { useSettingsStore } from '@/stores/settings.store';
 
 const ROWS = [
@@ -19,12 +20,14 @@ const ROWS = [
 export default function ProfileScreen() {
   const theme = useSettingsStore((s) => s.theme);
   const setTheme = useSettingsStore((s) => s.setTheme);
+  const soundEnabled = useSettingsStore((s) => s.soundEnabled);
+  const setSoundEnabled = useSettingsStore((s) => s.setSoundEnabled);
 
   return (
     <ScrollView className="flex-1 bg-background-dark" contentContainerStyle={{ padding: 16 }}>
       <Text className="mb-4 text-3xl font-bold text-text-light">Profil</Text>
 
-      <View className="mb-6 rounded-2xl border border-border-dark bg-surface-dark p-4">
+      <View className="mb-4 rounded-2xl border border-border-dark bg-surface-dark p-4">
         <Text className="mb-3 text-xs font-semibold uppercase tracking-wider text-text-muted">
           Erscheinungsbild
         </Text>
@@ -49,6 +52,21 @@ export default function ProfileScreen() {
             </Pressable>
           ))}
         </View>
+      </View>
+
+      <View className="mb-6 flex-row items-center justify-between rounded-2xl border border-border-dark bg-surface-dark p-4">
+        <View className="flex-1 pr-3">
+          <Text className="text-base text-text-light">Sounds</Text>
+          <Text className="text-xs text-text-muted">
+            Achievement-Chime beim Freischalten abspielen.
+          </Text>
+        </View>
+        <Switch
+          value={soundEnabled}
+          onValueChange={setSoundEnabled}
+          trackColor={{ true: colors.primary, false: colors.border.dark }}
+          thumbColor="#FFFFFF"
+        />
       </View>
 
       <View className="overflow-hidden rounded-2xl border border-border-dark bg-surface-dark">

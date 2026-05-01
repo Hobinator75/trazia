@@ -6,7 +6,9 @@ export {
 } from './engine';
 export type {
   Achievement,
+  AchievementCategory,
   AchievementContext,
+  AchievementTier,
   AchievementUnlock,
   CabinClassRule,
   CountRule,

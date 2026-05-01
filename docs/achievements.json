@@ -3,129 +3,180 @@
     "id": "first_journey",
     "title": "First Steps",
     "description": "Log your first journey.",
+    "tier": "bronze",
+    "category": "milestones",
     "rule": { "type": "count", "threshold": 1 }
   },
   {
     "id": "ten_journeys",
     "title": "Frequent Traveler",
     "description": "Log ten journeys.",
+    "tier": "silver",
+    "category": "milestones",
     "rule": { "type": "count", "threshold": 10 }
   },
   {
     "id": "earth_circumnavigated",
     "title": "Round the Earth",
     "description": "Travel 40,075 km in total — the Earth's circumference.",
+    "tier": "gold",
+    "category": "distance",
     "rule": { "type": "distance_total", "thresholdKm": 40075 }
   },
   {
     "id": "long_haul_8000",
     "title": "Long Haul",
     "description": "A single journey of at least 8,000 km.",
+    "tier": "silver",
+    "category": "distance",
     "rule": { "type": "single_journey_distance", "thresholdKm": 8000 }
   },
   {
     "id": "marathon_12h",
     "title": "Marathon",
     "description": "A single journey of at least 12 hours.",
+    "tier": "silver",
+    "category": "distance",
     "rule": { "type": "single_journey_duration", "thresholdMinutes": 720 }
   },
   {
     "id": "atlantic_crosser",
     "title": "Atlantic Crosser",
     "description": "Cross the Atlantic Ocean.",
+    "tier": "silver",
+    "category": "geography",
     "rule": { "type": "geo_condition", "condition": "atlantic" }
   },
   {
     "id": "pacific_crosser",
     "title": "Pacific Crosser",
     "description": "Cross the Pacific Ocean.",
+    "tier": "gold",
+    "category": "geography",
     "rule": { "type": "geo_condition", "condition": "pacific" }
   },
   {
     "id": "equator_crosser",
     "title": "Equator Crosser",
     "description": "Cross the Equator.",
+    "tier": "silver",
+    "category": "geography",
     "rule": { "type": "geo_condition", "condition": "equator" }
   },
   {
     "id": "arctic_explorer",
     "title": "Arctic Explorer",
     "description": "Cross the Arctic Circle.",
+    "tier": "gold",
+    "category": "geography",
     "rule": { "type": "geo_condition", "condition": "polar_north" }
   },
   {
     "id": "antarctic_explorer",
     "title": "Antarctic Explorer",
     "description": "Cross the Antarctic Circle.",
-    "rule": { "type": "geo_condition", "condition": "polar_south" },
-    "hidden": true
+    "tier": "platinum",
+    "category": "hidden",
+    "hidden": true,
+    "rule": { "type": "geo_condition", "condition": "polar_south" }
   },
   {
     "id": "antipode_traveler",
     "title": "Antipode Traveler",
     "description": "Travel to the opposite side of the world.",
-    "rule": { "type": "geo_condition", "condition": "antipode", "antipodeToleranceKm": 500 },
-    "hidden": true
+    "tier": "platinum",
+    "category": "hidden",
+    "hidden": true,
+    "rule": { "type": "geo_condition", "condition": "antipode", "antipodeToleranceKm": 500 }
   },
   {
     "id": "birthday_journey",
     "title": "Born to Travel",
     "description": "Take a trip on your birthday.",
-    "rule": { "type": "date_match", "pattern": "--01-15" },
-    "hidden": true
+    "tier": "bronze",
+    "category": "hidden",
+    "hidden": true,
+    "rule": { "type": "date_match", "pattern": "--01-15" }
   },
   {
     "id": "widebody",
     "title": "Widebody",
     "description": "Fly aboard a widebody aircraft.",
+    "tier": "bronze",
+    "category": "aircraft",
     "rule": { "type": "vehicle_category", "categories": ["widebody"] }
   },
   {
     "id": "star_alliance",
     "title": "Star Alliance",
     "description": "Fly with at least one Star Alliance airline.",
+    "tier": "silver",
+    "category": "airlines",
     "rule": { "type": "operator_set", "operatorCodes": ["LH", "UA", "AC", "SQ"] }
   },
   {
     "id": "regular_route_5",
     "title": "Regular",
     "description": "Travel the same route at least five times.",
+    "tier": "bronze",
+    "category": "milestones",
     "rule": { "type": "route_repeat", "count": 5 }
   },
   {
     "id": "lufthansa_loyalty_10",
     "title": "Crane Club",
     "description": "Take ten journeys with Lufthansa.",
+    "tier": "gold",
+    "category": "airlines",
     "rule": { "type": "operator_loyalty", "count": 10, "operatorCode": "LH" }
   },
   {
     "id": "ten_countries",
     "title": "Globetrotter",
     "description": "Visit ten different countries.",
+    "tier": "gold",
+    "category": "geography",
     "rule": { "type": "different_count", "entity": "countries", "count": 10 }
   },
   {
     "id": "weekly_5_in_7",
     "title": "Power Week",
     "description": "Log five journeys within seven days.",
+    "tier": "silver",
+    "category": "milestones",
     "rule": { "type": "time_window", "windowDays": 7, "minJourneys": 5 }
   },
   {
     "id": "first_class",
     "title": "First Class",
     "description": "Travel in first class.",
+    "tier": "gold",
+    "category": "milestones",
     "rule": { "type": "cabin_class", "cabinClass": "first" }
   },
   {
     "id": "four_seasons",
     "title": "Four Seasons",
     "description": "Travel in every season of the year.",
+    "tier": "silver",
+    "category": "milestones",
     "rule": { "type": "season_complete" }
   },
   {
     "id": "every_month",
     "title": "Every Month",
     "description": "Travel at least once in every calendar month of a year.",
+    "tier": "gold",
+    "category": "milestones",
     "rule": { "type": "month_complete" }
+  },
+  {
+    "id": "premium_globetrotter",
+    "title": "Premium Globetrotter",
+    "description": "Premium-only achievement — coming with the paid tier.",
+    "tier": "premium",
+    "category": "premium",
+    "premium": true,
+    "rule": { "type": "different_count", "entity": "countries", "count": 25 }
   }
 ]
