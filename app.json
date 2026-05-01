@@ -33,14 +33,15 @@
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff",
+          "backgroundColor": "#0A0E1A",
           "dark": {
-            "backgroundColor": "#000000"
+            "backgroundColor": "#0A0E1A"
           }
         }
       ],
       "expo-sqlite",
-      "expo-localization"
+      "expo-localization",
+      "@react-native-community/datetimepicker"
     ],
     "experiments": {
       "typedRoutes": true,
