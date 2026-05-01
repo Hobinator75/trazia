@@ -1,13 +1,7 @@
-import { useLocalSearchParams } from 'expo-router';
+import { Redirect, useLocalSearchParams } from 'expo-router';
 
-import { PlaceholderScreen } from '@/components/ui/PlaceholderScreen';
-
-export default function MapJourneyDetailScreen() {
+export default function MapJourneyDetailRedirect() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  return (
-    <PlaceholderScreen
-      title="Reise-Detail"
-      subtitle={`Detailansicht für Reise ${id}. Kommt in CC-3.4.`}
-    />
-  );
+  if (!id) return null;
+  return <Redirect href={{ pathname: '/journeys/[id]', params: { id } }} />;
 }
