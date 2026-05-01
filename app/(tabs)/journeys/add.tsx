@@ -4,6 +4,7 @@ import { View } from 'react-native';
 import { FlightForm } from '@/components/domain/AddJourney/FlightForm';
 import { OtherForm } from '@/components/domain/AddJourney/OtherForm';
 import { type AddJourneyMode, ModePicker, MODES } from '@/components/domain/ModePicker';
+import { trackModeLockedTapped } from '@/lib/observability/analytics';
 import { useSnackbarStore } from '@/stores/snackbarStore';
 
 export default function AddJourneyScreen() {
@@ -13,6 +14,7 @@ export default function AddJourneyScreen() {
   const onLockedTap = (locked: AddJourneyMode) => {
     const def = MODES.find((m) => m.value === locked);
     showSnackbar(`${def?.label ?? 'Modus'} ist in Phase 2 verfügbar.`, { variant: 'info' });
+    void trackModeLockedTapped(locked);
   };
 
   return (

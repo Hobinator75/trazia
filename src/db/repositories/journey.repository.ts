@@ -2,6 +2,7 @@ import { desc, eq } from 'drizzle-orm';
 
 import { recalculateAchievements } from '@/lib/achievements/sync';
 import { onJourneyCreated } from '@/lib/ads/interstitialController';
+import { trackJourneyAdded } from '@/lib/observability/analytics';
 
 import {
   journeyCompanions,
@@ -111,6 +112,7 @@ export async function createJourney(
   }
   const created = await getJourneyById(db, id);
   if (!created) throw new Error(`createJourney failed for ${id}`);
+  void trackJourneyAdded(created.mode);
   return created;
 }
 

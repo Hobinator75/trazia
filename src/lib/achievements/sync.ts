@@ -1,5 +1,6 @@
 import { achievementUnlocks, journeys, locations, operators, vehicles } from '@/db/schema';
 import type { DrizzleDb } from '@/db/types';
+import { trackAchievementUnlocked } from '@/lib/observability/analytics';
 import { useAchievementStore } from '@/stores/achievementStore';
 
 import { evaluateAll } from './engine';
@@ -60,6 +61,9 @@ export async function recalculateAchievements(
     );
     if (opts.notify !== false) {
       useAchievementStore.getState().appendUnlocks(newUnlocks);
+    }
+    for (const unlock of newUnlocks) {
+      void trackAchievementUnlocked(unlock.achievementId);
     }
   }
 

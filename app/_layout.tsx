@@ -17,6 +17,8 @@ import { useDbReady } from '@/hooks/useDbReady';
 import { useThemeBinding } from '@/hooks/useThemeBinding';
 import { configureAds, ensureConsent } from '@/lib/ads';
 import { configureIap } from '@/lib/iap';
+import { trackAppOpened } from '@/lib/observability/analytics';
+import { configureSentry } from '@/lib/observability/sentry';
 import { useOnboardingStore } from '@/stores/onboardingStore';
 import { colors } from '@/theme/colors';
 
@@ -31,6 +33,8 @@ export default function RootLayout() {
   useEffect(() => {
     void hydrateOnboarding();
     void configureIap();
+    void configureSentry();
+    void trackAppOpened();
     void (async () => {
       await ensureConsent();
       await configureAds();

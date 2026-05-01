@@ -10,6 +10,11 @@ interface SettingsState {
   language: LanguagePreference;
   soundEnabled: boolean;
   notificationsEnabled: boolean;
+  // Default ON: anonymous stack-traces only, no PII (toggle is mentioned
+  // explicitly in the privacy policy).
+  crashReportsEnabled: boolean;
+  // Default OFF: opt-in DSGVO-compliant analytics.
+  analyticsEnabled: boolean;
   profileName: string | null;
   avatarUri: string | null;
   setTheme: (theme: ThemePreference) => void;
@@ -17,6 +22,8 @@ interface SettingsState {
   setLanguage: (lang: LanguagePreference) => void;
   setSoundEnabled: (enabled: boolean) => void;
   setNotificationsEnabled: (enabled: boolean) => void;
+  setCrashReportsEnabled: (enabled: boolean) => void;
+  setAnalyticsEnabled: (enabled: boolean) => void;
   setProfileName: (name: string | null) => void;
   setAvatarUri: (uri: string | null) => void;
 }
@@ -27,6 +34,8 @@ export const useSettingsStore = create<SettingsState>((set) => ({
   language: 'system',
   soundEnabled: true,
   notificationsEnabled: false,
+  crashReportsEnabled: true,
+  analyticsEnabled: false,
   profileName: null,
   avatarUri: null,
   setTheme: (theme) => set({ theme }),
@@ -34,6 +43,8 @@ export const useSettingsStore = create<SettingsState>((set) => ({
   setLanguage: (language) => set({ language }),
   setSoundEnabled: (soundEnabled) => set({ soundEnabled }),
   setNotificationsEnabled: (notificationsEnabled) => set({ notificationsEnabled }),
+  setCrashReportsEnabled: (crashReportsEnabled) => set({ crashReportsEnabled }),
+  setAnalyticsEnabled: (analyticsEnabled) => set({ analyticsEnabled }),
   setProfileName: (profileName) => set({ profileName }),
   setAvatarUri: (avatarUri) => set({ avatarUri }),
 }));

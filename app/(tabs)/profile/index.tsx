@@ -176,6 +176,10 @@ export default function ProfileScreen() {
   const setSoundEnabled = useSettingsStore((s) => s.setSoundEnabled);
   const notificationsEnabled = useSettingsStore((s) => s.notificationsEnabled);
   const setNotificationsEnabled = useSettingsStore((s) => s.setNotificationsEnabled);
+  const crashReportsEnabled = useSettingsStore((s) => s.crashReportsEnabled);
+  const setCrashReportsEnabled = useSettingsStore((s) => s.setCrashReportsEnabled);
+  const analyticsEnabled = useSettingsStore((s) => s.analyticsEnabled);
+  const setAnalyticsEnabled = useSettingsStore((s) => s.setAnalyticsEnabled);
 
   const adFreeUntil = usePremiumStore((s) => s.adFreeUntil);
   const setAdFreeUntil = usePremiumStore((s) => s.setAdFreeUntil);
@@ -278,6 +282,18 @@ export default function ProfileScreen() {
           description="Push beim Freischalten neuer Achievements (System-Berechtigung erforderlich)."
           value={notificationsEnabled}
           onValueChange={setNotificationsEnabled}
+        />
+        <ToggleRow
+          label="Crash-Reports erlauben"
+          description="Anonyme Stack-Traces an Sentry — keine PII, kein Tracking."
+          value={crashReportsEnabled}
+          onValueChange={setCrashReportsEnabled}
+        />
+        <ToggleRow
+          label="Analyse erlauben"
+          description="Anonyme Nutzungs-Events (PostHog). Hilft Prioritäten zu setzen — opt-in."
+          value={analyticsEnabled}
+          onValueChange={setAnalyticsEnabled}
         />
       </View>
 

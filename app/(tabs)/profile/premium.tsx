@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Stack, useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -9,6 +9,7 @@ import { useIsPremium } from '@/hooks/useIsPremium';
 import { useOfferings } from '@/hooks/useOfferings';
 import { isMockIap, purchasePackage, restorePurchases, setMockPremium } from '@/lib/iap';
 import type { IapPackage, ProductId } from '@/lib/iap/types';
+import { trackPaywallPurchased, trackPaywallShown } from '@/lib/observability/analytics';
 import { useSnackbarStore } from '@/stores/snackbarStore';
 import { colors } from '@/theme/colors';
 
@@ -80,11 +81,16 @@ export default function PaywallScreen() {
   const [selected, setSelected] = useState<ProductId>('trazia_premium_yearly');
   const [busy, setBusy] = useState(false);
 
+  useEffect(() => {
+    void trackPaywallShown('profile');
+  }, []);
+
   const handlePurchase = async () => {
     setBusy(true);
     const result = await purchasePackage(selected);
     setBusy(false);
     if (result.success) {
+      void trackPaywallPurchased(selected);
       showSnackbar('Premium aktiviert. Danke!', { variant: 'success' });
       router.back();
     } else if (result.cancelled) {
