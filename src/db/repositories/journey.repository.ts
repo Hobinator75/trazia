@@ -1,6 +1,7 @@
 import { desc, eq } from 'drizzle-orm';
 
 import { recalculateAchievements } from '@/lib/achievements/sync';
+import { onJourneyCreated } from '@/lib/ads/interstitialController';
 
 import {
   journeyCompanions,
@@ -23,6 +24,9 @@ const uuid = () => globalThis.crypto.randomUUID();
 export interface JourneyMutationOptions {
   evaluateAchievements?: boolean;
   notify?: boolean;
+  // Repository-side ad-trigger is enabled by default. Tests opt out so they
+  // never load the native AdMob module.
+  triggerInterstitial?: boolean;
 }
 
 export async function listJourneys(db: DrizzleDb): Promise<Journey[]> {
@@ -101,6 +105,9 @@ export async function createJourney(
       triggeringJourneyId: id,
       ...(opts.notify !== undefined ? { notify: opts.notify } : {}),
     });
+  }
+  if (opts.triggerInterstitial !== false) {
+    void onJourneyCreated();
   }
   const created = await getJourneyById(db, id);
   if (!created) throw new Error(`createJourney failed for ${id}`);

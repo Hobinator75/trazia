@@ -12,6 +12,7 @@ import {
   type JourneyWithRefs,
 } from '@/db/repositories/journey.repository';
 
+import { AdaptiveBannerAd } from '@/components/domain/AdaptiveBannerAd';
 import { type JourneyAction, JourneyActionSheet } from '@/components/domain/JourneyActionSheet';
 import { JourneyCard } from '@/components/domain/JourneyCard';
 import {
@@ -20,9 +21,11 @@ import {
   type JourneyFilters,
   JourneyFilterSheet,
 } from '@/components/domain/JourneyFilterSheet';
+import { PremiumUpsellSheet } from '@/components/domain/PremiumUpsellSheet';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { useJourneys } from '@/hooks/useJourneys';
+import { useJourneyCountUpsell } from '@/hooks/useUpsellTriggers';
 import {
   applyFilters,
   buildFacets,
@@ -84,6 +87,7 @@ export default function JourneysScreen() {
   );
   const sections: JourneySection[] = useMemo(() => groupByYearMonth(filtered), [filtered]);
   const filterCount = activeFilterCount(filters);
+  const upsell25 = useJourneyCountUpsell(journeys.length);
 
   const handleConfirmDelete = useCallback(
     (journey: JourneyWithRefs) => {
@@ -225,6 +229,14 @@ export default function JourneysScreen() {
         }
       />
 
+      <View
+        className="absolute left-0 right-0"
+        style={{ bottom: insets.bottom }}
+        pointerEvents="box-none"
+      >
+        <AdaptiveBannerAd />
+      </View>
+
       <Link href="/journeys/add" asChild>
         <Pressable
           className="absolute right-6 h-14 w-14 items-center justify-center rounded-full bg-primary shadow-lg active:opacity-80"
@@ -250,6 +262,14 @@ export default function JourneysScreen() {
         visible={actionFor !== null}
         onClose={() => setActionFor(null)}
         onSelect={handleAction}
+      />
+
+      <PremiumUpsellSheet
+        visible={upsell25.visible}
+        onClose={upsell25.dismiss}
+        title="Free funktioniert dir doch"
+        message="Du hast schon 25 Reisen geloggt — Premium schaltet Wrapped, unbegrenzt Fotos und Werbefrei frei."
+        ctaLabel="Premium ansehen"
       />
     </View>
   );

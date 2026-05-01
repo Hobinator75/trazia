@@ -1,6 +1,7 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { useEffect } from 'react';
 import { useColorScheme } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -14,11 +15,28 @@ import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { Snackbar } from '@/components/ui/Snackbar';
 import { useDbReady } from '@/hooks/useDbReady';
 import { useThemeBinding } from '@/hooks/useThemeBinding';
+import { configureAds, ensureConsent } from '@/lib/ads';
+import { configureIap } from '@/lib/iap';
+import { useOnboardingStore } from '@/stores/onboardingStore';
 import { colors } from '@/theme/colors';
 
 export default function RootLayout() {
   useThemeBinding();
   const scheme = useColorScheme();
+
+  const hydrateOnboarding = useOnboardingStore((s) => s.hydrate);
+  const onboardingHydrated = useOnboardingStore((s) => s.hydrated);
+  const onboardingCompleted = useOnboardingStore((s) => s.completed);
+
+  useEffect(() => {
+    void hydrateOnboarding();
+    void configureIap();
+    void (async () => {
+      await ensureConsent();
+      await configureAds();
+    })();
+  }, [hydrateOnboarding]);
+
   const navTheme =
     scheme === 'light'
       ? {
@@ -53,11 +71,15 @@ export default function RootLayout() {
           <ErrorBoundary>
             {error ? (
               <LoadingScreen title="Datenbank-Fehler" subtitle={error.message} />
-            ) : !ready ? (
+            ) : !ready || !onboardingHydrated ? (
               <LoadingScreen subtitle="Datenbank wird vorbereitet…" />
             ) : (
               <Stack screenOptions={{ headerShown: false }}>
-                <Stack.Screen name="(tabs)" />
+                {onboardingCompleted ? (
+                  <Stack.Screen name="(tabs)" />
+                ) : (
+                  <Stack.Screen name="onboarding" />
+                )}
               </Stack>
             )}
             <AchievementToast />

@@ -1,6 +1,7 @@
 import { ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { AdaptiveBannerAd } from '@/components/domain/AdaptiveBannerAd';
 import { AchievementsSection } from '@/components/domain/Stats/AchievementsSection';
 import { ChartsSection } from '@/components/domain/Stats/ChartsSection';
 import { HeroCard } from '@/components/domain/Stats/HeroCard';
@@ -47,6 +48,10 @@ export default function StatsScreen() {
       )}
 
       <AchievementsSection unlockedIds={unlockedIds} unlockedAtById={unlockedAtById} />
+
+      <View className="px-2 pt-2">
+        <AdaptiveBannerAd />
+      </View>
     </ScrollView>
   );
 }

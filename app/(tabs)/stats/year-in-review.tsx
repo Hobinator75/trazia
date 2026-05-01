@@ -1,9 +1,13 @@
-import { ScrollView, Text, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import { Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { useIsPremium } from '@/hooks/useIsPremium';
 import { useStatsData } from '@/hooks/useStatsData';
 import { statsByMonth, statsByYear, topOperators, topRoutes } from '@/lib/stats';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
+import { colors } from '@/theme/colors';
 
 const MONTH_NAMES = [
   'Januar',
@@ -22,7 +26,9 @@ const MONTH_NAMES = [
 
 export default function YearInReviewScreen() {
   const insets = useSafeAreaInsets();
+  const router = useRouter();
   const { journeys, refs, loading } = useStatsData();
+  const { isPremium } = useIsPremium();
   const year = new Date().getFullYear();
 
   if (loading && journeys.length === 0) {
@@ -87,41 +93,70 @@ export default function YearInReviewScreen() {
         </Text>
       </View>
 
-      {busiestMonth ? (
-        <View className="mt-3 rounded-3xl border border-border-dark bg-surface-dark p-5">
-          <Text className="text-xs uppercase tracking-wider text-text-muted">Aktivster Monat</Text>
-          <Text className="text-4xl font-bold text-text-light">{busiestMonth.month}</Text>
-          <Text className="text-xs text-text-muted">
-            {Math.round(busiestMonth.km).toLocaleString('de-DE')} km zurückgelegt
+      {isPremium ? (
+        <>
+          {busiestMonth ? (
+            <View className="mt-3 rounded-3xl border border-border-dark bg-surface-dark p-5">
+              <Text className="text-xs uppercase tracking-wider text-text-muted">
+                Aktivster Monat
+              </Text>
+              <Text className="text-4xl font-bold text-text-light">{busiestMonth.month}</Text>
+              <Text className="text-xs text-text-muted">
+                {Math.round(busiestMonth.km).toLocaleString('de-DE')} km zurückgelegt
+              </Text>
+            </View>
+          ) : null}
+
+          {routes.length > 0 ? (
+            <View className="mt-3 rounded-3xl border border-border-dark bg-surface-dark p-5">
+              <Text className="text-xs uppercase tracking-wider text-text-muted">
+                Lieblings-Routen
+              </Text>
+              {routes.map((r) => (
+                <Text key={`${r.from}-${r.to}`} className="mt-2 text-base text-text-light">
+                  {r.from} → {r.to} · {r.count}×
+                </Text>
+              ))}
+            </View>
+          ) : null}
+
+          {operators.length > 0 ? (
+            <View className="mt-3 rounded-3xl border border-border-dark bg-surface-dark p-5">
+              <Text className="text-xs uppercase tracking-wider text-text-muted">
+                Top Operators
+              </Text>
+              {operators.map((o) => (
+                <Text key={o.operator} className="mt-2 text-base text-text-light">
+                  {o.operator} · {o.count} Reisen · {Math.round(o.totalKm).toLocaleString('de-DE')}{' '}
+                  km
+                </Text>
+              ))}
+            </View>
+          ) : null}
+
+          <Text className="mt-6 px-2 text-center text-xs text-text-muted">
+            Storyfied Premium-Wrapped mit Animationen kommt in CC-3.8.
           </Text>
-        </View>
-      ) : null}
-
-      {routes.length > 0 ? (
-        <View className="mt-3 rounded-3xl border border-border-dark bg-surface-dark p-5">
-          <Text className="text-xs uppercase tracking-wider text-text-muted">Lieblings-Routen</Text>
-          {routes.map((r) => (
-            <Text key={`${r.from}-${r.to}`} className="mt-2 text-base text-text-light">
-              {r.from} → {r.to} · {r.count}×
+        </>
+      ) : (
+        <View className="mt-3 rounded-3xl border border-primary/40 bg-primary/10 p-5">
+          <View className="mb-2 flex-row items-center gap-2">
+            <Ionicons name="lock-closed" size={16} color={colors.primary} />
+            <Text className="text-xs font-semibold uppercase tracking-wider text-primary">
+              Premium-Vorschau
             </Text>
-          ))}
+          </View>
+          <Text className="text-base text-text-light">
+            Aktivster Monat, Lieblings-Routen und Top Operators sind Teil des Premium-Wrapped.
+          </Text>
+          <Pressable
+            onPress={() => router.push('/profile/premium')}
+            className="mt-4 items-center rounded-full bg-primary py-3 active:opacity-80"
+          >
+            <Text className="text-sm font-semibold text-white">Premium freischalten</Text>
+          </Pressable>
         </View>
-      ) : null}
-
-      {operators.length > 0 ? (
-        <View className="mt-3 rounded-3xl border border-border-dark bg-surface-dark p-5">
-          <Text className="text-xs uppercase tracking-wider text-text-muted">Top Operators</Text>
-          {operators.map((o) => (
-            <Text key={o.operator} className="mt-2 text-base text-text-light">
-              {o.operator} · {o.count} Reisen · {Math.round(o.totalKm).toLocaleString('de-DE')} km
-            </Text>
-          ))}
-        </View>
-      ) : null}
-
-      <Text className="mt-6 px-2 text-center text-xs text-text-muted">
-        Storyfied Premium-Wrapped mit Animationen kommt in CC-3.8.
-      </Text>
+      )}
     </ScrollView>
   );
 }
