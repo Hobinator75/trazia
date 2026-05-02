@@ -125,6 +125,57 @@ describe('seedFromStatic', () => {
     expect(locs.length).toBeGreaterThan(0);
   });
 
+  it('seed v1 → v2 migration adds new system rows but keeps user data and existing system rows', async () => {
+    // Simulate a device that was on v1: one system airport (FRA) and one
+    // user-created location are already present, with seed.version="1".
+    await storage.setItem(SEED_VERSION_KEY, '1');
+    await handle.db.insert(locations).values([
+      {
+        name: 'Frankfurt Airport',
+        city: 'Frankfurt',
+        country: 'DE',
+        lat: 50.0379,
+        lng: 8.5622,
+        type: 'airport',
+        iata: 'FRA',
+        icao: 'EDDF',
+        isSystemSeed: true,
+      },
+      {
+        name: 'My private airfield',
+        lat: 0,
+        lng: 0,
+        type: 'airport',
+        isSystemSeed: false,
+      },
+    ]);
+
+    // Re-seed with the v2 dataset (TEST_DATA = FRA + LHR).
+    const result = await seedFromStatic({ db: handle.db, storage, data: TEST_DATA });
+    expect(result.inserted).toBe(true);
+    expect(result.reason).toBe('version-upgrade');
+    expect(result.counts.locations).toBe(1); // only LHR is new; FRA already there
+
+    const allRows = await handle.db.select().from(locations);
+    expect(allRows.map((r) => r.name).sort()).toEqual([
+      'Frankfurt Airport',
+      'London Heathrow',
+      'My private airfield',
+    ]);
+
+    // The user row is preserved.
+    const userRows = allRows.filter((r) => !r.isSystemSeed);
+    expect(userRows).toHaveLength(1);
+    expect(userRows[0]?.name).toBe('My private airfield');
+
+    // FRA row is preserved (same id), not duplicated.
+    const fraRows = allRows.filter((r) => r.iata === 'FRA');
+    expect(fraRows).toHaveLength(1);
+
+    // Version is now bumped.
+    expect(await storage.getItem(SEED_VERSION_KEY)).toBe(SEED_VERSION);
+  });
+
   it('keeps user-created rows untouched (only seeds isSystemSeed=true rows)', async () => {
     await handle.db.insert(locations).values({
       name: 'My private airfield',
