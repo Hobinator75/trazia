@@ -3,18 +3,22 @@ import { and, eq, isNotNull } from 'drizzle-orm';
 import aircraftJson from '../../../assets/static/aircraft.json';
 import airlinesJson from '../../../assets/static/airlines.json';
 import airportsJson from '../../../assets/static/airports.json';
+import railwayOperatorsJson from '../../../assets/static/railway_operators.json';
+import trainStationsJson from '../../../assets/static/train_stations.json';
+import trainsJson from '../../../assets/static/trains.json';
 import { locations, operators, vehicles } from '../schema';
 import type { DrizzleDb } from '../types';
 
-// Bumped from "1" to "2" when the static catalogs grew from a hand-curated
-// 8-airport sample to the full OurAirports + OpenFlights datasets. See
-// scripts/build-static-data.ts.
+// v1 → v2: added the full OurAirports / OpenFlights catalogs (3000+ airports,
+//          900+ airlines, 150 aircraft).
+// v2 → v3: added the train stack (124 main European/JP/US stations, 51
+//          railway operators, 75 train models — Phase 8.1 enablement).
 //
 // Upgrade strategy: additive. Existing isSystemSeed=true rows are kept (so
 // any user journey FK references stay valid); only catalog entries that
 // aren't already present get inserted. User rows (isSystemSeed=false) are
 // always left untouched.
-export const SEED_VERSION = '2';
+export const SEED_VERSION = '3';
 export const SEED_VERSION_KEY = 'seed.version';
 
 // SQLite caps each prepared statement at 999 parameters. Each location row
@@ -53,10 +57,39 @@ export interface AircraftRecord {
   capacity?: number | null;
 }
 
+export interface TrainStationRecord {
+  ibnr: string;
+  name: string;
+  city?: string | null;
+  country: string;
+  lat: number;
+  lng: number;
+  station_class?: string | null;
+}
+
+export interface RailwayOperatorRecord {
+  code: string;
+  name: string;
+  country?: string | null;
+  modes?: ('train' | 'flight' | 'car' | 'ship')[];
+}
+
+export interface TrainRecord {
+  code: string;
+  manufacturer: string;
+  model: string;
+  category?: string | null;
+  country?: string | null;
+  name_short?: string | null;
+}
+
 export interface SeedDataset {
   airports: AirportRecord[];
   airlines: AirlineRecord[];
   aircraft: AircraftRecord[];
+  trainStations: TrainStationRecord[];
+  railwayOperators: RailwayOperatorRecord[];
+  trains: TrainRecord[];
 }
 
 export interface SeedFromStaticOptions {
@@ -75,6 +108,9 @@ const defaultDataset: SeedDataset = {
   airports: airportsJson as AirportRecord[],
   airlines: airlinesJson as AirlineRecord[],
   aircraft: aircraftJson as AircraftRecord[],
+  trainStations: trainStationsJson as TrainStationRecord[],
+  railwayOperators: railwayOperatorsJson as RailwayOperatorRecord[],
+  trains: trainsJson as TrainRecord[],
 };
 
 const ZERO_COUNTS = { locations: 0, operators: 0, vehicles: 0 } as const;
@@ -113,13 +149,16 @@ async function upsertAdditive(
   db: DrizzleDb,
   data: SeedDataset,
 ): Promise<{ locations: number; operators: number; vehicles: number }> {
-  const insertedLocations = await upsertAirports(db, data.airports);
-  const insertedOperators = await upsertOperators(db, data.airlines);
-  const insertedVehicles = await upsertVehicles(db, data.aircraft);
+  const newAirports = await upsertAirports(db, data.airports);
+  const newStations = await upsertTrainStations(db, data.trainStations);
+  const newAirlines = await upsertOperators(db, data.airlines);
+  const newRailwayOps = await upsertRailwayOperators(db, data.railwayOperators);
+  const newAircraft = await upsertVehicles(db, data.aircraft);
+  const newTrains = await upsertTrains(db, data.trains);
   return {
-    locations: insertedLocations,
-    operators: insertedOperators,
-    vehicles: insertedVehicles,
+    locations: newAirports + newStations,
+    operators: newAirlines + newRailwayOps,
+    vehicles: newAircraft + newTrains,
   };
 }
 
@@ -185,10 +224,15 @@ async function upsertVehicles(db: DrizzleDb, aircraft: AircraftRecord[]): Promis
   if (aircraft.length === 0) return 0;
 
   const existingRows = await db
-    .select({ code: vehicles.code })
+    .select({ code: vehicles.code, mode: vehicles.mode })
     .from(vehicles)
     .where(and(eq(vehicles.isSystemSeed, true), isNotNull(vehicles.code)));
-  const existing = new Set(existingRows.map((r) => r.code).filter((c): c is string => Boolean(c)));
+  const existing = new Set(
+    existingRows
+      .filter((r) => r.mode === 'flight')
+      .map((r) => r.code)
+      .filter((c): c is string => Boolean(c)),
+  );
 
   const newRows = aircraft
     .filter((v) => !existing.has(v.code))
@@ -199,6 +243,109 @@ async function upsertVehicles(db: DrizzleDb, aircraft: AircraftRecord[]): Promis
       manufacturer: v.manufacturer,
       model: v.model,
       capacity: v.capacity ?? null,
+      isSystemSeed: true,
+    }));
+
+  for (let i = 0; i < newRows.length; i += INSERT_CHUNK) {
+    const chunk = newRows.slice(i, i + INSERT_CHUNK);
+    if (chunk.length > 0) await db.insert(vehicles).values(chunk);
+  }
+  return newRows.length;
+}
+
+async function upsertTrainStations(
+  db: DrizzleDb,
+  stations: TrainStationRecord[],
+): Promise<number> {
+  if (stations.length === 0) return 0;
+
+  const existingRows = await db
+    .select({ ibnr: locations.ibnr })
+    .from(locations)
+    .where(and(eq(locations.isSystemSeed, true), isNotNull(locations.ibnr)));
+  const existing = new Set(existingRows.map((r) => r.ibnr).filter((i): i is string => Boolean(i)));
+
+  const newRows = stations
+    .filter((s) => !existing.has(s.ibnr))
+    .map((s) => ({
+      name: s.name,
+      city: s.city ?? null,
+      country: s.country,
+      lat: s.lat,
+      lng: s.lng,
+      type: 'train_station' as const,
+      ibnr: s.ibnr,
+      isSystemSeed: true,
+    }));
+
+  for (let i = 0; i < newRows.length; i += INSERT_CHUNK) {
+    const chunk = newRows.slice(i, i + INSERT_CHUNK);
+    if (chunk.length > 0) await db.insert(locations).values(chunk);
+  }
+  return newRows.length;
+}
+
+async function upsertRailwayOperators(
+  db: DrizzleDb,
+  ops: RailwayOperatorRecord[],
+): Promise<number> {
+  if (ops.length === 0) return 0;
+
+  const existingRows = await db
+    .select({ code: operators.code, modes: operators.modes })
+    .from(operators)
+    .where(and(eq(operators.isSystemSeed, true), isNotNull(operators.code)));
+
+  // Track which (code, mode) pairs are already seeded so an airline with
+  // code "DB" (Deutsche Bahn) doesn't collide with any code-clash future
+  // airline.
+  const trainCodesSeeded = new Set(
+    existingRows
+      .filter((r) => Array.isArray(r.modes) && r.modes.includes('train'))
+      .map((r) => r.code)
+      .filter((c): c is string => Boolean(c)),
+  );
+
+  const newRows = ops
+    .filter((o) => !trainCodesSeeded.has(o.code))
+    .map((o) => ({
+      name: o.name,
+      code: o.code,
+      modes: o.modes ?? (['train'] as ('train' | 'flight' | 'car' | 'ship')[]),
+      country: o.country ?? null,
+      isSystemSeed: true,
+    }));
+
+  for (let i = 0; i < newRows.length; i += INSERT_CHUNK) {
+    const chunk = newRows.slice(i, i + INSERT_CHUNK);
+    if (chunk.length > 0) await db.insert(operators).values(chunk);
+  }
+  return newRows.length;
+}
+
+async function upsertTrains(db: DrizzleDb, trains: TrainRecord[]): Promise<number> {
+  if (trains.length === 0) return 0;
+
+  const existingRows = await db
+    .select({ code: vehicles.code, mode: vehicles.mode })
+    .from(vehicles)
+    .where(and(eq(vehicles.isSystemSeed, true), isNotNull(vehicles.code)));
+  const existing = new Set(
+    existingRows
+      .filter((r) => r.mode === 'train')
+      .map((r) => r.code)
+      .filter((c): c is string => Boolean(c)),
+  );
+
+  const newRows = trains
+    .filter((t) => !existing.has(t.code))
+    .map((t) => ({
+      mode: 'train' as const,
+      code: t.code,
+      category: t.category ?? null,
+      manufacturer: t.manufacturer,
+      model: t.model,
+      capacity: null,
       isSystemSeed: true,
     }));
 

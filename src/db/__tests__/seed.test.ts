@@ -68,6 +68,36 @@ const TEST_DATA: SeedDataset = {
       capacity: 180,
     },
   ],
+  trainStations: [
+    {
+      ibnr: '8011160',
+      name: 'Berlin Hbf',
+      city: 'Berlin',
+      country: 'DE',
+      lat: 52.5251,
+      lng: 13.3694,
+    },
+    {
+      ibnr: '8000261',
+      name: 'München Hbf',
+      city: 'München',
+      country: 'DE',
+      lat: 48.1402,
+      lng: 11.5586,
+    },
+  ],
+  railwayOperators: [
+    { code: 'DB', name: 'Deutsche Bahn', country: 'DE', modes: ['train'] },
+    { code: 'OBB', name: 'ÖBB', country: 'AT', modes: ['train'] },
+  ],
+  trains: [
+    {
+      code: 'ICE4',
+      manufacturer: 'Siemens / Bombardier',
+      model: 'ICE 4 (BR 412)',
+      category: 'highspeed',
+    },
+  ],
 };
 
 describe('seedFromStatic', () => {
@@ -88,18 +118,26 @@ describe('seedFromStatic', () => {
 
     expect(result.inserted).toBe(true);
     expect(result.reason).toBe('fresh-install');
-    expect(result.counts).toEqual({ locations: 2, operators: 2, vehicles: 2 });
+    // 2 airports + 2 train stations = 4 locations
+    // 2 airlines + 2 railway operators = 4 operators
+    // 2 aircraft + 1 train = 3 vehicles
+    expect(result.counts).toEqual({ locations: 4, operators: 4, vehicles: 3 });
     expect(await storage.getItem(SEED_VERSION_KEY)).toBe(SEED_VERSION);
 
     const locs = await handle.db.select().from(locations);
-    expect(locs).toHaveLength(2);
+    expect(locs).toHaveLength(4);
     expect(locs.every((row) => row.isSystemSeed)).toBe(true);
+    expect(locs.find((l) => l.iata === 'FRA')).toBeDefined();
+    expect(locs.find((l) => l.ibnr === '8011160')?.type).toBe('train_station');
 
     const ops = await handle.db.select().from(operators);
     expect(ops.find((o) => o.code === 'LH')?.modes).toEqual(['flight']);
+    expect(ops.find((o) => o.code === 'DB')?.modes).toEqual(['train']);
 
     const veh = await handle.db.select().from(vehicles);
-    expect(veh.map((v) => v.code).sort()).toEqual(['A320', 'B738']);
+    expect(veh.find((v) => v.code === 'B738')?.mode).toBe('flight');
+    expect(veh.find((v) => v.code === 'ICE4')?.mode).toBe('train');
+    expect(veh.find((v) => v.code === 'ICE4')?.category).toBe('highspeed');
   });
 
   it('is idempotent: a second run with the same version skips insertion', async () => {
@@ -110,7 +148,7 @@ describe('seedFromStatic', () => {
     expect(second.reason).toBe('up-to-date');
 
     const locs = await handle.db.select().from(locations);
-    expect(locs).toHaveLength(TEST_DATA.airports.length);
+    expect(locs).toHaveLength(TEST_DATA.airports.length + TEST_DATA.trainStations.length);
   });
 
   it('self-heals when seed.version is set but the table is empty (post-reset)', async () => {
@@ -125,9 +163,9 @@ describe('seedFromStatic', () => {
     expect(locs.length).toBeGreaterThan(0);
   });
 
-  it('seed v1 → v2 migration adds new system rows but keeps user data and existing system rows', async () => {
-    // Simulate a device that was on v1: one system airport (FRA) and one
-    // user-created location are already present, with seed.version="1".
+  it('upgrade adds new system rows but keeps user data and existing system rows', async () => {
+    // Simulate a device on an older seed version: one system airport (FRA)
+    // and one user-created location are already present.
     await storage.setItem(SEED_VERSION_KEY, '1');
     await handle.db.insert(locations).values([
       {
@@ -150,17 +188,20 @@ describe('seedFromStatic', () => {
       },
     ]);
 
-    // Re-seed with the v2 dataset (TEST_DATA = FRA + LHR).
+    // Re-seed with TEST_DATA (FRA + LHR airports, 2 train stations).
     const result = await seedFromStatic({ db: handle.db, storage, data: TEST_DATA });
     expect(result.inserted).toBe(true);
     expect(result.reason).toBe('version-upgrade');
-    expect(result.counts.locations).toBe(1); // only LHR is new; FRA already there
+    // 1 new airport (LHR) + 2 new stations = 3 location inserts.
+    expect(result.counts.locations).toBe(3);
 
     const allRows = await handle.db.select().from(locations);
     expect(allRows.map((r) => r.name).sort()).toEqual([
+      'Berlin Hbf',
       'Frankfurt Airport',
       'London Heathrow',
       'My private airfield',
+      'München Hbf',
     ]);
 
     // The user row is preserved.
@@ -198,6 +239,8 @@ describe('seedFromStatic', () => {
       .select()
       .from(locations)
       .where(eq(locations.isSystemSeed, true));
-    expect(seededRows).toHaveLength(TEST_DATA.airports.length);
+    expect(seededRows).toHaveLength(
+      TEST_DATA.airports.length + TEST_DATA.trainStations.length,
+    );
   });
 });
