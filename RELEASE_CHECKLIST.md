@@ -2,6 +2,30 @@
 
 Vor jedem Store-Submit alle Punkte abhaken. Ergänzungen gerne via PR.
 
+## ⚠️ Hard-Stops vor erstem Production-Build
+
+Diese Punkte sind nach dem Audit-Fix-Pass **noch offen** und blockieren den
+Production-Submit, wenn nicht vorher erledigt:
+
+- [ ] **Echte AdMob-IDs eintragen.** `app.json:plugins.react-native-google-mobile-ads.androidAppId`
+      und `iosAppId` zeigen aktuell auf Google's Sample-Test-IDs
+      (`ca-app-pub-3940256099942544~…`). Echte IDs aus dem AdMob-Konto
+      einsetzen — sonst sieht der User „Test Ad" und kein Cent fließt.
+- [ ] **Sentry-Account anlegen + DSN setzen.** `app.json:plugins.@sentry/react-native/expo`
+      hat `organization: "trazia"` / `project: "trazia"` als Platzhalter; ohne
+      `SENTRY_AUTH_TOKEN` als EAS-Secret skipt das Plugin den Source-Map-
+      Upload still (Build geht durch, keine Symbolicate-Fähigkeit). Für echte
+      Crash-Reports: Org/Project bei sentry.io anlegen, `EXPO_PUBLIC_SENTRY_DSN`
+      und `SENTRY_AUTH_TOKEN` als EAS-Secrets hinterlegen.
+- [ ] **Apple Developer Account einrichten + ASC App ID + Apple Team ID setzen.**
+      `eas.json:submit.{preview,production}.ios.ascAppId` und `appleTeamId`
+      sind aktuell leere Strings. Vor `eas submit --profile production`
+      ausfüllen.
+- [ ] **Echte Bahnhof-Daten erweitern.** `assets/static/train_stations.json`
+      enthält 124 Stationen (Europa-Schwerpunkt + JP/US-Top-10). Außerhalb
+      Europa kann der User nicht suchen. Post-Launch-TODO: per Overpass-API
+      auf 5–10k Stationen ausbauen, oder kuratierte Listen-Erweiterung.
+
 ## 0 · Pre-Flight
 
 - [ ] Alle Tests grün lokal: `npm run typecheck && npm run lint && npm run format:check && npm run test`

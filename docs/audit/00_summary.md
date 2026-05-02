@@ -108,6 +108,84 @@ Begründung:
    Bahnhof-Seed, Train-Achievements.
 6. Erst dann: **Phase 9 (Auto)** angreifen.
 
+## NACH FIX-SESSION (2026-05-02 abends)
+
+In sieben Block-Commits abgearbeitet (`git log --oneline | grep audit`).
+
+### Was gefixt wurde
+
+**Build-Konfiguration (Block 1):**
+- `expo-asset` als peer-dep installiert.
+- `compileSdkVersion`/`targetSdkVersion` aus `app.json` per `expo-build-properties`-Plugin.
+- Sentry-Plugin-Slugs auf "trazia" — Plugin skipt Source-Map-Upload still ohne SENTRY_AUTH_TOKEN.
+- EAS-Submit ASC App ID + Apple Team ID auf leere Strings gesetzt (Tim füllt vor erstem submit).
+- `.gitignore` nimmt `.secrets/` mit.
+- `expo-doctor` bestanden 17/17.
+
+**Echte Seed-Daten (Block 2):**
+- `scripts/build-static-data.ts` zieht OurAirports + OpenFlights live.
+- `assets/static/airports.json`: **3 308** Einträge (vorher 8).
+- `assets/static/airlines.json`: **993** Einträge (vorher 6).
+- `assets/static/aircraft.json`: **147** kuratierte ICAO-Designators (vorher 6).
+- `seedFromStatic` v1→v2 mit additivem Upgrade-Pfad — bestehende User-Daten bleiben.
+
+**Journey-Edit-Screen (Block 3):**
+- FlightForm/OtherForm akzeptieren `editing`-Prop und schalten auf UPDATE.
+- `app/(tabs)/journeys/edit/[id].tsx` echt umgesetzt (nicht mehr Platzhalter).
+- Repository-Layer mit lazy-import für ads/analytics — Tests laufen jetzt im Node-Env durch.
+
+**Achievement-Catalog auf Spec (Block 4):**
+- `docs/achievements.json`: 22 → **44** Achievements (12 cross-modal + 32 flight).
+- `atlantic_crosser` → `transatlantic` mit Migration 0002.
+- Neue: first_flight, fifty_flights, jumbo_jet, supersonic, oneworld_alliance, skyteam_alliance, …
+- `Achievement.appliesTo`-Feld unterscheidet flight / train / cross.
+
+**Phase 8.1 Train (Block 5):**
+- Seed: 124 Bahnhöfe, 51 Bahnbetreiber, 75 Train-Modelle.
+- TrainForm.tsx (~440 Zeilen) parallel zur FlightForm.
+- ModePicker schaltet Train frei.
+- AddJourney + Edit-Screen rendern TrainForm bei mode='train'.
+- JourneyCard mit dediziertem TrainCardBody (Stadt-Pair + Operator-Code).
+- 18 Train-Achievements (first_train, db_loyalty_25, european_rail, sleeper_train, …).
+- Onboarding-Modes-Karte aktivierbar.
+- Achievement-Catalog jetzt **62** total.
+
+**Polish (Block 6):**
+- Stats Quick-Numbers von Pressable → View (kein toter Tap-Target).
+- Map-Default: 2D statt 3D (3D-Linien sind nicht tappbar).
+- Onboarding first-journey trägt jetzt eine echte Beispielreise ein.
+- TransportMode + 'walk' | 'bike' | 'other'; OtherForm speichert per submode.
+- `src/i18n/` gelöscht; Sprache aus Settings entfernt; DE-only für v1.
+- `<Image>` aus expo-image überall mit Fotos.
+- MapView2D: greatCirclePath in useMemo.
+- aggregateStatsMemo eingeschaltet in useStatsData.
+- Migration 0003: indexes auf `journeys.cabin_class` und `journeys.vehicle_id`.
+
+**Tests (Block 7):**
+- `journey.repository.test.ts`: create/update/delete/duplicate, train-haversine, first_train.
+- `lib/journeys/__tests__/sections.test.ts`: applyFilters / groupByYearMonth / buildFacets.
+- `lib/export/__tests__/snapshot.test.ts`: build + restore-roundtrip.
+- `lib/forms/__tests__/journeySchemas.test.ts`: Zod edge cases.
+- `lib/achievements/__tests__/catalog.test.ts`: catalog smoke + spec-IDs.
+- `seed.test.ts` erweitert um Train-Daten und Version-Upgrade.
+- **138/138 Tests grün, tsc 0, lint 0, expo-doctor 17/17.**
+
+### Was offen bleibt
+
+- **Echter 3D-Globus** (Globe3D.tsx): bleibt SVG-Placeholder. CC-3.5.
+- **Stats-Drilldown**: `stats/stat/[key].tsx` weiterhin Platzhalter; tap-targets sind aber jetzt deaktiviert. CC-3.6.
+- **Sound-Asset**: lib/sound.ts hat das expo-audio-Wiring side-by-side im Code, aber keine MP3-Datei. CC-3.7.
+- **AdMob-Production-IDs / Sentry-Account / Apple-IDs**: Platzhalter ersetzt, aber Tim braucht echte Werte vor `eas build --profile production`. Siehe RELEASE_CHECKLIST.md.
+- **Trips / Multi-leg-UI**: Schema da, kein UI. CC-3.9.
+- **Train-Stations weltweit**: 124 europäische + JP + US, nicht global. Tim kann erweitern oder per Overpass nachziehen.
+
+### Empfehlung
+
+Die App ist **launch-fähig für Phase 1 + Phase 8.1 (Flug + Zug)**.
+
+- Vor Codex-Cross-Audit: ✅ kann jetzt los — Tests sind grün, Spec-Compliance ist auf 32+18 Achievements, Build-Configs sauber.
+- Vor Phase 9 (Auto): erst Codex-Cross-Audit + Tims manuelles Test-Drehbuch (`11_test_script.md`) durchspielen.
+
 ## Audit-Index
 
 - [01_structure.md](01_structure.md) — Repo-Struktur (FOUND/MISSING/EXTRA)
