@@ -1,4 +1,4 @@
-export type TransportMode = 'flight' | 'train' | 'car' | 'ship';
+export type TransportMode = 'flight' | 'train' | 'car' | 'ship' | 'walk' | 'bike' | 'other';
 
 export type LocationKind = 'airport' | 'train_station' | 'port' | 'address';
 

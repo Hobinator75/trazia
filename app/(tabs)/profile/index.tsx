@@ -9,7 +9,6 @@ import { showRewardedAd } from '@/lib/ads/rewarded';
 import { usePremiumStore } from '@/stores/premiumStore';
 import {
   type DistanceUnit,
-  type LanguagePreference,
   type ThemePreference,
   useSettingsStore,
 } from '@/stores/settings.store';
@@ -134,12 +133,6 @@ const THEME_OPTIONS = [
   { value: 'system' as const, label: 'System' },
 ];
 
-const LANGUAGE_OPTIONS = [
-  { value: 'de' as const, label: 'Deutsch' },
-  { value: 'en' as const, label: 'English' },
-  { value: 'system' as const, label: 'System' },
-];
-
 const UNIT_OPTIONS = [
   { value: 'km' as const, label: 'km' },
   { value: 'mi' as const, label: 'Meilen' },
@@ -168,8 +161,6 @@ export default function ProfileScreen() {
 
   const theme = useSettingsStore((s) => s.theme);
   const setTheme = useSettingsStore((s) => s.setTheme);
-  const language = useSettingsStore((s) => s.language);
-  const setLanguage = useSettingsStore((s) => s.setLanguage);
   const distanceUnit = useSettingsStore((s) => s.distanceUnit);
   const setDistanceUnit = useSettingsStore((s) => s.setDistanceUnit);
   const soundEnabled = useSettingsStore((s) => s.soundEnabled);
@@ -257,13 +248,6 @@ export default function ProfileScreen() {
           options={THEME_OPTIONS}
           value={theme}
           onChange={setTheme}
-        />
-        <SegmentedRow<LanguagePreference>
-          label="Sprache"
-          description="Strings im UI; Reise-Einträge bleiben unverändert."
-          options={LANGUAGE_OPTIONS}
-          value={language}
-          onChange={setLanguage}
         />
         <SegmentedRow<DistanceUnit>
           label="Einheiten"

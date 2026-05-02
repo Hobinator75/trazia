@@ -2,12 +2,14 @@ import { create } from 'zustand';
 
 export type ThemePreference = 'dark' | 'light' | 'system';
 export type DistanceUnit = 'km' | 'mi';
-export type LanguagePreference = 'de' | 'en' | 'system';
+
+// Note: a `language` setting and the `src/i18n/` subsystem existed but were
+// never wired up — Trazia ships German-only for the v1 launch. English will
+// land post-Phase-9 with i18next + react-native-localize.
 
 interface SettingsState {
   theme: ThemePreference;
   distanceUnit: DistanceUnit;
-  language: LanguagePreference;
   soundEnabled: boolean;
   notificationsEnabled: boolean;
   // Default ON: anonymous stack-traces only, no PII (toggle is mentioned
@@ -19,7 +21,6 @@ interface SettingsState {
   avatarUri: string | null;
   setTheme: (theme: ThemePreference) => void;
   setDistanceUnit: (unit: DistanceUnit) => void;
-  setLanguage: (lang: LanguagePreference) => void;
   setSoundEnabled: (enabled: boolean) => void;
   setNotificationsEnabled: (enabled: boolean) => void;
   setCrashReportsEnabled: (enabled: boolean) => void;
@@ -31,7 +32,6 @@ interface SettingsState {
 export const useSettingsStore = create<SettingsState>((set) => ({
   theme: 'dark',
   distanceUnit: 'km',
-  language: 'system',
   soundEnabled: true,
   notificationsEnabled: false,
   crashReportsEnabled: true,
@@ -40,7 +40,6 @@ export const useSettingsStore = create<SettingsState>((set) => ({
   avatarUri: null,
   setTheme: (theme) => set({ theme }),
   setDistanceUnit: (distanceUnit) => set({ distanceUnit }),
-  setLanguage: (language) => set({ language }),
   setSoundEnabled: (soundEnabled) => set({ soundEnabled }),
   setNotificationsEnabled: (notificationsEnabled) => set({ notificationsEnabled }),
   setCrashReportsEnabled: (crashReportsEnabled) => set({ crashReportsEnabled }),

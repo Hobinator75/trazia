@@ -1,12 +1,12 @@
 import { Ionicons } from '@expo/vector-icons';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { eq } from 'drizzle-orm';
+import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import {
-  Image,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -69,10 +69,20 @@ async function ensureAdhocLocation(label: string): Promise<string> {
   return id;
 }
 
-// Edit-mode reads the original submode out of `source` ("manual:walk" etc.)
-// because OtherForm currently persists every submode as mode='car' (the
-// per-mode mapping is on the Block 6 polish list).
+// Each submode is persisted to its own TransportMode so stats / charts
+// reflect the user's actual movement type. Legacy journeys created before
+// this fix had mode='car' regardless of submode, with the real submode
+// encoded in `source` ("manual:walk" etc.); we honor that on edit.
+function modeFromSubmode(submode: OtherSubmode): 'walk' | 'bike' | 'other' {
+  if (submode === 'walk') return 'walk';
+  if (submode === 'bike') return 'bike';
+  return 'other';
+}
+
 function submodeFromJourney(journey: JourneyWithRefs): OtherSubmode {
+  if (journey.mode === 'walk') return 'walk';
+  if (journey.mode === 'bike') return 'bike';
+  if (journey.mode === 'other') return 'other';
   if (typeof journey.source === 'string') {
     const tail = journey.source.split(':')[1];
     if (tail === 'walk' || tail === 'bike' || tail === 'other') return tail;
@@ -161,9 +171,7 @@ export function OtherForm({ editing }: OtherFormProps = {}) {
       ]);
 
       const journeyPatch = {
-        // Block 6 will split this into per-submode TransportModes; for now we
-        // keep the legacy 'car' bucket so the schema doesn't shift mid-block.
-        mode: 'car' as const,
+        mode: modeFromSubmode(values.submode),
         fromLocationId: fromId,
         toLocationId: toId,
         date: values.date,
@@ -333,7 +341,7 @@ export function OtherForm({ editing }: OtherFormProps = {}) {
               <Image
                 source={{ uri: photoUri }}
                 style={{ width: '100%', height: 160, borderRadius: 8 }}
-                resizeMode="cover"
+                contentFit="cover"
               />
             ) : (
               <View className="flex-row items-center justify-center gap-2 py-6">

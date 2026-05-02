@@ -1,26 +1,36 @@
 import { useSettingsStore } from '@/stores/settings.store';
 
-// Sound is asset-graceful: the unlock chime expects
-// assets/sounds/achievement_unlock.mp3 — if that file isn't bundled (e.g.
-// during development before the audio asset is checked in) we silently skip
-// playback rather than crash the bundler. Drop the asset in place and
-// uncomment the require + createSound block below to wire it up.
-//
-// import { createAudioPlayer, setAudioModeAsync } from 'expo-audio';
-// const UNLOCK_ASSET = require('../../assets/sounds/achievement_unlock.mp3');
+// Achievement-unlock chime. The expo-audio integration is sketched out below
+// but kept inert until the audio asset is checked in — Metro statically
+// analyses `require('./asset.mp3')`, so an inline require with a missing
+// file would break the bundle. Once `assets/sounds/achievement_unlock_bronze.mp3`
+// lands, swap the stub block for the wired block (kept side-by-side as a
+// reminder), and a generic chime plays for every tier until silver/gold/
+// platinum sounds are recorded.
 
-let unlockPlayer: { play: () => void } | null = null;
+type Player = { play: () => void };
+let unlockPlayer: Player | null = null;
+let attempted = false;
 
-async function ensureUnlockPlayer(): Promise<{ play: () => void } | null> {
-  if (unlockPlayer) return unlockPlayer;
+async function ensureUnlockPlayer(): Promise<Player | null> {
+  if (unlockPlayer || attempted) return unlockPlayer;
+  attempted = true;
 
-  // TODO CC-3.7: replace this stub with the real expo-audio integration once
-  // the unlock chime asset is checked into assets/sounds/.
+  // Wired version (uncomment once the asset is checked in):
   //
-  //   await setAudioModeAsync({ playsInSilentMode: false });
-  //   const player = createAudioPlayer(UNLOCK_ASSET);
-  //   unlockPlayer = { play: () => player.play() };
-  //   return unlockPlayer;
+  //   try {
+  //     const audio = await import('expo-audio');
+  //     // eslint-disable-next-line @typescript-eslint/no-require-imports
+  //     const asset = require('../../assets/sounds/achievement_unlock_bronze.mp3');
+  //     await audio.setAudioModeAsync({ playsInSilentMode: false });
+  //     const player = audio.createAudioPlayer(asset);
+  //     unlockPlayer = { play: () => player.play() };
+  //     return unlockPlayer;
+  //   } catch {
+  //     unlockPlayer = null;
+  //     return null;
+  //   }
+
   return null;
 }
 
@@ -31,7 +41,6 @@ export async function playUnlockSound(): Promise<void> {
     const player = await ensureUnlockPlayer();
     player?.play();
   } catch {
-    // Asset missing or audio session unavailable; silent failure is
-    // intentional — we don't want a missing chime to break the unlock UX.
+    // Silent: a missing chime should never break the unlock UX.
   }
 }

@@ -7,7 +7,6 @@ export const EARTH_RADIUS_KM = 6371.0088;
 export const EARTH_CIRCUMFERENCE_KM = 40075.017;
 export const POLAR_CIRCLE_LAT = 66.5;
 
-const TWO_PI = Math.PI * 2;
 const toRad = (deg: number): number => (deg * Math.PI) / 180;
 const toDeg = (rad: number): number => (rad * 180) / Math.PI;
 
@@ -157,6 +156,3 @@ export function bezierPath(a: LatLng, b: LatLng, curvature = 0.2, points = 32): 
   return out;
 }
 
-// Suppress unused lint on TWO_PI if minifier optimizes out; it's exposed for
-// downstream geo helpers (route smoothing, animation).
-export { TWO_PI };

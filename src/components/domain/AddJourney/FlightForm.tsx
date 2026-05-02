@@ -1,11 +1,11 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Ionicons } from '@expo/vector-icons';
+import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import {
-  Image,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -396,7 +396,7 @@ export function FlightForm({ editing }: FlightFormProps = {}) {
               <Image
                 source={{ uri: photoUri }}
                 style={{ width: '100%', height: 160, borderRadius: 8 }}
-                resizeMode="cover"
+                contentFit="cover"
               />
             ) : (
               <View className="flex-row items-center justify-center gap-2 py-6">

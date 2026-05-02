@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { db } from '@/db/client';
 import { listJourneysWithRefs, type JourneyWithRefs } from '@/db/repositories/journey.repository';
 import { achievementUnlocks, locations, operators } from '@/db/schema';
-import { aggregateStats, type Stats, type StatsRefs } from '@/lib/stats';
+import { aggregateStatsMemo, type Stats, type StatsRefs } from '@/lib/stats';
 import { useAchievementStore } from '@/stores/achievementStore';
 
 export interface StatsData {
@@ -71,7 +71,9 @@ export function useStatsData(): StatsData {
     return unsub;
   }, [reload]);
 
-  const stats = useMemo(() => aggregateStats(journeys, refs), [journeys, refs]);
+  // Reference-equality memoised; keeps recomputation out of focus events
+  // when journeys/refs haven't changed (which is most refocus events).
+  const stats = useMemo(() => aggregateStatsMemo(journeys, refs), [journeys, refs]);
 
   return {
     journeys,

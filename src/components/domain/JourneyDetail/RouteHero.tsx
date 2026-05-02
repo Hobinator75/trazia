@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Image, Text, View } from 'react-native';
+import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Text, View } from 'react-native';
 
 import type { JourneyWithRefs } from '@/db/repositories/journey.repository';
 import { formatDateLong, journeyTitle } from '@/lib/journeys/format';
@@ -26,7 +27,7 @@ export function RouteHero({ journey, photoUri, height = 260 }: RouteHeroProps) {
         <Image
           source={{ uri: photoUri }}
           style={{ position: 'absolute', inset: 0 }}
-          resizeMode="cover"
+          contentFit="cover"
         />
       ) : (
         <FallbackBackground />

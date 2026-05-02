@@ -67,6 +67,30 @@ export function MapView2D({ journeys }: MapView2DProps) {
     return journeys;
   }, [journeys, viewMode, selectedYear]);
 
+  // Pre-compute great-circle paths once per filtered set; without this they
+  // re-run on every render (mode toggle, year picker, sheet open) — N journeys
+  // × 64 points × cosine math gets noticeable past 100 journeys.
+  const journeyArcs = useMemo(
+    () =>
+      filtered.map((journey) => {
+        if (!journey.fromLocation || !journey.toLocation) return null;
+        const a: LatLng = {
+          latitude: journey.fromLocation.lat,
+          longitude: journey.fromLocation.lng,
+        };
+        const b: LatLng = {
+          latitude: journey.toLocation.lat,
+          longitude: journey.toLocation.lng,
+        };
+        return {
+          journey,
+          path: greatCirclePath(a, b, 64),
+          stroke: modeColors[journey.mode as keyof typeof modeColors] ?? colors.primary,
+        };
+      }),
+    [filtered],
+  );
+
   const locationStats = useMemo(() => buildLocationStats(filtered), [filtered]);
   const maxVisits = useMemo(() => {
     let max = 0;
@@ -92,29 +116,19 @@ export function MapView2D({ journeys }: MapView2DProps) {
           longitudeDelta: 180,
         }}
       >
-        {filtered.map((journey) => {
-          if (!journey.fromLocation || !journey.toLocation) return null;
-          const a: LatLng = {
-            latitude: journey.fromLocation.lat,
-            longitude: journey.fromLocation.lng,
-          };
-          const b: LatLng = {
-            latitude: journey.toLocation.lat,
-            longitude: journey.toLocation.lng,
-          };
-          const stroke = modeColors[journey.mode as keyof typeof modeColors] ?? colors.primary;
-          const path = greatCirclePath(a, b, 64);
+        {journeyArcs.map((arc) => {
+          if (!arc) return null;
           return (
             <Polyline
-              key={journey.id}
-              coordinates={path}
-              strokeColor={stroke}
+              key={arc.journey.id}
+              coordinates={arc.path}
+              strokeColor={arc.stroke}
               strokeWidth={2}
               tappable
               onPress={() =>
-                router.push({ pathname: '/journeys/[id]', params: { id: journey.id } })
+                router.push({ pathname: '/journeys/[id]', params: { id: arc.journey.id } })
               }
-              geodesic={journey.routeType !== 'bezier'}
+              geodesic={arc.journey.routeType !== 'bezier'}
             />
           );
         })}

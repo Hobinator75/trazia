@@ -15,7 +15,10 @@ type Mode = '2d' | '3d';
 export default function MapScreen() {
   const insets = useSafeAreaInsets();
   const { journeys, loading } = useJourneys();
-  const [mode, setMode] = useState<Mode>('3d');
+  // Default to 2D until CC-3.5 ships a real 3D globe. The current Globe3D is
+  // an SVG illusion whose route polylines aren't tappable; MapView2D's
+  // polylines are, which is what users expect when tapping a route.
+  const [mode, setMode] = useState<Mode>('2d');
 
   if (loading && journeys.length === 0) {
     return <LoadingScreen subtitle="Karte wird geladen…" />;

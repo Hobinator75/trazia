@@ -1,7 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
+import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
 import { useState } from 'react';
-import { Image, Modal, Pressable, Text, TextInput, View } from 'react-native';
+import { Modal, Pressable, Text, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useSettingsStore } from '@/stores/settings.store';
@@ -51,7 +52,11 @@ export function ProfileHeader() {
     <View className="mb-4 flex-row items-center gap-4 rounded-2xl border border-border-dark bg-surface-dark p-4">
       <Pressable onPress={pickAvatar} hitSlop={6}>
         {avatarUri ? (
-          <Image source={{ uri: avatarUri }} style={{ width: 64, height: 64, borderRadius: 32 }} />
+          <Image
+            source={{ uri: avatarUri }}
+            style={{ width: 64, height: 64, borderRadius: 32 }}
+            contentFit="cover"
+          />
         ) : (
           <View className="h-16 w-16 items-center justify-center rounded-full bg-primary/20">
             <Ionicons name="person" size={28} color={colors.primary} />

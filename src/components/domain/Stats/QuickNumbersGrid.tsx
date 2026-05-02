@@ -1,18 +1,20 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import type { Stats } from '@/lib/stats';
 import { colors } from '@/theme/colors';
 
+// Quick numbers are display-only for now. The Stat-Drilldown screen
+// (app/(tabs)/stats/stat/[key].tsx) is a placeholder until CC-3.6 lands;
+// making the tiles tappable would lead nowhere. Re-introduce onTilePress +
+// router.push when the drilldown ships.
+
 export interface QuickNumbersGridProps {
   stats: Stats;
-  onTilePress?: (
-    key: 'journeys' | 'countries' | 'hours' | 'operators' | 'locations' | 'vehicles',
-  ) => void;
 }
 
 interface TileSpec {
-  key: 'journeys' | 'countries' | 'hours' | 'operators' | 'locations' | 'vehicles';
+  key: string;
   label: string;
   icon: React.ComponentProps<typeof Ionicons>['name'];
   value: string;
@@ -62,15 +64,14 @@ function buildTiles(stats: Stats): TileSpec[] {
   ];
 }
 
-export function QuickNumbersGrid({ stats, onTilePress }: QuickNumbersGridProps) {
+export function QuickNumbersGrid({ stats }: QuickNumbersGridProps) {
   const tiles = buildTiles(stats);
   return (
     <View className="mx-4 my-3 flex-row flex-wrap" style={{ gap: 12 }}>
       {tiles.map((tile) => (
-        <Pressable
+        <View
           key={tile.key}
-          onPress={() => onTilePress?.(tile.key)}
-          className="rounded-2xl border border-border-dark bg-surface-dark p-4 active:opacity-80"
+          className="rounded-2xl border border-border-dark bg-surface-dark p-4"
           style={{ width: '31%' }}
         >
           <Ionicons name={tile.icon} size={18} color={colors.text.muted} />
@@ -80,7 +81,7 @@ export function QuickNumbersGrid({ stats, onTilePress }: QuickNumbersGridProps) 
           <Text className="text-xs text-text-muted" numberOfLines={1}>
             {tile.label}
           </Text>
-        </Pressable>
+        </View>
       ))}
     </View>
   );

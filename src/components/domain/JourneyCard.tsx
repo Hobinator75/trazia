@@ -162,6 +162,10 @@ export const JourneyCard = memo(function JourneyCard({
       ) : journey.mode === 'ship' ? (
         // TODO Phase 2: replace with shipping-line logo + UN/LOCODEs.
         <GenericCardBody journey={journey} iconName="boat" modeColor={modeColors.ship} />
+      ) : journey.mode === 'walk' ? (
+        <GenericCardBody journey={journey} iconName="walk" modeColor={modeColors.other} />
+      ) : journey.mode === 'bike' ? (
+        <GenericCardBody journey={journey} iconName="bicycle" modeColor={modeColors.other} />
       ) : (
         <GenericCardBody
           journey={journey}
