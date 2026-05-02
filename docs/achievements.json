@@ -409,5 +409,171 @@
     "category": "airlines",
     "appliesTo": "flight",
     "rule": { "type": "operator_loyalty", "count": 50, "operatorCode": "LH" }
+  },
+
+  {
+    "id": "first_train",
+    "title": "First Train",
+    "description": "Log your first train journey.",
+    "tier": "bronze",
+    "category": "milestones",
+    "appliesTo": "train",
+    "rule": { "type": "count", "threshold": 1, "mode": "train" }
+  },
+  {
+    "id": "ten_trains",
+    "title": "Frequent Rail",
+    "description": "Take ten train journeys.",
+    "tier": "bronze",
+    "category": "milestones",
+    "appliesTo": "train",
+    "rule": { "type": "count", "threshold": 10, "mode": "train" }
+  },
+  {
+    "id": "fifty_trains",
+    "title": "Schedule Insider",
+    "description": "Take fifty train journeys.",
+    "tier": "silver",
+    "category": "milestones",
+    "appliesTo": "train",
+    "rule": { "type": "count", "threshold": 50, "mode": "train" }
+  },
+  {
+    "id": "hundred_trains",
+    "title": "Train Centurion",
+    "description": "Take a hundred train journeys.",
+    "tier": "gold",
+    "category": "milestones",
+    "appliesTo": "train",
+    "rule": { "type": "count", "threshold": 100, "mode": "train" }
+  },
+  {
+    "id": "five_hundred_trains",
+    "title": "Lifetime BahnCard",
+    "description": "Take five hundred train journeys.",
+    "tier": "platinum",
+    "category": "milestones",
+    "appliesTo": "train",
+    "rule": { "type": "count", "threshold": 500, "mode": "train" }
+  },
+  {
+    "id": "train_distance_5k",
+    "title": "Track Marathon",
+    "description": "Travel 5,000 km by rail.",
+    "tier": "bronze",
+    "category": "distance",
+    "appliesTo": "train",
+    "rule": { "type": "distance_total", "thresholdKm": 5000, "mode": "train" }
+  },
+  {
+    "id": "train_distance_50k",
+    "title": "Iron Road 50k",
+    "description": "Travel 50,000 km by rail.",
+    "tier": "silver",
+    "category": "distance",
+    "appliesTo": "train",
+    "rule": { "type": "distance_total", "thresholdKm": 50000, "mode": "train" }
+  },
+  {
+    "id": "train_around_world",
+    "title": "Round the Earth (Rail)",
+    "description": "Travel 40,075 km by rail — Earth's circumference, all on tracks.",
+    "tier": "gold",
+    "category": "distance",
+    "appliesTo": "train",
+    "rule": { "type": "distance_total", "thresholdKm": 40075, "mode": "train" }
+  },
+  {
+    "id": "train_long_haul",
+    "title": "Night Train Hero",
+    "description": "A single train ride of at least six hours.",
+    "tier": "silver",
+    "category": "distance",
+    "appliesTo": "train",
+    "rule": { "type": "single_journey_duration", "thresholdMinutes": 360, "mode": "train" }
+  },
+  {
+    "id": "train_marathon",
+    "title": "Trans-Sib Spirit",
+    "description": "A single train ride of at least twelve hours.",
+    "tier": "gold",
+    "category": "distance",
+    "appliesTo": "train",
+    "rule": { "type": "single_journey_duration", "thresholdMinutes": 720, "mode": "train" }
+  },
+  {
+    "id": "ice_rider",
+    "title": "ICE Rider",
+    "description": "Ride aboard an ICE 1, 2, 3, 3neo or 4.",
+    "tier": "bronze",
+    "category": "aircraft",
+    "appliesTo": "train",
+    "rule": { "type": "operator_loyalty", "count": 1, "operatorCode": "DB" }
+  },
+  {
+    "id": "highspeed_rail",
+    "title": "Highspeed Rail",
+    "description": "Travel aboard a high-speed train.",
+    "tier": "silver",
+    "category": "aircraft",
+    "appliesTo": "train",
+    "rule": { "type": "vehicle_category", "categories": ["highspeed"] }
+  },
+  {
+    "id": "intercity_rail",
+    "title": "Intercity Regular",
+    "description": "Travel aboard an intercity train.",
+    "tier": "bronze",
+    "category": "aircraft",
+    "appliesTo": "train",
+    "rule": { "type": "vehicle_category", "categories": ["intercity"] }
+  },
+  {
+    "id": "regional_rail",
+    "title": "Regional Hero",
+    "description": "Travel aboard a regional train.",
+    "tier": "bronze",
+    "category": "aircraft",
+    "appliesTo": "train",
+    "rule": { "type": "vehicle_category", "categories": ["regional"] }
+  },
+  {
+    "id": "sleeper_train",
+    "title": "Sleeper Train",
+    "description": "Travel in a sleeper carriage.",
+    "tier": "silver",
+    "category": "milestones",
+    "appliesTo": "train",
+    "rule": { "type": "cabin_class", "cabinClass": "sleeper" }
+  },
+  {
+    "id": "first_class_rail",
+    "title": "First Class Rail",
+    "description": "Travel first class by train.",
+    "tier": "silver",
+    "category": "milestones",
+    "appliesTo": "train",
+    "rule": { "type": "cabin_class", "cabinClass": "first" }
+  },
+  {
+    "id": "db_loyalty_25",
+    "title": "BahnCard Hero",
+    "description": "Take twenty-five trips with Deutsche Bahn.",
+    "tier": "gold",
+    "category": "airlines",
+    "appliesTo": "train",
+    "rule": { "type": "operator_loyalty", "count": 25, "operatorCode": "DB" }
+  },
+  {
+    "id": "european_rail",
+    "title": "European Rail",
+    "description": "Travel with at least one major European rail operator.",
+    "tier": "silver",
+    "category": "airlines",
+    "appliesTo": "train",
+    "rule": {
+      "type": "operator_set",
+      "operatorCodes": ["DB", "OBB", "SBB", "SNCF", "TI", "ITA", "NS", "RENFE", "CP", "SNCB", "EUS", "DSB", "SJ", "VR", "NSB"]
+    }
   }
 ]

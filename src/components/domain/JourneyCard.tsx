@@ -67,6 +67,44 @@ const FlightCardBody = memo(function FlightCardBody({ journey }: { journey: Jour
   );
 });
 
+const TrainCardBody = memo(function TrainCardBody({ journey }: { journey: JourneyWithRefs }) {
+  const fromName = journey.fromLocation?.city ?? journey.fromLocation?.name ?? '?';
+  const toName = journey.toLocation?.city ?? journey.toLocation?.name ?? '?';
+  const opCode = journey.operator?.code ?? journey.operator?.name?.slice(0, 2) ?? '🚆';
+  return (
+    <>
+      <View
+        className="h-10 w-10 items-center justify-center rounded-full"
+        style={{ backgroundColor: `${modeColors.train}33` }}
+      >
+        <Text className="text-xs font-bold" style={{ color: modeColors.train }}>
+          {opCode.toUpperCase()}
+        </Text>
+      </View>
+
+      <View className="flex-1">
+        <View className="flex-row items-center gap-2">
+          <Text className="text-base font-bold tracking-tight text-text-light" numberOfLines={1}>
+            {fromName}
+          </Text>
+          <Ionicons name="arrow-forward" size={14} color={colors.text.muted} />
+          <Text className="text-base font-bold tracking-tight text-text-light" numberOfLines={1}>
+            {toName}
+          </Text>
+        </View>
+        <Text className="text-xs text-text-muted">
+          {[journey.serviceNumber, formatDate(journey.date)].filter(Boolean).join(' · ')}
+        </Text>
+        <Text className="text-xs text-text-muted">
+          {[formatDistance(journey.distanceKm), formatDuration(journey.durationMinutes)]
+            .filter((v) => v !== '—')
+            .join(' · ') || '—'}
+        </Text>
+      </View>
+    </>
+  );
+});
+
 const GenericCardBody = memo(function GenericCardBody({
   journey,
   iconName,
@@ -116,9 +154,7 @@ export const JourneyCard = memo(function JourneyCard({
       {journey.mode === 'flight' ? (
         <FlightCardBody journey={journey} />
       ) : journey.mode === 'train' ? (
-        // TODO Phase 2: replace with rail-specific layout (operator logo,
-        // IBNR codes, train number, platform when available).
-        <GenericCardBody journey={journey} iconName="train" modeColor={modeColors.train} />
+        <TrainCardBody journey={journey} />
       ) : journey.mode === 'car' ? (
         // TODO Phase 2: replace with shortened address strings + odometer
         // delta when GPS / vehicle telemetry is wired.

@@ -3,6 +3,7 @@ import { View } from 'react-native';
 
 import { FlightForm } from '@/components/domain/AddJourney/FlightForm';
 import { OtherForm } from '@/components/domain/AddJourney/OtherForm';
+import { TrainForm } from '@/components/domain/AddJourney/TrainForm';
 import { type AddJourneyMode, ModePicker, MODES } from '@/components/domain/ModePicker';
 import { trackModeLockedTapped } from '@/lib/observability/analytics';
 import { useSnackbarStore } from '@/stores/snackbarStore';
@@ -22,7 +23,7 @@ export default function AddJourneyScreen() {
       <View className="border-b border-border-dark">
         <ModePicker value={mode} onChange={setMode} onLockedTap={onLockedTap} />
       </View>
-      {mode === 'flight' ? <FlightForm /> : <OtherForm />}
+      {mode === 'flight' ? <FlightForm /> : mode === 'train' ? <TrainForm /> : <OtherForm />}
     </View>
   );
 }

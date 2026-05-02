@@ -12,6 +12,7 @@ import {
 
 import { FlightForm } from '@/components/domain/AddJourney/FlightForm';
 import { OtherForm } from '@/components/domain/AddJourney/OtherForm';
+import { TrainForm } from '@/components/domain/AddJourney/TrainForm';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 
 interface LoadState {
@@ -74,18 +75,9 @@ export default function EditJourneyScreen() {
 
   if (state.journey.mode === 'train') {
     return (
-      <View className="flex-1 items-center justify-center bg-background-dark px-6">
+      <View className="flex-1 bg-background-dark">
         <Stack.Screen options={{ title: 'Zug bearbeiten' }} />
-        <Text className="mb-2 text-lg font-semibold text-text-light">Bald verfügbar</Text>
-        <Text className="text-center text-sm text-text-muted">
-          Das Bearbeiten von Zugfahrten kommt mit der nächsten App-Version.
-        </Text>
-        <Pressable
-          onPress={() => router.back()}
-          className="mt-6 rounded-full bg-primary px-6 py-3 active:opacity-80"
-        >
-          <Text className="text-base font-semibold text-white">Zurück</Text>
-        </Pressable>
+        <TrainForm editing={editing} />
       </View>
     );
   }

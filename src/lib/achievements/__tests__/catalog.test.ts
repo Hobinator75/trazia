@@ -50,6 +50,15 @@ describe('achievements catalog (docs/achievements.json)', () => {
     expect(flightCount).toBeGreaterThanOrEqual(32);
   });
 
+  it('contains at least 18 train-mode achievements (Phase 8.1 spec)', () => {
+    const trainCount = ALL.filter((a) => a.appliesTo === 'train').length;
+    expect(trainCount).toBeGreaterThanOrEqual(18);
+  });
+
+  it('exposes the spec-canonical first_train id', () => {
+    expect(ALL.find((a) => a.id === 'first_train')).toBeDefined();
+  });
+
   it('contains the IDs the manual test script and audit reference', () => {
     const required = [
       'first_flight',

@@ -172,6 +172,125 @@ describe('journey.repository', () => {
     expect(remaining).toBeUndefined();
   });
 
+  it('train journey: Berlin Hbf → München Hbf distance is ~500 km via haversine', async () => {
+    // Inline so the test doesn't depend on the seed pipeline.
+    await handle.db.insert(locations).values([
+      {
+        name: 'Berlin Hbf',
+        city: 'Berlin',
+        country: 'DE',
+        lat: 52.5251,
+        lng: 13.3694,
+        type: 'train_station',
+        ibnr: '8011160',
+        isSystemSeed: true,
+      },
+      {
+        name: 'München Hbf',
+        city: 'München',
+        country: 'DE',
+        lat: 48.1402,
+        lng: 11.5586,
+        type: 'train_station',
+        ibnr: '8000261',
+        isSystemSeed: true,
+      },
+    ]);
+    const berlin = (
+      await handle.db.select().from(locations).where(eq(locations.ibnr, '8011160'))
+    )[0]!;
+    const munich = (
+      await handle.db.select().from(locations).where(eq(locations.ibnr, '8000261'))
+    )[0]!;
+
+    const { haversineDistance } = await import('@/lib/geo');
+    const dist = haversineDistance(
+      { latitude: berlin.lat, longitude: berlin.lng },
+      { latitude: munich.lat, longitude: munich.lng },
+    );
+    expect(dist).toBeGreaterThan(490);
+    expect(dist).toBeLessThan(510);
+
+    const journey = await createJourney(
+      handle.db,
+      {
+        mode: 'train',
+        fromLocationId: berlin.id,
+        toLocationId: munich.id,
+        date: '2026-04-15',
+        serviceNumber: 'ICE 73',
+        distanceKm: Math.round(dist * 10) / 10,
+        durationMinutes: 240,
+        cabinClass: 'second',
+        isManualEntry: true,
+      },
+      NO_NOTIFY_NO_ADS,
+    );
+    expect(journey.mode).toBe('train');
+    expect(journey.distanceKm).toBeGreaterThan(490);
+  });
+
+  it('first_train unlocks on first train journey, not on first flight', async () => {
+    // Flight only — first_train must NOT unlock.
+    await createJourney(
+      handle.db,
+      {
+        mode: 'flight',
+        fromLocationId: fraId,
+        toLocationId: jfkId,
+        date: '2026-04-10',
+        isManualEntry: true,
+      },
+      NO_NOTIFY_NO_ADS,
+    );
+    let unlocks = await handle.db.select().from(achievementUnlocks);
+    expect(unlocks.map((u) => u.achievementId)).toContain('first_flight');
+    expect(unlocks.map((u) => u.achievementId)).not.toContain('first_train');
+
+    // Add a train journey — first_train must unlock now.
+    await handle.db.insert(locations).values({
+      name: 'Berlin Hbf',
+      city: 'Berlin',
+      country: 'DE',
+      lat: 52.5251,
+      lng: 13.3694,
+      type: 'train_station',
+      ibnr: '8011160',
+      isSystemSeed: true,
+    });
+    await handle.db.insert(locations).values({
+      name: 'München Hbf',
+      city: 'München',
+      country: 'DE',
+      lat: 48.1402,
+      lng: 11.5586,
+      type: 'train_station',
+      ibnr: '8000261',
+      isSystemSeed: true,
+    });
+    const berlin = (
+      await handle.db.select().from(locations).where(eq(locations.ibnr, '8011160'))
+    )[0]!;
+    const munich = (
+      await handle.db.select().from(locations).where(eq(locations.ibnr, '8000261'))
+    )[0]!;
+    await createJourney(
+      handle.db,
+      {
+        mode: 'train',
+        fromLocationId: berlin.id,
+        toLocationId: munich.id,
+        date: '2026-04-12',
+        distanceKm: 504,
+        isManualEntry: true,
+      },
+      NO_NOTIFY_NO_ADS,
+    );
+
+    unlocks = await handle.db.select().from(achievementUnlocks);
+    expect(unlocks.map((u) => u.achievementId)).toContain('first_train');
+  });
+
   it('duplicateJourney creates a fresh row with the same payload but different id', async () => {
     const original = await createJourney(
       handle.db,

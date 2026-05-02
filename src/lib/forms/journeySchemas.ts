@@ -3,6 +3,9 @@ import { z } from 'zod';
 export const cabinClassEnum = z.enum(['economy', 'premium_economy', 'business', 'first']);
 export type CabinClass = z.infer<typeof cabinClassEnum>;
 
+export const trainClassEnum = z.enum(['second', 'first', 'sleeper']);
+export type TrainClass = z.infer<typeof trainClassEnum>;
+
 export const otherSubmodeEnum = z.enum(['walk', 'bike', 'other']);
 export type OtherSubmode = z.infer<typeof otherSubmodeEnum>;
 
@@ -33,6 +36,30 @@ export const flightFormSchema = z
   });
 
 export type FlightFormValues = z.infer<typeof flightFormSchema>;
+
+export const trainFormSchema = z
+  .object({
+    fromLocationId: z.string().min(1, 'Bitte Abfahrtsbahnhof wählen'),
+    toLocationId: z.string().min(1, 'Bitte Zielbahnhof wählen'),
+    date: z.string().regex(ISO_DATE_RE, 'Datum erforderlich (YYYY-MM-DD)'),
+    startTimeLocal: optionalString(8),
+    endTimeLocal: optionalString(8),
+    operatorId: z.string().nullable().optional(),
+    serviceNumber: optionalString(16),
+    vehicleId: z.string().nullable().optional(),
+    seatNumber: optionalString(16),
+    trainClass: trainClassEnum.optional(),
+    notes: optionalString(500),
+    photoUri: optionalString(2048),
+    companions: z.array(z.string().min(1)),
+    tags: z.array(z.string().min(1)),
+  })
+  .refine((data) => data.fromLocationId !== data.toLocationId, {
+    path: ['toLocationId'],
+    message: 'Ziel muss sich vom Abfahrtsbahnhof unterscheiden',
+  });
+
+export type TrainFormValues = z.infer<typeof trainFormSchema>;
 
 export const otherFormSchema = z.object({
   submode: otherSubmodeEnum,

@@ -17,7 +17,7 @@ interface ModeOption {
 
 const OPTIONS: ModeOption[] = [
   { id: 'flight', label: 'Flüge', icon: 'airplane', enabled: true },
-  { id: 'train', label: 'Züge', icon: 'train', enabled: false },
+  { id: 'train', label: 'Züge', icon: 'train', enabled: true },
   { id: 'car', label: 'Auto', icon: 'car', enabled: false },
   { id: 'ship', label: 'Schiff', icon: 'boat', enabled: false },
   { id: 'bus', label: 'Bus', icon: 'bus', enabled: false },

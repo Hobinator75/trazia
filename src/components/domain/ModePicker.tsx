@@ -15,7 +15,7 @@ interface ModeDef {
 
 export const MODES: readonly ModeDef[] = [
   { value: 'flight', label: 'Flug', icon: 'airplane', enabled: true },
-  { value: 'train', label: 'Zug', icon: 'train', enabled: false, comingIn: 'Phase 2' },
+  { value: 'train', label: 'Zug', icon: 'train', enabled: true },
   { value: 'car', label: 'Auto', icon: 'car', enabled: false, comingIn: 'Phase 2' },
   { value: 'ship', label: 'Schiff', icon: 'boat', enabled: false, comingIn: 'Phase 2' },
   { value: 'bus', label: 'Bus', icon: 'bus', enabled: false, comingIn: 'Phase 2' },
