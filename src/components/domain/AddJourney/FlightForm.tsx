@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import {
   Image,
@@ -17,10 +17,16 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { db } from '@/db/client';
 import { journeyCompanions, journeyPhotos, journeyTags } from '@/db/schema';
-import { createJourney } from '@/db/repositories/journey.repository';
+import {
+  createJourney,
+  updateJourney,
+  type JourneyExtras,
+  type JourneyWithRefs,
+} from '@/db/repositories/journey.repository';
 import { getLocationById, searchLocations } from '@/db/repositories/location.repository';
 import { searchOperators } from '@/db/repositories/operator.repository';
 import { searchVehicles } from '@/db/repositories/vehicle.repository';
+import { eq } from 'drizzle-orm';
 import type { Location, Operator, Vehicle } from '@/db/schema';
 import { haversineDistance, initialBearing } from '@/lib/geo';
 import {
@@ -56,34 +62,91 @@ interface ModalKind {
   kind: 'from' | 'to' | 'operator' | 'vehicle' | null;
 }
 
-export function FlightForm() {
+const renderLocationLabel = (loc: Location): string =>
+  [loc.iata, loc.name].filter(Boolean).join(' · ');
+const renderOperatorLabel = (op: Operator): string => `${op.code ?? '—'} · ${op.name}`;
+const renderVehicleLabel = (v: Vehicle): string =>
+  `${v.code ?? ''} · ${v.manufacturer ?? ''} ${v.model ?? ''}`.trim();
+
+export interface FlightFormProps {
+  // When provided, the form is in edit mode: defaults are taken from the
+  // existing journey + extras and onSubmit will UPDATE rather than INSERT.
+  editing?: { journey: JourneyWithRefs; extras: JourneyExtras };
+}
+
+export function FlightForm({ editing }: FlightFormProps = {}) {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const showSnackbar = useSnackbarStore((s) => s.show);
+  const isEdit = editing !== undefined;
 
   const [submitting, setSubmitting] = useState(false);
   const [modal, setModal] = useState<ModalKind>({ kind: null });
-  const [fromLabel, setFromLabel] = useState<string>();
-  const [toLabel, setToLabel] = useState<string>();
-  const [operatorLabel, setOperatorLabel] = useState<string>();
-  const [vehicleLabel, setVehicleLabel] = useState<string>();
+  const [fromLabel, setFromLabel] = useState<string | undefined>(
+    editing?.journey.fromLocation ? renderLocationLabel(editing.journey.fromLocation) : undefined,
+  );
+  const [toLabel, setToLabel] = useState<string | undefined>(
+    editing?.journey.toLocation ? renderLocationLabel(editing.journey.toLocation) : undefined,
+  );
+  const [operatorLabel, setOperatorLabel] = useState<string | undefined>(
+    editing?.journey.operator ? renderOperatorLabel(editing.journey.operator) : undefined,
+  );
+  const [vehicleLabel, setVehicleLabel] = useState<string | undefined>(
+    editing?.journey.vehicle ? renderVehicleLabel(editing.journey.vehicle) : undefined,
+  );
+
+  const defaults: FlightFormValues = editing
+    ? {
+        fromLocationId: editing.journey.fromLocationId,
+        toLocationId: editing.journey.toLocationId,
+        date: editing.journey.date,
+        startTimeLocal: editing.journey.startTimeLocal ?? undefined,
+        endTimeLocal: editing.journey.endTimeLocal ?? undefined,
+        operatorId: editing.journey.operatorId,
+        serviceNumber: editing.journey.serviceNumber ?? undefined,
+        vehicleId: editing.journey.vehicleId,
+        seatNumber: editing.journey.seatNumber ?? undefined,
+        cabinClass:
+          editing.journey.cabinClass &&
+          (editing.journey.cabinClass === 'economy' ||
+            editing.journey.cabinClass === 'premium_economy' ||
+            editing.journey.cabinClass === 'business' ||
+            editing.journey.cabinClass === 'first')
+            ? editing.journey.cabinClass
+            : undefined,
+        notes: editing.journey.notes ?? undefined,
+        photoUri: editing.extras.photoUris[0],
+        companions: editing.extras.companions,
+        tags: editing.extras.tags,
+      }
+    : {
+        fromLocationId: '',
+        toLocationId: '',
+        date: todayIso(),
+        companions: [],
+        tags: [],
+      };
 
   const {
     control,
     handleSubmit,
     setValue,
     watch,
+    reset,
     formState: { errors },
   } = useForm<FlightFormValues>({
     resolver: zodResolver(flightFormSchema),
-    defaultValues: {
-      fromLocationId: '',
-      toLocationId: '',
-      date: todayIso(),
-      companions: [],
-      tags: [],
-    },
+    defaultValues: defaults,
   });
+
+  // Reset form when the editing target changes. `defaults`/`reset`/`editing`
+  // are deliberately omitted from deps — they derive synchronously from
+  // `editing.journey.id` so re-running on every render would either be a
+  // no-op or wipe in-progress edits.
+  useEffect(() => {
+    if (editing) reset(defaults);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editing?.journey.id]);
 
   const photoUri = watch('photoUri');
 
@@ -119,8 +182,8 @@ export function FlightForm() {
             ) / 10
           : null;
 
-      const journey = await createJourney(db, {
-        mode: 'flight',
+      const journeyPatch = {
+        mode: 'flight' as const,
         fromLocationId: values.fromLocationId,
         toLocationId: values.toLocationId,
         date: values.date,
@@ -132,26 +195,38 @@ export function FlightForm() {
         seatNumber: values.seatNumber ?? null,
         cabinClass: values.cabinClass ?? null,
         distanceKm,
-        routeType: 'great_circle',
+        routeType: 'great_circle' as const,
         notes: values.notes ?? null,
         isManualEntry: true,
         source: 'manual',
-      });
+      };
+
+      let journeyId: string;
+      if (editing) {
+        await updateJourney(db, editing.journey.id, journeyPatch);
+        journeyId = editing.journey.id;
+        // Edit-mode: replace child collections wholesale. Cheaper than
+        // diff-and-merge and keeps the form simple.
+        await db.delete(journeyCompanions).where(eq(journeyCompanions.journeyId, journeyId));
+        await db.delete(journeyTags).where(eq(journeyTags.journeyId, journeyId));
+        await db.delete(journeyPhotos).where(eq(journeyPhotos.journeyId, journeyId));
+      } else {
+        const journey = await createJourney(db, journeyPatch);
+        journeyId = journey.id;
+      }
 
       if (values.companions.length > 0) {
         await db
           .insert(journeyCompanions)
-          .values(
-            values.companions.map((name) => ({ journeyId: journey.id, companionName: name })),
-          );
+          .values(values.companions.map((name) => ({ journeyId, companionName: name })));
       }
       if (values.tags.length > 0) {
         await db
           .insert(journeyTags)
-          .values(values.tags.map((tag) => ({ journeyId: journey.id, tag })));
+          .values(values.tags.map((tag) => ({ journeyId, tag })));
       }
       if (values.photoUri) {
-        await db.insert(journeyPhotos).values({ journeyId: journey.id, photoUri: values.photoUri });
+        await db.insert(journeyPhotos).values({ journeyId, photoUri: values.photoUri });
       }
 
       // Bearing is computed for downstream features (route arrows etc.) but
@@ -163,7 +238,7 @@ export function FlightForm() {
         );
       }
 
-      showSnackbar('Reise gespeichert', { variant: 'success' });
+      showSnackbar(editing ? 'Reise aktualisiert' : 'Reise gespeichert', { variant: 'success' });
       router.back();
     } catch (err) {
       showSnackbar(err instanceof Error ? err.message : 'Fehler beim Speichern', {
@@ -175,9 +250,6 @@ export function FlightForm() {
   };
 
   const closeModal = () => setModal({ kind: null });
-
-  const renderLocationLabel = (loc: Location): string =>
-    [loc.iata, loc.name].filter(Boolean).join(' · ');
 
   return (
     <KeyboardAvoidingView
@@ -375,7 +447,11 @@ export function FlightForm() {
           className={`items-center rounded-full px-4 py-4 ${submitting ? 'bg-primary/50' : 'bg-primary active:opacity-80'}`}
         >
           <Text className="text-base font-semibold text-white">
-            {submitting ? 'Speichern…' : 'Reise speichern'}
+            {submitting
+              ? 'Speichern…'
+              : isEdit
+                ? 'Änderungen speichern'
+                : 'Reise speichern'}
           </Text>
         </Pressable>
       </View>
@@ -421,7 +497,7 @@ export function FlightForm() {
         onClose={closeModal}
         onSelect={(op) => {
           setValue('operatorId', op.id, { shouldValidate: true });
-          setOperatorLabel(`${op.code ?? '—'} · ${op.name}`);
+          setOperatorLabel(renderOperatorLabel(op));
         }}
         search={(q) => searchOperators(db, q, 'flight')}
         toResult={(op) => ({
@@ -437,7 +513,7 @@ export function FlightForm() {
         onClose={closeModal}
         onSelect={(v) => {
           setValue('vehicleId', v.id, { shouldValidate: true });
-          setVehicleLabel(`${v.code ?? ''} · ${v.manufacturer ?? ''} ${v.model ?? ''}`.trim());
+          setVehicleLabel(renderVehicleLabel(v));
         }}
         search={(q) => searchVehicles(db, q, 'flight')}
         toResult={(v) => ({

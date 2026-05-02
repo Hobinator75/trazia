@@ -1,8 +1,13 @@
 import { desc, eq } from 'drizzle-orm';
 
 import { recalculateAchievements } from '@/lib/achievements/sync';
-import { onJourneyCreated } from '@/lib/ads/interstitialController';
-import { trackJourneyAdded } from '@/lib/observability/analytics';
+
+// `interstitialController` and `analytics` are loaded lazily inside the
+// mutation paths because their transitive deps include `react-native`. Top-
+// level imports here would force vitest (a Node environment) to parse the
+// RN entry, which fails on Flow syntax. Production builds short-circuit
+// these `import()` calls via Metro's tree-shaker, so there is no runtime
+// cost. The same lazy-loading pattern is used in lib/observability/sentry.
 
 import {
   journeyCompanions,
@@ -108,11 +113,11 @@ export async function createJourney(
     });
   }
   if (opts.triggerInterstitial !== false) {
-    void onJourneyCreated();
+    void import('@/lib/ads/interstitialController').then((mod) => mod.onJourneyCreated());
   }
   const created = await getJourneyById(db, id);
   if (!created) throw new Error(`createJourney failed for ${id}`);
-  void trackJourneyAdded(created.mode);
+  void import('@/lib/observability/analytics').then((mod) => mod.trackJourneyAdded(created.mode));
   return created;
 }
 

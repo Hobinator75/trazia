@@ -1,8 +1,9 @@
 import { Ionicons } from '@expo/vector-icons';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { eq } from 'drizzle-orm';
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import {
   Image,
@@ -16,7 +17,12 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { db } from '@/db/client';
-import { createJourney } from '@/db/repositories/journey.repository';
+import {
+  createJourney,
+  updateJourney,
+  type JourneyExtras,
+  type JourneyWithRefs,
+} from '@/db/repositories/journey.repository';
 import { journeyPhotos, journeyTags, locations } from '@/db/schema';
 import {
   type OtherFormValues,
@@ -63,29 +69,71 @@ async function ensureAdhocLocation(label: string): Promise<string> {
   return id;
 }
 
-export function OtherForm() {
+// Edit-mode reads the original submode out of `source` ("manual:walk" etc.)
+// because OtherForm currently persists every submode as mode='car' (the
+// per-mode mapping is on the Block 6 polish list).
+function submodeFromJourney(journey: JourneyWithRefs): OtherSubmode {
+  if (typeof journey.source === 'string') {
+    const tail = journey.source.split(':')[1];
+    if (tail === 'walk' || tail === 'bike' || tail === 'other') return tail;
+  }
+  return 'other';
+}
+
+export interface OtherFormProps {
+  editing?: { journey: JourneyWithRefs; extras: JourneyExtras };
+}
+
+export function OtherForm({ editing }: OtherFormProps = {}) {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const showSnackbar = useSnackbarStore((s) => s.show);
+  const isEdit = editing !== undefined;
 
   const [submitting, setSubmitting] = useState(false);
+
+  const defaults: OtherFormValues = editing
+    ? {
+        submode: submodeFromJourney(editing.journey),
+        fromText: editing.journey.fromLocation?.name ?? '',
+        toText: editing.journey.toLocation?.name ?? '',
+        date: editing.journey.date,
+        startTimeLocal: editing.journey.startTimeLocal ?? undefined,
+        endTimeLocal: editing.journey.endTimeLocal ?? undefined,
+        distanceKm:
+          editing.journey.distanceKm !== null && editing.journey.distanceKm !== undefined
+            ? String(editing.journey.distanceKm)
+            : undefined,
+        notes: editing.journey.notes ?? undefined,
+        photoUri: editing.extras.photoUris[0],
+        tags: editing.extras.tags,
+      }
+    : {
+        submode: 'other',
+        fromText: '',
+        toText: '',
+        date: todayIso(),
+        tags: [],
+      };
 
   const {
     control,
     handleSubmit,
     setValue,
     watch,
+    reset,
     formState: { errors },
   } = useForm<OtherFormValues>({
     resolver: zodResolver(otherFormSchema),
-    defaultValues: {
-      submode: 'other',
-      fromText: '',
-      toText: '',
-      date: todayIso(),
-      tags: [],
-    },
+    defaultValues: defaults,
   });
+
+  // `defaults`/`reset`/`editing` are deliberately omitted from deps — they
+  // derive synchronously from `editing.journey.id`.
+  useEffect(() => {
+    if (editing) reset(defaults);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editing?.journey.id]);
 
   const photoUri = watch('photoUri');
 
@@ -112,33 +160,43 @@ export function OtherForm() {
         ensureAdhocLocation(values.toText),
       ]);
 
-      const journey = await createJourney(db, {
-        // Map the submode to the closest TransportMode for downstream stats.
-        // Walk/Bike currently fall under 'car' bucket-wise; this can be
-        // promoted to its own mode when Phase 3 lands.
-        mode: 'car',
+      const journeyPatch = {
+        // Block 6 will split this into per-submode TransportModes; for now we
+        // keep the legacy 'car' bucket so the schema doesn't shift mid-block.
+        mode: 'car' as const,
         fromLocationId: fromId,
         toLocationId: toId,
         date: values.date,
         startTimeLocal: values.startTimeLocal ?? null,
         endTimeLocal: values.endTimeLocal ?? null,
         distanceKm: parseDistanceInput(values.distanceKm),
-        routeType: 'bezier',
+        routeType: 'bezier' as const,
         notes: values.notes ?? null,
         isManualEntry: true,
         source: `manual:${values.submode}`,
-      });
+      };
+
+      let journeyId: string;
+      if (editing) {
+        await updateJourney(db, editing.journey.id, journeyPatch);
+        journeyId = editing.journey.id;
+        await db.delete(journeyTags).where(eq(journeyTags.journeyId, journeyId));
+        await db.delete(journeyPhotos).where(eq(journeyPhotos.journeyId, journeyId));
+      } else {
+        const journey = await createJourney(db, journeyPatch);
+        journeyId = journey.id;
+      }
 
       if (values.tags.length > 0) {
         await db
           .insert(journeyTags)
-          .values(values.tags.map((tag) => ({ journeyId: journey.id, tag })));
+          .values(values.tags.map((tag) => ({ journeyId, tag })));
       }
       if (values.photoUri) {
-        await db.insert(journeyPhotos).values({ journeyId: journey.id, photoUri: values.photoUri });
+        await db.insert(journeyPhotos).values({ journeyId, photoUri: values.photoUri });
       }
 
-      showSnackbar('Reise gespeichert', { variant: 'success' });
+      showSnackbar(editing ? 'Reise aktualisiert' : 'Reise gespeichert', { variant: 'success' });
       router.back();
     } catch (err) {
       showSnackbar(err instanceof Error ? err.message : 'Fehler beim Speichern', {
@@ -307,7 +365,11 @@ export function OtherForm() {
           className={`items-center rounded-full px-4 py-4 ${submitting ? 'bg-primary/50' : 'bg-primary active:opacity-80'}`}
         >
           <Text className="text-base font-semibold text-white">
-            {submitting ? 'Speichern…' : 'Reise speichern'}
+            {submitting
+              ? 'Speichern…'
+              : isEdit
+                ? 'Änderungen speichern'
+                : 'Reise speichern'}
           </Text>
         </Pressable>
       </View>
