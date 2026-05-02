@@ -20,11 +20,15 @@
         "NSPrivacyAccessedAPITypes": [
           {
             "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryUserDefaults",
-            "NSPrivacyAccessedAPITypeReasons": ["CA92.1"]
+            "NSPrivacyAccessedAPITypeReasons": [
+              "CA92.1"
+            ]
           },
           {
             "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryFileTimestamp",
-            "NSPrivacyAccessedAPITypeReasons": ["C617.1"]
+            "NSPrivacyAccessedAPITypeReasons": [
+              "C617.1"
+            ]
           }
         ]
       }
@@ -32,10 +36,14 @@
     "android": {
       "package": "com.trazia.app",
       "versionCode": 1,
-      "compileSdkVersion": 35,
-      "targetSdkVersion": 35,
-      "permissions": ["INTERNET", "com.android.vending.BILLING"],
-      "blockedPermissions": ["ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION"],
+      "permissions": [
+        "INTERNET",
+        "com.android.vending.BILLING"
+      ],
+      "blockedPermissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION"
+      ],
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -78,11 +86,21 @@
       [
         "@sentry/react-native/expo",
         {
-          "organization": "REPLACE_WITH_SENTRY_ORG_SLUG",
-          "project": "REPLACE_WITH_SENTRY_PROJECT_SLUG"
+          "organization": "trazia",
+          "project": "trazia"
         }
       ],
-      "expo-tracking-transparency"
+      "expo-tracking-transparency",
+      "expo-asset",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "compileSdkVersion": 35,
+            "targetSdkVersion": 35
+          }
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

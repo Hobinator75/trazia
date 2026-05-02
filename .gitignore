@@ -34,6 +34,9 @@ yarn-error.*
 .env
 .env*.local
 
+# secrets (Play service-account JSON, Apple keys)
+.secrets/
+
 # typescript
 *.tsbuildinfo
 

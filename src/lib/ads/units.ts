@@ -2,6 +2,10 @@ import { Platform } from 'react-native';
 
 // Google's published test ad unit IDs. Safe to ship — they always serve a
 // "Test Ad" placeholder regardless of the calling app's AdMob account.
+//
+// TODO before launch: replace these fallbacks (and the androidAppId/iosAppId
+// in app.json) with the real AdMob unit IDs via EXPO_PUBLIC_ADMOB_* env vars
+// or an EAS secret. See RELEASE_CHECKLIST.md → "AdMob configuration".
 const TEST_BANNER_ANDROID = 'ca-app-pub-3940256099942544/6300978111';
 const TEST_BANNER_IOS = 'ca-app-pub-3940256099942544/2934735716';
 const TEST_INTERSTITIAL_ANDROID = 'ca-app-pub-3940256099942544/1033173712';
