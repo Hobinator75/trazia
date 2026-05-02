@@ -137,6 +137,11 @@ export interface Achievement {
   category?: AchievementCategory;
   rule: Rule;
   reward?: { points?: number };
+  // Conceptual mode this achievement belongs to. 'cross' (or undefined) means
+  // any journey can unlock it; 'flight' / 'train' etc. categorise it for UI
+  // filters and the catalog test. The engine itself filters via rule.mode
+  // where available — this field is orthogonal to evaluation.
+  appliesTo?: 'cross' | TransportMode;
 }
 
 export interface AchievementUnlock {

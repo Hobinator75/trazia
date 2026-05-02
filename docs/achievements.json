@@ -5,6 +5,7 @@
     "description": "Log your first journey.",
     "tier": "bronze",
     "category": "milestones",
+    "appliesTo": "cross",
     "rule": { "type": "count", "threshold": 1 }
   },
   {
@@ -13,6 +14,7 @@
     "description": "Log ten journeys.",
     "tier": "silver",
     "category": "milestones",
+    "appliesTo": "cross",
     "rule": { "type": "count", "threshold": 10 }
   },
   {
@@ -21,15 +23,8 @@
     "description": "Travel 40,075 km in total — the Earth's circumference.",
     "tier": "gold",
     "category": "distance",
+    "appliesTo": "cross",
     "rule": { "type": "distance_total", "thresholdKm": 40075 }
-  },
-  {
-    "id": "long_haul_8000",
-    "title": "Long Haul",
-    "description": "A single journey of at least 8,000 km.",
-    "tier": "silver",
-    "category": "distance",
-    "rule": { "type": "single_journey_distance", "thresholdKm": 8000 }
   },
   {
     "id": "marathon_12h",
@@ -37,23 +32,8 @@
     "description": "A single journey of at least 12 hours.",
     "tier": "silver",
     "category": "distance",
+    "appliesTo": "cross",
     "rule": { "type": "single_journey_duration", "thresholdMinutes": 720 }
-  },
-  {
-    "id": "atlantic_crosser",
-    "title": "Atlantic Crosser",
-    "description": "Cross the Atlantic Ocean.",
-    "tier": "silver",
-    "category": "geography",
-    "rule": { "type": "geo_condition", "condition": "atlantic" }
-  },
-  {
-    "id": "pacific_crosser",
-    "title": "Pacific Crosser",
-    "description": "Cross the Pacific Ocean.",
-    "tier": "gold",
-    "category": "geography",
-    "rule": { "type": "geo_condition", "condition": "pacific" }
   },
   {
     "id": "equator_crosser",
@@ -61,33 +41,8 @@
     "description": "Cross the Equator.",
     "tier": "silver",
     "category": "geography",
+    "appliesTo": "cross",
     "rule": { "type": "geo_condition", "condition": "equator" }
-  },
-  {
-    "id": "arctic_explorer",
-    "title": "Arctic Explorer",
-    "description": "Cross the Arctic Circle.",
-    "tier": "gold",
-    "category": "geography",
-    "rule": { "type": "geo_condition", "condition": "polar_north" }
-  },
-  {
-    "id": "antarctic_explorer",
-    "title": "Antarctic Explorer",
-    "description": "Cross the Antarctic Circle.",
-    "tier": "platinum",
-    "category": "hidden",
-    "hidden": true,
-    "rule": { "type": "geo_condition", "condition": "polar_south" }
-  },
-  {
-    "id": "antipode_traveler",
-    "title": "Antipode Traveler",
-    "description": "Travel to the opposite side of the world.",
-    "tier": "platinum",
-    "category": "hidden",
-    "hidden": true,
-    "rule": { "type": "geo_condition", "condition": "antipode", "antipodeToleranceKm": 500 }
   },
   {
     "id": "birthday_journey",
@@ -96,23 +51,8 @@
     "tier": "bronze",
     "category": "hidden",
     "hidden": true,
+    "appliesTo": "cross",
     "rule": { "type": "date_match", "pattern": "--01-15" }
-  },
-  {
-    "id": "widebody",
-    "title": "Widebody",
-    "description": "Fly aboard a widebody aircraft.",
-    "tier": "bronze",
-    "category": "aircraft",
-    "rule": { "type": "vehicle_category", "categories": ["widebody"] }
-  },
-  {
-    "id": "star_alliance",
-    "title": "Star Alliance",
-    "description": "Fly with at least one Star Alliance airline.",
-    "tier": "silver",
-    "category": "airlines",
-    "rule": { "type": "operator_set", "operatorCodes": ["LH", "UA", "AC", "SQ"] }
   },
   {
     "id": "regular_route_5",
@@ -120,15 +60,8 @@
     "description": "Travel the same route at least five times.",
     "tier": "bronze",
     "category": "milestones",
+    "appliesTo": "cross",
     "rule": { "type": "route_repeat", "count": 5 }
-  },
-  {
-    "id": "lufthansa_loyalty_10",
-    "title": "Crane Club",
-    "description": "Take ten journeys with Lufthansa.",
-    "tier": "gold",
-    "category": "airlines",
-    "rule": { "type": "operator_loyalty", "count": 10, "operatorCode": "LH" }
   },
   {
     "id": "ten_countries",
@@ -136,6 +69,7 @@
     "description": "Visit ten different countries.",
     "tier": "gold",
     "category": "geography",
+    "appliesTo": "cross",
     "rule": { "type": "different_count", "entity": "countries", "count": 10 }
   },
   {
@@ -144,15 +78,8 @@
     "description": "Log five journeys within seven days.",
     "tier": "silver",
     "category": "milestones",
+    "appliesTo": "cross",
     "rule": { "type": "time_window", "windowDays": 7, "minJourneys": 5 }
-  },
-  {
-    "id": "first_class",
-    "title": "First Class",
-    "description": "Travel in first class.",
-    "tier": "gold",
-    "category": "milestones",
-    "rule": { "type": "cabin_class", "cabinClass": "first" }
   },
   {
     "id": "four_seasons",
@@ -160,6 +87,7 @@
     "description": "Travel in every season of the year.",
     "tier": "silver",
     "category": "milestones",
+    "appliesTo": "cross",
     "rule": { "type": "season_complete" }
   },
   {
@@ -168,6 +96,7 @@
     "description": "Travel at least once in every calendar month of a year.",
     "tier": "gold",
     "category": "milestones",
+    "appliesTo": "cross",
     "rule": { "type": "month_complete" }
   },
   {
@@ -177,6 +106,308 @@
     "tier": "premium",
     "category": "premium",
     "premium": true,
+    "appliesTo": "cross",
     "rule": { "type": "different_count", "entity": "countries", "count": 25 }
+  },
+
+  {
+    "id": "first_flight",
+    "title": "Cleared for Takeoff",
+    "description": "Log your first flight.",
+    "tier": "bronze",
+    "category": "milestones",
+    "appliesTo": "flight",
+    "rule": { "type": "count", "threshold": 1, "mode": "flight" }
+  },
+  {
+    "id": "ten_flights",
+    "title": "Frequent Flyer",
+    "description": "Take ten flights.",
+    "tier": "bronze",
+    "category": "milestones",
+    "appliesTo": "flight",
+    "rule": { "type": "count", "threshold": 10, "mode": "flight" }
+  },
+  {
+    "id": "fifty_flights",
+    "title": "Fifty Sectors",
+    "description": "Take fifty flights.",
+    "tier": "silver",
+    "category": "milestones",
+    "appliesTo": "flight",
+    "rule": { "type": "count", "threshold": 50, "mode": "flight" }
+  },
+  {
+    "id": "hundred_flights",
+    "title": "Centurion",
+    "description": "Take a hundred flights.",
+    "tier": "gold",
+    "category": "milestones",
+    "appliesTo": "flight",
+    "rule": { "type": "count", "threshold": 100, "mode": "flight" }
+  },
+  {
+    "id": "five_hundred_flights",
+    "title": "Million Miler",
+    "description": "Take five hundred flights.",
+    "tier": "platinum",
+    "category": "milestones",
+    "appliesTo": "flight",
+    "rule": { "type": "count", "threshold": 500, "mode": "flight" }
+  },
+  {
+    "id": "flight_distance_50k",
+    "title": "Sky Marathoner",
+    "description": "Fly 50,000 km in total.",
+    "tier": "silver",
+    "category": "distance",
+    "appliesTo": "flight",
+    "rule": { "type": "distance_total", "thresholdKm": 50000, "mode": "flight" }
+  },
+  {
+    "id": "flight_around_world",
+    "title": "Round the Earth (Air)",
+    "description": "Fly 40,075 km — Earth's circumference, by air alone.",
+    "tier": "gold",
+    "category": "distance",
+    "appliesTo": "flight",
+    "rule": { "type": "distance_total", "thresholdKm": 40075, "mode": "flight" }
+  },
+  {
+    "id": "flight_distance_500k",
+    "title": "Half Million Air",
+    "description": "Fly 500,000 km in total.",
+    "tier": "gold",
+    "category": "distance",
+    "appliesTo": "flight",
+    "rule": { "type": "distance_total", "thresholdKm": 500000, "mode": "flight" }
+  },
+  {
+    "id": "long_haul",
+    "title": "Long Haul",
+    "description": "A single flight of at least six hours.",
+    "tier": "silver",
+    "category": "distance",
+    "appliesTo": "flight",
+    "rule": { "type": "single_journey_duration", "thresholdMinutes": 360, "mode": "flight" }
+  },
+  {
+    "id": "ultra_long_haul",
+    "title": "Ultra Long Haul",
+    "description": "A single flight of at least fifteen hours.",
+    "tier": "gold",
+    "category": "distance",
+    "appliesTo": "flight",
+    "rule": { "type": "single_journey_duration", "thresholdMinutes": 900, "mode": "flight" }
+  },
+  {
+    "id": "long_haul_8000",
+    "title": "8,000 km Club",
+    "description": "A single flight of at least 8,000 km.",
+    "tier": "silver",
+    "category": "distance",
+    "appliesTo": "flight",
+    "rule": { "type": "single_journey_distance", "thresholdKm": 8000, "mode": "flight" }
+  },
+  {
+    "id": "transatlantic",
+    "title": "Transatlantic",
+    "description": "Cross the Atlantic Ocean.",
+    "tier": "silver",
+    "category": "geography",
+    "appliesTo": "flight",
+    "rule": { "type": "geo_condition", "condition": "atlantic" }
+  },
+  {
+    "id": "pacific_crosser",
+    "title": "Pacific Crosser",
+    "description": "Cross the Pacific Ocean.",
+    "tier": "gold",
+    "category": "geography",
+    "appliesTo": "flight",
+    "rule": { "type": "geo_condition", "condition": "pacific" }
+  },
+  {
+    "id": "arctic_explorer",
+    "title": "Arctic Explorer",
+    "description": "Cross the Arctic Circle.",
+    "tier": "gold",
+    "category": "geography",
+    "appliesTo": "flight",
+    "rule": { "type": "geo_condition", "condition": "polar_north" }
+  },
+  {
+    "id": "antarctic_explorer",
+    "title": "Antarctic Explorer",
+    "description": "Cross the Antarctic Circle.",
+    "tier": "platinum",
+    "category": "hidden",
+    "hidden": true,
+    "appliesTo": "flight",
+    "rule": { "type": "geo_condition", "condition": "polar_south" }
+  },
+  {
+    "id": "antipode_traveler",
+    "title": "Antipode Traveler",
+    "description": "Travel to the opposite side of the world.",
+    "tier": "platinum",
+    "category": "hidden",
+    "hidden": true,
+    "appliesTo": "flight",
+    "rule": { "type": "geo_condition", "condition": "antipode", "antipodeToleranceKm": 500 }
+  },
+  {
+    "id": "widebody",
+    "title": "Widebody",
+    "description": "Fly aboard a widebody aircraft.",
+    "tier": "bronze",
+    "category": "aircraft",
+    "appliesTo": "flight",
+    "rule": { "type": "vehicle_category", "categories": ["widebody"] }
+  },
+  {
+    "id": "jumbo_jet",
+    "title": "Jumbo Jet",
+    "description": "Fly aboard a Boeing 747 or other jumbo aircraft.",
+    "tier": "silver",
+    "category": "aircraft",
+    "appliesTo": "flight",
+    "rule": { "type": "vehicle_category", "categories": ["jumbo"] }
+  },
+  {
+    "id": "narrowbody_traveller",
+    "title": "Narrowbody Regular",
+    "description": "Fly aboard a narrowbody aircraft.",
+    "tier": "bronze",
+    "category": "aircraft",
+    "appliesTo": "flight",
+    "rule": { "type": "vehicle_category", "categories": ["narrowbody"] }
+  },
+  {
+    "id": "regional_jet",
+    "title": "Regional Hopper",
+    "description": "Fly aboard a regional aircraft.",
+    "tier": "bronze",
+    "category": "aircraft",
+    "appliesTo": "flight",
+    "rule": { "type": "vehicle_category", "categories": ["regional"] }
+  },
+  {
+    "id": "heritage_aircraft",
+    "title": "Aviation History",
+    "description": "Fly aboard a heritage aircraft (DC-3, Ju 52, etc.).",
+    "tier": "gold",
+    "category": "aircraft",
+    "appliesTo": "flight",
+    "rule": { "type": "vehicle_category", "categories": ["heritage"] }
+  },
+  {
+    "id": "supersonic",
+    "title": "Mach One",
+    "description": "Fly aboard a supersonic aircraft.",
+    "tier": "platinum",
+    "category": "hidden",
+    "hidden": true,
+    "appliesTo": "flight",
+    "rule": { "type": "vehicle_category", "categories": ["supersonic"] }
+  },
+  {
+    "id": "first_class",
+    "title": "First Class",
+    "description": "Travel in first class.",
+    "tier": "gold",
+    "category": "milestones",
+    "appliesTo": "flight",
+    "rule": { "type": "cabin_class", "cabinClass": "first" }
+  },
+  {
+    "id": "business_class",
+    "title": "Business Class",
+    "description": "Travel in business class.",
+    "tier": "silver",
+    "category": "milestones",
+    "appliesTo": "flight",
+    "rule": { "type": "cabin_class", "cabinClass": "business" }
+  },
+  {
+    "id": "premium_eco",
+    "title": "Premium Economy",
+    "description": "Travel in premium economy.",
+    "tier": "bronze",
+    "category": "milestones",
+    "appliesTo": "flight",
+    "rule": { "type": "cabin_class", "cabinClass": "premium_economy" }
+  },
+  {
+    "id": "star_alliance",
+    "title": "Star Alliance",
+    "description": "Fly with at least one Star Alliance airline.",
+    "tier": "silver",
+    "category": "airlines",
+    "appliesTo": "flight",
+    "rule": {
+      "type": "operator_set",
+      "operatorCodes": ["LH", "UA", "AC", "SQ", "TG", "NH", "OS", "LX", "SK", "TK", "ET", "NZ", "OZ", "MS", "TP", "SA", "AV", "BR", "CA", "CM", "JP", "ZH", "OU", "A3"]
+    }
+  },
+  {
+    "id": "oneworld_alliance",
+    "title": "Oneworld",
+    "description": "Fly with at least one Oneworld airline.",
+    "tier": "silver",
+    "category": "airlines",
+    "appliesTo": "flight",
+    "rule": {
+      "type": "operator_set",
+      "operatorCodes": ["BA", "AA", "CX", "JL", "IB", "AY", "QF", "QR", "RJ", "MH", "S7", "UL", "AT"]
+    }
+  },
+  {
+    "id": "skyteam_alliance",
+    "title": "SkyTeam",
+    "description": "Fly with at least one SkyTeam airline.",
+    "tier": "silver",
+    "category": "airlines",
+    "appliesTo": "flight",
+    "rule": {
+      "type": "operator_set",
+      "operatorCodes": ["DL", "AF", "KL", "AZ", "KE", "VS", "UX", "MU", "CZ", "SU", "VN", "GA", "SV", "ME", "OK", "AR", "RO", "KQ", "AM"]
+    }
+  },
+  {
+    "id": "middle_east_carrier",
+    "title": "Gulf Carrier",
+    "description": "Fly with a Middle East mega-carrier.",
+    "tier": "silver",
+    "category": "airlines",
+    "appliesTo": "flight",
+    "rule": { "type": "operator_set", "operatorCodes": ["EK", "EY", "QR", "GF", "WY"] }
+  },
+  {
+    "id": "lufthansa_loyalty_10",
+    "title": "Crane Club",
+    "description": "Take ten flights with Lufthansa.",
+    "tier": "gold",
+    "category": "airlines",
+    "appliesTo": "flight",
+    "rule": { "type": "operator_loyalty", "count": 10, "operatorCode": "LH" }
+  },
+  {
+    "id": "lh_loyalty_25",
+    "title": "Senator Status",
+    "description": "Take twenty-five flights with Lufthansa.",
+    "tier": "gold",
+    "category": "airlines",
+    "appliesTo": "flight",
+    "rule": { "type": "operator_loyalty", "count": 25, "operatorCode": "LH" }
+  },
+  {
+    "id": "lh_loyalty_50",
+    "title": "HON Circle",
+    "description": "Take fifty flights with Lufthansa.",
+    "tier": "platinum",
+    "category": "airlines",
+    "appliesTo": "flight",
+    "rule": { "type": "operator_loyalty", "count": 50, "operatorCode": "LH" }
   }
 ]
