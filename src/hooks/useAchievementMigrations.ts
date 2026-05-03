@@ -5,6 +5,7 @@ import {
   applyAchievementIdMigrations,
   type ApplyAchievementIdMigrationsResult,
 } from '@/lib/achievements/migration';
+import { reportMigrationOutcome } from '@/lib/achievements/reportMigration';
 import { captureException } from '@/lib/observability/sentry';
 
 export interface UseAchievementMigrationsState {
@@ -30,19 +31,10 @@ export function useAchievementMigrations(enabled: boolean = true): UseAchievemen
     let cancelled = false;
 
     applyAchievementIdMigrations(db)
-      .then((result) => {
+      .then(async (result) => {
         if (cancelled) return;
-        if (result.error) {
-          void captureException(result.error, {
-            origin: 'achievement-id-migration',
-            applied: result.applied.map((m) => m.fromId),
-            conflicts: result.conflicts.map((c) => ({
-              fromId: c.migration.fromId,
-              fromCount: c.fromCount,
-              toCount: c.toCount,
-            })),
-          });
-        }
+        await reportMigrationOutcome(result);
+        if (cancelled) return;
         setState({ done: true, result, error: result.error });
       })
       .catch((error: unknown) => {

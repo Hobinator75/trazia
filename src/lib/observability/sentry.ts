@@ -68,9 +68,17 @@ export async function captureException(
 export async function captureMessage(
   message: string,
   level: 'info' | 'warning' | 'error' = 'info',
+  context?: { tags?: Record<string, string>; extra?: Record<string, unknown> },
 ): Promise<void> {
   if (!useSettingsStore.getState().crashReportsEnabled) return;
   const Sentry = await loadSentry();
-  if (!Sentry) return;
-  Sentry.captureMessage(message, level);
+  if (!Sentry) {
+    if (__DEV__) console.warn('[Sentry stub] would capture message:', message, level, context);
+    return;
+  }
+  Sentry.captureMessage(message, {
+    level,
+    ...(context?.tags ? { tags: context.tags } : {}),
+    ...(context?.extra ? { extra: context.extra } : {}),
+  });
 }

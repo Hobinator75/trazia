@@ -9,7 +9,6 @@ import { sql } from 'drizzle-orm';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import { createTestDb } from '@/db/__tests__/test-db';
-import { achievementUnlocks, journeys, locations } from '@/db/schema';
 import { evaluateAll, __setAchievementsCatalogForTesting } from '@/lib/achievements/engine';
 import type { Achievement, AchievementContext } from '@/lib/achievements/types';
 import { restoreFromSnapshot } from '@/lib/backup/restore';
@@ -61,6 +60,29 @@ describe('launch-blocker reproductions', () => {
         handle.sqlite.exec(stmt);
       }
     }).not.toThrow();
+  });
+
+  // The SQL-0002 file is now a no-op: re-running it any number of times
+  // must leave the achievement_unlocks table untouched.
+  it('SQL-0002 is idempotent — running it twice is a no-op', () => {
+    handle.sqlite
+      .prepare("INSERT INTO achievement_unlocks (id, achievement_id) VALUES (?, ?)")
+      .run('unlock-keep', 'transatlantic');
+
+    const sqlText = fs.readFileSync(SQL_0002_PATH, 'utf-8');
+    const statements = sqlText
+      .split('--> statement-breakpoint')
+      .map((s) => s.trim())
+      .filter((s) => s.length > 0);
+
+    for (const stmt of statements) handle.sqlite.exec(stmt);
+    for (const stmt of statements) handle.sqlite.exec(stmt);
+
+    const row = handle.sqlite
+      .prepare("SELECT id, achievement_id FROM achievement_unlocks WHERE id = 'unlock-keep'")
+      .get() as { id: string; achievement_id: string } | undefined;
+
+    expect(row).toEqual({ id: 'unlock-keep', achievement_id: 'transatlantic' });
   });
 
   // 0.2b) FlightForm/TrainForm/OtherForm must compute durationMinutes

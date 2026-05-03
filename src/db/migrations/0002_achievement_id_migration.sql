@@ -1,12 +1,9 @@
--- Migration 0002: rename achievement IDs to align with the spec naming.
--- atlantic_crosser → transatlantic (the catalog v2 entry has the new id).
--- Existing unlock rows are migrated in place; the unique index on
--- achievement_id allows the rename only because the new id isn't yet used.
---
--- Belt-and-braces: the same rename is also performed at every cold-start
--- by `src/lib/achievements/migration.ts` (idempotent, transactional,
--- with rollback). Keeping both is intentional — the code-side guard
--- catches the case where THIS migration crashes mid-way and Drizzle's
--- journal still records it as applied on the next boot.
-UPDATE achievement_unlocks SET achievement_id = 'transatlantic'
-  WHERE achievement_id = 'atlantic_crosser';
+-- noop: replaced by code-migration in src/lib/achievements/migration.ts.
+-- Intentionally a no-op so the rename `atlantic_crosser → transatlantic`
+-- never crashes the app on devices that already hold both unlock rows
+-- (the unique index on achievement_id would reject a blind UPDATE).
+-- The drizzle journal entry stays in place so existing devices treat
+-- this migration as already applied. We use a WHERE-0 UPDATE rather
+-- than `SELECT 1` because Drizzle's migrator runs statements through
+-- `db.run()` which rejects statements that produce result rows.
+UPDATE achievement_unlocks SET achievement_id = achievement_id WHERE 0;
