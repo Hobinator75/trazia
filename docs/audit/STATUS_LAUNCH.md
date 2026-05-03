@@ -32,4 +32,15 @@ Stand: 2026-05-04 (laufend)
 
 ## Manuelle Tim-Reviews offen
 
-(werden in Block 7 ergänzt)
+- [ ] App Privacy Details auf App Store Connect manuell eintragen
+      (siehe `docs/privacy-policy-de.md` — Sentry, PostHog, AdMob,
+      RevenueCat müssen alle deklariert sein).
+- [ ] `trazia.com/privacy` mit beiden Sprachen (DE + EN) hosten —
+      Quelle: `docs/privacy-policy-{de,en}.md`.
+- [ ] Datenschutzerklärungs-URL im App-Store / Play-Store Listing
+      eintragen.
+- [ ] AdMob Production-IDs in `app.json` und EAS-Secrets setzen
+      (`src/lib/ads/units.ts` hat den BLOCKING-Hinweis).
+- [ ] Manuelle Test-Drehbuch S1-S7 + S10-S14 auf echtem Gerät spielen,
+      Findings in `docs/audit/manual-test-findings.md` sammeln.
+      S8/S9 (Train) skippen — Phase-1 versteckt.

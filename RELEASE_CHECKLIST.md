@@ -7,10 +7,21 @@ Vor jedem Store-Submit alle Punkte abhaken. Ergänzungen gerne via PR.
 Diese Punkte sind nach dem Audit-Fix-Pass **noch offen** und blockieren den
 Production-Submit, wenn nicht vorher erledigt:
 
-- [ ] **Echte AdMob-IDs eintragen.** `app.json:plugins.react-native-google-mobile-ads.androidAppId`
-      und `iosAppId` zeigen aktuell auf Google's Sample-Test-IDs
-      (`ca-app-pub-3940256099942544~…`). Echte IDs aus dem AdMob-Konto
-      einsetzen — sonst sieht der User „Test Ad" und kein Cent fließt.
+- [ ] **AdMob-Production-IDs (BLOCKING).** `src/lib/ads/units.ts` und
+      `app.json:plugins.react-native-google-mobile-ads.{ios,android}AppId`
+      zeigen aktuell auf Google's Sample-Test-IDs (`ca-app-pub-3940256099942544~…`).
+      Vor dem ersten Production-Build durch echte IDs ersetzen, idealerweise
+      über EAS-Secrets — sonst sieht der User „Test Ad" und kein Cent fließt.
+- [ ] **App Privacy Details auf App Store Connect eingetragen** (Tim macht
+      manuell vor Submit). Datenkategorien und Drittanbieter müssen mit
+      `docs/privacy-policy-de.md` / `docs/privacy-policy-en.md`
+      übereinstimmen (Sentry, PostHog, AdMob, RevenueCat).
+- [ ] **Privacy-Manifests aller SDKs verifiziert.** Nach dem ersten
+      EAS-Build über Xcode → Privacy Report Tool prüfen, dass keine
+      undokumentierten Reasons / Required-Reason-APIs verwendet werden.
+- [ ] **Datenschutzerklärung ist auf trazia.com/privacy verfügbar**
+      (Tim macht manuell). Beide Sprachen (DE/EN) auf den Stand von
+      `docs/privacy-policy-{de,en}.md` bringen.
 - [ ] **Sentry-Account anlegen + DSN setzen.** `app.json:plugins.@sentry/react-native/expo`
       hat `organization: "trazia"` / `project: "trazia"` als Platzhalter; ohne
       `SENTRY_AUTH_TOKEN` als EAS-Secret skipt das Plugin den Source-Map-

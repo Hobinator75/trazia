@@ -1,11 +1,19 @@
 import { Platform } from 'react-native';
 
-// Google's published test ad unit IDs. Safe to ship — they always serve a
-// "Test Ad" placeholder regardless of the calling app's AdMob account.
+// BEFORE PRODUCTION BUILD: replace the AdMob test fallbacks with real
+// IDs from the production AdMob account, set via EAS Secrets. The
+// constants below are Google's published test units — they always
+// serve a "Test Ad" placeholder. Shipping a Production build with
+// these still active means zero ad revenue.
 //
-// TODO before launch: replace these fallbacks (and the androidAppId/iosAppId
-// in app.json) with the real AdMob unit IDs via EXPO_PUBLIC_ADMOB_* env vars
-// or an EAS secret. See RELEASE_CHECKLIST.md → "AdMob configuration".
+// Required EAS Secrets:
+//   EXPO_PUBLIC_ADMOB_BANNER_{ANDROID,IOS}
+//   EXPO_PUBLIC_ADMOB_INTERSTITIAL_{ANDROID,IOS}
+//   EXPO_PUBLIC_ADMOB_REWARDED_{ANDROID,IOS}
+// AND: app.json plugins.react-native-google-mobile-ads.{android,ios}AppId
+//      → real ca-app-pub-XXXX~YYYY values.
+//
+// See RELEASE_CHECKLIST.md → "Hard-Stops vor erstem Production-Build".
 const TEST_BANNER_ANDROID = 'ca-app-pub-3940256099942544/6300978111';
 const TEST_BANNER_IOS = 'ca-app-pub-3940256099942544/2934735716';
 const TEST_INTERSTITIAL_ANDROID = 'ca-app-pub-3940256099942544/1033173712';
