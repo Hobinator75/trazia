@@ -31,6 +31,7 @@ import {
   type OtherSubmode,
   parseDistanceInput,
 } from '@/lib/forms/journeySchemas';
+import { computeDurationMinutes } from '@/lib/journeys/duration';
 import { useSnackbarStore } from '@/stores/snackbarStore';
 import { colors } from '@/theme/colors';
 
@@ -170,6 +171,12 @@ export function OtherForm({ editing }: OtherFormProps = {}) {
         ensureAdhocLocation(values.toText),
       ]);
 
+      const durationMinutes = computeDurationMinutes(
+        values.startTimeLocal,
+        values.endTimeLocal,
+        values.date,
+      );
+
       const journeyPatch = {
         mode: modeFromSubmode(values.submode),
         fromLocationId: fromId,
@@ -178,6 +185,7 @@ export function OtherForm({ editing }: OtherFormProps = {}) {
         startTimeLocal: values.startTimeLocal ?? null,
         endTimeLocal: values.endTimeLocal ?? null,
         distanceKm: parseDistanceInput(values.distanceKm),
+        durationMinutes: durationMinutes ?? null,
         routeType: 'bezier' as const,
         notes: values.notes ?? null,
         isManualEntry: true,

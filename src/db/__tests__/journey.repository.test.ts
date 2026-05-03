@@ -84,6 +84,11 @@ describe('journey.repository', () => {
   });
 
   it('createJourney inserts a row and trackable refs', async () => {
+    // Note: durationMinutes is intentionally omitted — the form layer
+    // computes it from start/end. The repository test should reflect
+    // the patch shape the form actually produces. (Codex Cross-Audit
+    // v2 flagged the previous manual `durationMinutes: 540` as masking
+    // the FlightForm bug fixed in Block 2.)
     const journey = await createJourney(
       handle.db,
       {
@@ -91,11 +96,12 @@ describe('journey.repository', () => {
         fromLocationId: fraId,
         toLocationId: jfkId,
         date: '2026-04-15',
+        startTimeLocal: '14:00',
+        endTimeLocal: '23:00',
         operatorId: lhId,
         vehicleId: b77wId,
         cabinClass: 'business',
         distanceKm: 6204,
-        durationMinutes: 540,
         isManualEntry: true,
       },
       NO_NOTIFY_NO_ADS,
@@ -123,7 +129,6 @@ describe('journey.repository', () => {
         toLocationId: jfkId,
         date: '2026-04-15',
         distanceKm: 6204,
-        durationMinutes: 540,
         isManualEntry: true,
       },
       NO_NOTIFY_NO_ADS,
@@ -220,7 +225,6 @@ describe('journey.repository', () => {
         date: '2026-04-15',
         serviceNumber: 'ICE 73',
         distanceKm: Math.round(dist * 10) / 10,
-        durationMinutes: 240,
         cabinClass: 'second',
         isManualEntry: true,
       },
