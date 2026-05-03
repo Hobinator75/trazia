@@ -8,29 +8,19 @@ import trainStationsJson from '../../../assets/static/train_stations.json';
 import trainsJson from '../../../assets/static/trains.json';
 import { locations, operators, vehicles } from '../schema';
 import type { DrizzleDb } from '../types';
+import { SEED_VERSION, SEED_VERSION_KEY } from './constants';
+import type { SeedStorage } from './loadFromSeedDb';
 
-// v1 → v2: added the full OurAirports / OpenFlights catalogs (3000+ airports,
-//          900+ airlines, 150 aircraft).
-// v2 → v3: added the train stack (124 main European/JP/US stations, 51
-//          railway operators, 75 train models — Phase 8.1 enablement).
-//
-// Upgrade strategy: additive. Existing isSystemSeed=true rows are kept (so
-// any user journey FK references stay valid); only catalog entries that
-// aren't already present get inserted. User rows (isSystemSeed=false) are
-// always left untouched.
-export const SEED_VERSION = '3';
-export const SEED_VERSION_KEY = 'seed.version';
+// @deprecated Slow path retained as fallback for the Vitest environment
+// (which can't load expo-asset) and for any device where the pre-built
+// seed-DB asset is missing. Production cold-starts go through
+// `loadFromSeedDb` which is 5–15× faster.
+export { SEED_VERSION, SEED_VERSION_KEY };
 
 // SQLite caps each prepared statement at 999 parameters. Each location row
 // has 11 columns inserted, so 250 rows × 11 = 2750 — too many. Pick a chunk
 // size that stays under 999 for the widest table (locations).
 const INSERT_CHUNK = 80;
-
-export interface SeedStorage {
-  getItem(key: string): Promise<string | null>;
-  setItem(key: string, value: string): Promise<void>;
-  removeItem?: (key: string) => Promise<void>;
-}
 
 export interface AirportRecord {
   iata: string | null;
@@ -91,6 +81,8 @@ export interface SeedDataset {
   railwayOperators: RailwayOperatorRecord[];
   trains: TrainRecord[];
 }
+
+export type { SeedStorage };
 
 export interface SeedFromStaticOptions {
   db: DrizzleDb;

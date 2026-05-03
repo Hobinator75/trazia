@@ -16,6 +16,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "build:static-data": "node scripts/build-static-data.ts",
+    "build:seed-db": "node scripts/build-seed-db.ts",
     "bump:patch": "node scripts/bump.ts patch",
     "bump:minor": "node scripts/bump.ts minor",
     "bump:major": "node scripts/bump.ts major",

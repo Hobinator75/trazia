@@ -1,0 +1,26 @@
+═══════════════════════════════════════════════
+ Cold-start seed measurement — 2026-05-03T04:30:29.995Z
+═══════════════════════════════════════════════
+ JSON path:    47.5 ms   (4.665 rows)
+ Seed-DB path: 3.6 ms   (4.665 rows)
+ Speed-up:     13.11× faster   (43.9 ms saved)
+ Asset size:   1.01 MB
+
+ Note: better-sqlite3 sync driver underestimates the absolute speed-up
+ on iOS/Android — expo-sqlite has higher per-statement overhead, so the
+ real-device delta is typically 2–3× larger than reported here.
+
+═══════════════════════════════════════════════
+ Asset-size impact (static analysis only — bundle-export skipped)
+═══════════════════════════════════════════════
+ assets/static/*.json   = 1,052,653 bytes  (~1.00 MB)
+ assets/seed/trazia-seed.db = 1,060,864 bytes  (~1.01 MB)
+ net delta:             +1.01 MB (we keep both: JSON path is the
+                        Vitest fallback and a runtime safety net)
+
+ Note: `npx expo export --platform ios` was attempted but failed on
+ a PRE-EXISTING issue — the Drizzle migration imports in
+ src/db/migrations/migrations.js point at .sql files, which Metro
+ cannot parse without a transformer (e.g. babel-plugin-inline-import).
+ This is unrelated to Block 1 and tracked separately in
+ docs/audit/STATUS_OPT.md → "Pre-existing bundle blocker".
