@@ -64,20 +64,24 @@ Status: **abgeschlossen**
 - Nach Block 1: 146 (+8)
 - Nach Block 2: 152 (+6)
 
-## Pre-existing bundle blocker (NICHT durch Block 1 verursacht)
+## Pre-existing bundle blocker — RESOLVED (Launch-Fix Block 6, 2026-05-04)
 
-`npx expo export --platform ios` schlägt fehl beim Parsen von
-`src/db/migrations/0000_initial.sql`. Ursache: `migrations.js`
-importiert die `.sql`-Files direkt (`import m0000 from './0000_initial.sql'`)
-und `metro.config.js` registriert `.sql` als source-ext, aber kein
-Transformer wandelt SQL → JS-String um.
+`npx expo export --platform ios` lief vorher gegen die Wand, weil
+`src/db/migrations/migrations.js` `.sql`-Files direkt importierte und
+Metro keinen `.sql`-Transformer hatte. Die Lösung lebt jetzt in:
 
-Üblicher Fix: `babel-plugin-inline-import` installieren und in
-`babel.config.js` für `.sql` aktivieren — das macht aus jedem SQL-Import
-einen String. Dieser Fix ist außerhalb des Scopes dieser Optimization
-Session und sollte vor dem ersten EAS-Build adressiert werden.
+- `scripts/generate-migration-strings.ts` (`npm run build:migrations`)
+  liest jede `*.sql`-Datei und schreibt
+  `src/db/migrations/sql-strings.ts` mit JS-Stringkonstanten.
+- `migrations.js` importiert die generierten Strings statt der
+  Rohdateien.
+- `metro.config.js` braucht die `sourceExts.push('sql')`-Zeile nicht
+  mehr und ist entsprechend bereinigt.
 
-Konsequenz für Block 1: die Bundle-Size-Messung (1.10) konnte nicht
-ausgeführt werden. Statisch: +1.01 MB durch `assets/seed/trazia-seed.db`,
-neutralisiert sich teilweise wenn die JSON-Fallbacks später entfernt
-werden (Backup-First — vorerst behalten).
+Build-Smoke verifiziert: `npx expo export --platform ios` schließt
+sauber mit einem 10.7 MB Hermes-Bundle (Total .expo-bundle-test
+≈ 15 MB inkl. Assets).
+
+Bundle-Size-Messung (Block 1 follow-up): die Seed-DB ist tatsächlich
+~0.8 % größer als die JSON-Fallbacks (perf-evidence.txt) — die
+13× Cold-Start-Beschleunigung wiegt das auf.
