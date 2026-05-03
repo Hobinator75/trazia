@@ -5,6 +5,7 @@ import { FlightForm } from '@/components/domain/AddJourney/FlightForm';
 import { OtherForm } from '@/components/domain/AddJourney/OtherForm';
 import { TrainForm } from '@/components/domain/AddJourney/TrainForm';
 import { type AddJourneyMode, ModePicker, MODES } from '@/components/domain/ModePicker';
+import { FEATURE_FLAGS } from '@/config/featureFlags';
 import { trackModeLockedTapped } from '@/lib/observability/analytics';
 import { useSnackbarStore } from '@/stores/snackbarStore';
 
@@ -18,12 +19,24 @@ export default function AddJourneyScreen() {
     void trackModeLockedTapped(locked);
   };
 
+  const renderForm = () => {
+    if (mode === 'flight') return <FlightForm />;
+    if (mode === 'train') {
+      // Defensive: the ModePicker doesn't allow selecting train when
+      // the flag is off (it's locked), but render the FlightForm as a
+      // safe fallback rather than crashing if the state somehow lands
+      // here (deep link, stale state from a previous build).
+      return FEATURE_FLAGS.PHASE_2_TRAIN_VISIBLE ? <TrainForm /> : <FlightForm />;
+    }
+    return <OtherForm />;
+  };
+
   return (
     <View className="flex-1 bg-background-dark">
       <View className="border-b border-border-dark">
         <ModePicker value={mode} onChange={setMode} onLockedTap={onLockedTap} />
       </View>
-      {mode === 'flight' ? <FlightForm /> : mode === 'train' ? <TrainForm /> : <OtherForm />}
+      {renderForm()}
     </View>
   );
 }

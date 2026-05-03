@@ -106,7 +106,13 @@ export function ChartsSection({ journeys }: ChartsSectionProps) {
       </CardShell>
 
       <CardShell title="Modi-Verteilung">
-        {modePieData ? (
+        {modePieData === null ? (
+          <Text className="text-sm text-text-muted">Noch keine Reisen.</Text>
+        ) : modePieData.length === 1 && modePieData[0]?.text === 'Flug' ? (
+          // Phase-1: most users will only have flights — a single-slice
+          // donut looks broken. Show a plain statement instead.
+          <Text className="text-sm text-text-light">100% Flugreisen</Text>
+        ) : (
           <View className="flex-row items-center gap-4">
             <PieChart data={modePieData} radius={80} donut innerRadius={48} />
             <View className="flex-1 gap-1">
@@ -121,8 +127,6 @@ export function ChartsSection({ journeys }: ChartsSectionProps) {
               ))}
             </View>
           </View>
-        ) : (
-          <Text className="text-sm text-text-muted">Noch keine Reisen.</Text>
         )}
         <Text className="mt-3 text-xs text-text-muted">Mehr Modi kommen bald!</Text>
       </CardShell>

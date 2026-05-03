@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { FEATURE_FLAGS } from '@/config/featureFlags';
 import { useOnboardingStore } from '@/stores/onboardingStore';
 import { colors } from '@/theme/colors';
 import type { TransportMode } from '@/types/domain-types';
@@ -15,9 +16,13 @@ interface ModeOption {
   enabled: boolean;
 }
 
+// Phase-1 hides Train completely; showing it as a locked tile would
+// mislead first-run users about what they can actually log today.
 const OPTIONS: ModeOption[] = [
   { id: 'flight', label: 'Flüge', icon: 'airplane', enabled: true },
-  { id: 'train', label: 'Züge', icon: 'train', enabled: true },
+  ...(FEATURE_FLAGS.PHASE_2_TRAIN_VISIBLE
+    ? ([{ id: 'train', label: 'Züge', icon: 'train', enabled: true }] as const)
+    : []),
   { id: 'car', label: 'Auto', icon: 'car', enabled: false },
   { id: 'ship', label: 'Schiff', icon: 'boat', enabled: false },
   { id: 'bus', label: 'Bus', icon: 'bus', enabled: false },

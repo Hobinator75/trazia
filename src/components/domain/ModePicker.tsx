@@ -1,26 +1,11 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Pressable, ScrollView, Text } from 'react-native';
 
+import { MODES, type AddJourneyMode } from './modePickerConfig';
 import { colors } from '@/theme/colors';
 
-export type AddJourneyMode = 'flight' | 'train' | 'car' | 'ship' | 'bus' | 'other';
-
-interface ModeDef {
-  value: AddJourneyMode;
-  label: string;
-  icon: React.ComponentProps<typeof Ionicons>['name'];
-  enabled: boolean;
-  comingIn?: 'Phase 2';
-}
-
-export const MODES: readonly ModeDef[] = [
-  { value: 'flight', label: 'Flug', icon: 'airplane', enabled: true },
-  { value: 'train', label: 'Zug', icon: 'train', enabled: true },
-  { value: 'car', label: 'Auto', icon: 'car', enabled: false, comingIn: 'Phase 2' },
-  { value: 'ship', label: 'Schiff', icon: 'boat', enabled: false, comingIn: 'Phase 2' },
-  { value: 'bus', label: 'Bus', icon: 'bus', enabled: false, comingIn: 'Phase 2' },
-  { value: 'other', label: 'Sonstiges', icon: 'ellipsis-horizontal', enabled: true },
-];
+export { MODES };
+export type { AddJourneyMode };
 
 export interface ModePickerProps {
   value: AddJourneyMode;
