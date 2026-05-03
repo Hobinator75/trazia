@@ -87,4 +87,33 @@ describe('achievements catalog (docs/achievements.json)', () => {
     const noTier = ALL.filter((a) => !a.tier).map((a) => a.id);
     expect(noTier).toEqual([]);
   });
+
+  // Mode-isolation invariant: the engine filters journeys by
+  // achievement.appliesTo before evaluating the rule. To keep the
+  // isolation reliable, every achievement MUST set appliesTo (either
+  // 'cross' or a specific TransportMode) — otherwise a flight first-
+  // class achievement could be triggered by a train cabin=first row
+  // (the bug Codex Cross-Audit v2 surfaced).
+  it('every achievement declares an appliesTo scope', () => {
+    const missing = ALL.filter((a) => a.appliesTo === undefined).map((a) => ({
+      id: a.id,
+      type: a.rule.type,
+    }));
+    expect(missing).toEqual([]);
+  });
+
+  it('mode-sensitive rule types are scoped to a single TransportMode (or explicitly cross)', () => {
+    const modeSensitive = new Set<RuleType>([
+      'cabin_class',
+      'vehicle_category',
+      'operator_set',
+      'operator_loyalty',
+      'geo_condition',
+      'route_repeat',
+    ]);
+    const offenders = ALL.filter(
+      (a) => modeSensitive.has(a.rule.type) && a.appliesTo === undefined,
+    ).map((a) => ({ id: a.id, type: a.rule.type }));
+    expect(offenders).toEqual([]);
+  });
 });

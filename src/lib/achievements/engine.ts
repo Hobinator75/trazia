@@ -67,8 +67,24 @@ export function evaluateAll(
   return out;
 }
 
+// Narrow the context's journey list to the modes that the achievement
+// applies to. `appliesTo: 'cross'` and undefined leave the list intact.
+// Rule-level `mode` filtering still happens further down — the two
+// guards are complementary: appliesTo gates the achievement's overall
+// scope, rule.mode applies within `count`/`distance_total` etc.
+function scopeByAppliesTo(
+  achievement: Achievement,
+  ctx: AchievementContext,
+): AchievementContext {
+  const appliesTo = achievement.appliesTo;
+  if (!appliesTo || appliesTo === 'cross') return ctx;
+  const filtered = ctx.allJourneys.filter((j) => j.mode === appliesTo);
+  if (filtered.length === ctx.allJourneys.length) return ctx;
+  return { ...ctx, allJourneys: filtered };
+}
+
 export function evaluateOne(achievement: Achievement, ctx: AchievementContext): boolean {
-  return evaluateRule(achievement.rule, ctx);
+  return evaluateRule(achievement.rule, scopeByAppliesTo(achievement, ctx));
 }
 
 function evaluateRule(rule: Rule, ctx: AchievementContext): boolean {

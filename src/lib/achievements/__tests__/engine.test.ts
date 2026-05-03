@@ -553,3 +553,127 @@ describe('performance', () => {
     expect(elapsed).toBeLessThan(100);
   });
 });
+
+describe('mode isolation via appliesTo', () => {
+  const flightFirstClass: Achievement = {
+    id: 'first_class',
+    title: 'First Class',
+    description: 'Flight first class.',
+    appliesTo: 'flight',
+    rule: { type: 'cabin_class', cabinClass: 'first' },
+  };
+  const railFirstClass: Achievement = {
+    id: 'first_class_rail',
+    title: 'First Class Rail',
+    description: 'Train first class.',
+    appliesTo: 'train',
+    rule: { type: 'cabin_class', cabinClass: 'first' },
+  };
+  const dbLoyaltyFlight: Achievement = {
+    id: 'brit_air_loyalty',
+    title: 'Brit Air loyalty',
+    description: 'Operator code DB (Brit Air, flight).',
+    appliesTo: 'flight',
+    rule: { type: 'operator_loyalty', count: 2, operatorCode: 'DB' },
+  };
+  const dbLoyaltyTrain: Achievement = {
+    id: 'db_loyalty_25',
+    title: 'BahnCard Hero',
+    description: 'Operator code DB (Deutsche Bahn, train).',
+    appliesTo: 'train',
+    rule: { type: 'operator_loyalty', count: 2, operatorCode: 'DB' },
+  };
+  const transatlantic: Achievement = {
+    id: 'transatlantic',
+    title: 'Transatlantic',
+    description: 'A flight that crosses the Atlantic.',
+    appliesTo: 'flight',
+    rule: { type: 'geo_condition', condition: 'atlantic' },
+  };
+  const multimodeCross: Achievement = {
+    id: 'multimode_3',
+    title: 'Multimode',
+    description: 'Three different transport modes.',
+    appliesTo: 'cross',
+    rule: { type: 'count', threshold: 3 },
+  };
+
+  it('Train cabin=first does NOT trigger Flight first_class', () => {
+    const ctx = baseCtx([j({ mode: 'train', cabinClass: 'first' })]);
+    const unlocks = evaluateAll(ctx, [flightFirstClass, railFirstClass]);
+    const ids = unlocks.map((u) => u.achievementId);
+    expect(ids).not.toContain('first_class');
+    expect(ids).toContain('first_class_rail');
+  });
+
+  it('Flight cabin=first does NOT trigger Train first_class_rail', () => {
+    const ctx = baseCtx([j({ mode: 'flight', cabinClass: 'first' })]);
+    const unlocks = evaluateAll(ctx, [flightFirstClass, railFirstClass]);
+    const ids = unlocks.map((u) => u.achievementId);
+    expect(ids).toContain('first_class');
+    expect(ids).not.toContain('first_class_rail');
+  });
+
+  it('"DB" operator code is mode-isolated: train DB does not unlock flight DB loyalty', () => {
+    const operators = new Map<string, Operator>([
+      [
+        'op-db-air',
+        {
+          id: 'op-db-air',
+          name: 'Brit Air',
+          code: 'DB',
+          modes: ['flight'],
+          country: 'GB',
+          logoPath: null,
+          isSystemSeed: true,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      ],
+      [
+        'op-db-rail',
+        {
+          id: 'op-db-rail',
+          name: 'Deutsche Bahn',
+          code: 'DB',
+          modes: ['train'],
+          country: 'DE',
+          logoPath: null,
+          isSystemSeed: true,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      ],
+    ]);
+    const ctx = baseCtx(
+      [
+        j({ id: 'j1', mode: 'train', operatorId: 'op-db-rail' }),
+        j({ id: 'j2', mode: 'train', operatorId: 'op-db-rail' }),
+      ],
+      { operatorsById: operators },
+    );
+    const unlocks = evaluateAll(ctx, [dbLoyaltyFlight, dbLoyaltyTrain]);
+    const ids = unlocks.map((u) => u.achievementId);
+    expect(ids).not.toContain('brit_air_loyalty');
+    expect(ids).toContain('db_loyalty_25');
+  });
+
+  it('transatlantic (mode=flight) is not triggered by a ship with the same coordinates', () => {
+    const ctx = baseCtx(
+      [j({ mode: 'ship' as const, fromLocationId: FRA.id, toLocationId: JFK.id })],
+      { locationsById: locationsMap },
+    );
+    const unlocks = evaluateAll(ctx, [transatlantic]);
+    expect(unlocks.map((u) => u.achievementId)).not.toContain('transatlantic');
+  });
+
+  it('cross-mode achievement (multimode) still counts journeys across modes', () => {
+    const ctx = baseCtx([
+      j({ id: 'j1', mode: 'flight' }),
+      j({ id: 'j2', mode: 'train' }),
+      j({ id: 'j3', mode: 'ship' as const }),
+    ]);
+    const unlocks = evaluateAll(ctx, [multimodeCross]);
+    expect(unlocks.map((u) => u.achievementId)).toContain('multimode_3');
+  });
+});
