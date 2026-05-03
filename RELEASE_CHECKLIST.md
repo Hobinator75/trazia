@@ -26,6 +26,33 @@ Production-Submit, wenn nicht vorher erledigt:
       Europa kann der User nicht suchen. Post-Launch-TODO: per Overpass-API
       auf 5–10k Stationen ausbauen, oder kuratierte Listen-Erweiterung.
 
+## DB-Migrationen (jeder Release)
+
+Achievement-ID-Renames werden über zwei parallele Wege gefahren:
+
+1. **Drizzle-SQL-Migration** (`src/db/migrations/000X_*.sql`) — läuft beim
+   ersten App-Start auf einem aktualisierten Device, einmalig, durch
+   Drizzle's Journal getrackt.
+2. **Code-Migration** (`src/lib/achievements/migration.ts` →
+   `ACHIEVEMENT_ID_MIGRATIONS`) — läuft bei JEDEM Cold-Start, ist
+   idempotent (eigene Log-Tabelle `achievement_id_migrations_log`),
+   transaktional (ROLLBACK on error) und greift auch dann, wenn die
+   SQL-Migration mittendrin gecrasht ist.
+
+Bei jedem neuen ID-Rename:
+
+- [ ] Eintrag in `ACHIEVEMENT_ID_MIGRATIONS` ergänzen (`fromId`, `toId`,
+      `reason`)
+- [ ] Test in `src/lib/achievements/__tests__/migration.test.ts` erweitert
+- [ ] Catalog-Test (`catalog.test.ts`) aktualisiert: alte ID darf nicht
+      mehr im Katalog sein
+- [ ] **Optional** — neue `0XYZ_achievement_id_<name>.sql` für
+      schnelleren First-Run; redundant, aber gibt zusätzlichen
+      Sicherheits-Layer für seltene Edge-Cases (kalter Start ohne
+      App-Update).
+- [ ] In RELEASE_CHECKLIST gezielt erwähnen, falls Sentry-Conflict-Reports
+      erwartet werden (zwei-Unlock-Edge-Case)
+
 ## 0 · Pre-Flight
 
 - [ ] Alle Tests grün lokal: `npm run typecheck && npm run lint && npm run format:check && npm run test`

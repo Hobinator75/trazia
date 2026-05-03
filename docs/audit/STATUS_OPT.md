@@ -37,7 +37,32 @@ der reale Faktor erfahrungsgemäß noch 2-3× größer.
 
 ## Block 2 — Achievement-ID-Migration mit Rollback
 
-Status: **siehe folgenden Commit `fix(migration): …`**
+Status: **abgeschlossen**
+
+### Was geliefert ist
+- `src/lib/achievements/migration.ts` — `applyAchievementIdMigrations(db)`:
+  idempotent, transaktional, mit Verifikation und Rollback.
+  - Eigene Tabelle `achievement_id_migrations_log` trackt bereits
+    angewandte Renames pro Device.
+  - Edge-Case "User hat sowohl alte UND neue ID" → wird als `conflicts`
+    geloggt, Migration skipt (würde sonst die unique-index-Constraint
+    verletzen).
+- `src/hooks/useAchievementMigrations.ts` — best-effort Hook, läuft nach
+  Drizzle-Migrations und vor Seed; Fehler gehen an Sentry, App startet
+  trotzdem.
+- `src/hooks/useDbReady.ts` — kettet Migrations → Achievement-Migrations
+  → Seed.
+- `src/lib/achievements/__tests__/migration.test.ts` — 6 neue Tests:
+  fresh-DB, legacy-DB, idempotency, conflict-edge, rollback-on-error,
+  unique-index preservation.
+- `src/db/migrations/0002_achievement_id_migration.sql` — Belt-and-braces
+  Notiz dass die Code-Migration parallel läuft.
+- `RELEASE_CHECKLIST.md` — neuer Abschnitt "DB-Migrationen".
+
+### Test-Counts
+- Vor dieser Session: 138
+- Nach Block 1: 146 (+8)
+- Nach Block 2: 152 (+6)
 
 ## Pre-existing bundle blocker (NICHT durch Block 1 verursacht)
 
