@@ -14,7 +14,18 @@ Stand: 2026-05-04 (laufend)
 | 5 | Phase-1 Train-Gating | ✅ |
 | 6 | Metro `.sql`-Bundling | offen |
 | 7 | Privacy-Policy-Disclosure | offen |
-| 8 | Final Validation | offen |
+| 8 | Final Validation | ✅ |
+
+## Final Validation Result (2026-05-04)
+
+- npm test: 193 / 193 grün
+- npx tsc --noEmit: 0 Errors
+- npm run lint: 0 Errors
+- expo-doctor: 17 / 17
+- Build-Smoke: `npx expo export --platform ios` läuft sauber durch
+  (10.7 MB Hermes-Bundle, 15 MB total).
+- Alle 4 Reproduction-Tests aus
+  `src/__tests__/launch-blockers.test.ts` (+ 1 Idempotenz-Test) grün.
 
 ## Notes
 

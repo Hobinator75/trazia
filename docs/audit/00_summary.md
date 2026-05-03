@@ -186,6 +186,53 @@ Die App ist **launch-fähig für Phase 1 + Phase 8.1 (Flug + Zug)**.
 - Vor Codex-Cross-Audit: ✅ kann jetzt los — Tests sind grün, Spec-Compliance ist auf 32+18 Achievements, Build-Configs sauber.
 - Vor Phase 9 (Auto): erst Codex-Cross-Audit + Tims manuelles Test-Drehbuch (`11_test_script.md`) durchspielen.
 
+## NACH LAUNCH-FIX-SESSION (2026-05-04)
+
+Die Codex-Cross-Audit-v2 (`docs/audit/codex/`) hat 8 zusätzliche Bugs
+aufgedeckt, die alle in dieser Session behoben wurden — siehe
+`docs/audit/STATUS_LAUNCH.md`.
+
+### Was gefixt ist
+
+| # | Bug | Block | Status |
+|---|---|---|---|
+| 1 | SQL-0002 crasht bei Doppel-Unlock | B1 | ✅ |
+| 2 | FlightForm/TrainForm/OtherForm berechnen kein durationMinutes | B2 | ✅ |
+| 3 | Engine ignoriert appliesTo bei cabin/operator/vehicle/geo | B3 | ✅ |
+| 4 | Backup-Restore destruktiv ohne Transaction | B4 | ✅ |
+| 5 | Train sichtbar trotz Phase-1-only-Launch | B5 | ✅ |
+| 6 | Metro `.sql`-Bundling-Blocker | B6 | ✅ |
+| 7 | Privacy-Policy nennt Sentry/PostHog nicht | B7 | ✅ |
+| 8 | Sentry-Conflict-Logging fehlt | B1 | ✅ |
+
+### Was noch offen ist (Tim manuell)
+
+- AdMob Production-IDs in EAS-Secrets eintragen (BLOCKING)
+- App Privacy Details auf App Store Connect manuell deklarieren
+- `trazia.com/privacy` mit DE+EN-Versionen hosten
+- Manuelles Test-Drehbuch (`11_test_script.md` S1-S7 + S10-S14) auf
+  echtem Gerät durchspielen — Findings in
+  `docs/audit/manual-test-findings.md` sammeln. Train-Schritte
+  (S8/S9) skippen, Phase-1 versteckt sie.
+
+### Test-Counts
+
+- Vor Launch-Fix-Session: 152
+- Nach Launch-Fix-Session: 193 (+41)
+- Alle 4 Reproduction-Tests aus `src/__tests__/launch-blockers.test.ts`
+  grün.
+
+### Build-Smoke
+
+- `npx tsc --noEmit`: 0 Errors
+- `npm run lint`: 0 Errors
+- `npx expo-doctor`: 17/17
+- `npx expo export --platform ios`: 10.7 MB Hermes-Bundle, sauber.
+
+### Status
+
+**Bereit für 2. Codex-Audit (Final-Review).**
+
 ## Audit-Index
 
 - [01_structure.md](01_structure.md) — Repo-Struktur (FOUND/MISSING/EXTRA)
