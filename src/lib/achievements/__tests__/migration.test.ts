@@ -4,10 +4,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { createTestDb } from '@/db/__tests__/test-db';
 import { achievementUnlocks } from '@/db/schema';
 
-import {
-  ACHIEVEMENT_ID_MIGRATIONS,
-  applyAchievementIdMigrations,
-} from '../migration';
+import { ACHIEVEMENT_ID_MIGRATIONS, applyAchievementIdMigrations } from '../migration';
 
 const ATLANTIC_TO_TRANSATLANTIC = ACHIEVEMENT_ID_MIGRATIONS.find(
   (m) => m.fromId === 'atlantic_crosser' && m.toId === 'transatlantic',

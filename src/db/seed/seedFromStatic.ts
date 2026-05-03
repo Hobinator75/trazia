@@ -201,8 +201,9 @@ async function upsertOperators(db: DrizzleDb, airlines: AirlineRecord[]): Promis
       country: a.country ?? null,
       isSystemSeed: true,
     }))
-    .filter((row): row is typeof row & { code: string } =>
-      Boolean(row.code) && !existing.has(row.code as string),
+    .filter(
+      (row): row is typeof row & { code: string } =>
+        Boolean(row.code) && !existing.has(row.code as string),
     );
 
   for (let i = 0; i < newRows.length; i += INSERT_CHUNK) {
@@ -245,10 +246,7 @@ async function upsertVehicles(db: DrizzleDb, aircraft: AircraftRecord[]): Promis
   return newRows.length;
 }
 
-async function upsertTrainStations(
-  db: DrizzleDb,
-  stations: TrainStationRecord[],
-): Promise<number> {
+async function upsertTrainStations(db: DrizzleDb, stations: TrainStationRecord[]): Promise<number> {
   if (stations.length === 0) return 0;
 
   const existingRows = await db

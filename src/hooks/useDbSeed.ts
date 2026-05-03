@@ -47,9 +47,7 @@ export function useDbSeed(enabled: boolean = true): UseDbSeedState {
           }
         } catch (slowError) {
           const error =
-            slowError instanceof Error
-              ? slowError
-              : new Error(String(slowError ?? fastError));
+            slowError instanceof Error ? slowError : new Error(String(slowError ?? fastError));
           if (!cancelled) {
             setState({ success: false, error, result: undefined });
           }

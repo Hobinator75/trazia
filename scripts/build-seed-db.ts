@@ -181,14 +181,7 @@ function buildSeedDb(): BuildStats {
       const code = a.iata ?? a.icao;
       if (!code || seenOperators.has(`flight:${code}`)) continue;
       seenOperators.add(`flight:${code}`);
-      insertOperator.run(
-        uuid(),
-        a.name,
-        code,
-        JSON.stringify(['flight']),
-        a.country ?? null,
-        null,
-      );
+      insertOperator.run(uuid(), a.name, code, JSON.stringify(['flight']), a.country ?? null, null);
       operatorCount++;
     }
 
@@ -218,15 +211,7 @@ function buildSeedDb(): BuildStats {
     for (const t of trains) {
       if (!t.code || seenTrains.has(t.code)) continue;
       seenTrains.add(t.code);
-      insertVehicle.run(
-        uuid(),
-        'train',
-        t.code,
-        t.category ?? null,
-        t.manufacturer,
-        t.model,
-        null,
-      );
+      insertVehicle.run(uuid(), 'train', t.code, t.category ?? null, t.manufacturer, t.model, null);
       vehicleCount++;
     }
   });

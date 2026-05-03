@@ -84,11 +84,21 @@ function uuid(): string {
 function timeJsonPath(): { ms: number; rows: number } {
   const sqlite = freshDb(tmpA);
 
-  const airports = JSON.parse(readFileSync(resolve(staticDir, 'airports.json'), 'utf8')) as Airport[];
-  const airlines = JSON.parse(readFileSync(resolve(staticDir, 'airlines.json'), 'utf8')) as Airline[];
-  const aircraft = JSON.parse(readFileSync(resolve(staticDir, 'aircraft.json'), 'utf8')) as Aircraft[];
-  const stations = JSON.parse(readFileSync(resolve(staticDir, 'train_stations.json'), 'utf8')) as Station[];
-  const ops = JSON.parse(readFileSync(resolve(staticDir, 'railway_operators.json'), 'utf8')) as RailwayOp[];
+  const airports = JSON.parse(
+    readFileSync(resolve(staticDir, 'airports.json'), 'utf8'),
+  ) as Airport[];
+  const airlines = JSON.parse(
+    readFileSync(resolve(staticDir, 'airlines.json'), 'utf8'),
+  ) as Airline[];
+  const aircraft = JSON.parse(
+    readFileSync(resolve(staticDir, 'aircraft.json'), 'utf8'),
+  ) as Aircraft[];
+  const stations = JSON.parse(
+    readFileSync(resolve(staticDir, 'train_stations.json'), 'utf8'),
+  ) as Station[];
+  const ops = JSON.parse(
+    readFileSync(resolve(staticDir, 'railway_operators.json'), 'utf8'),
+  ) as RailwayOp[];
   const trains = JSON.parse(readFileSync(resolve(staticDir, 'trains.json'), 'utf8')) as Train[];
 
   const insertLoc = sqlite.prepare(
@@ -134,14 +144,34 @@ function timeJsonPath(): { ms: number; rows: number } {
   for (const a of airports) {
     if (!a.iata) continue;
     push('loc', [
-      uuid(), a.name, a.city ?? null, a.country, a.lat, a.lng, 'airport', a.iata, a.icao, null, null,
+      uuid(),
+      a.name,
+      a.city ?? null,
+      a.country,
+      a.lat,
+      a.lng,
+      'airport',
+      a.iata,
+      a.icao,
+      null,
+      null,
     ]);
     rows++;
   }
   for (const s of stations) {
     if (!s.ibnr) continue;
     push('loc', [
-      uuid(), s.name, s.city ?? null, s.country, s.lat, s.lng, 'train_station', null, null, s.ibnr, null,
+      uuid(),
+      s.name,
+      s.city ?? null,
+      s.country,
+      s.lat,
+      s.lng,
+      'train_station',
+      null,
+      null,
+      s.ibnr,
+      null,
     ]);
     rows++;
   }
@@ -154,13 +184,28 @@ function timeJsonPath(): { ms: number; rows: number } {
   }
   for (const o of ops) {
     if (!o.code) continue;
-    push('op', [uuid(), o.name, o.code, JSON.stringify(o.modes ?? ['train']), o.country ?? null, null]);
+    push('op', [
+      uuid(),
+      o.name,
+      o.code,
+      JSON.stringify(o.modes ?? ['train']),
+      o.country ?? null,
+      null,
+    ]);
     rows++;
   }
   flush('op');
   for (const v of aircraft) {
     if (!v.code) continue;
-    push('veh', [uuid(), 'flight', v.code, v.category ?? null, v.manufacturer, v.model, v.capacity ?? null]);
+    push('veh', [
+      uuid(),
+      'flight',
+      v.code,
+      v.category ?? null,
+      v.manufacturer,
+      v.model,
+      v.capacity ?? null,
+    ]);
     rows++;
   }
   for (const t of trains) {

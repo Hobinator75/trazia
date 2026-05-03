@@ -39,9 +39,7 @@ const SEED_ALIAS = 'trazia_seed';
 // User-created rows (isSystemSeed = 0) are never touched. On any failure
 // the transaction rolls back and seed.version stays unchanged so the next
 // app launch retries.
-export async function loadFromSeedDb(
-  opts: LoadFromSeedDbOptions,
-): Promise<LoadFromSeedDbResult> {
+export async function loadFromSeedDb(opts: LoadFromSeedDbOptions): Promise<LoadFromSeedDbResult> {
   const { db, seedDbPath, storage } = opts;
 
   const currentVersion = await storage.getItem(SEED_VERSION_KEY);
@@ -58,11 +56,7 @@ export async function loadFromSeedDb(
   }
 
   const reason: LoadFromSeedDbResult['reason'] =
-    currentVersion === null
-      ? 'fresh-install'
-      : !hasSystemData
-        ? 'self-heal'
-        : 'version-upgrade';
+    currentVersion === null ? 'fresh-install' : !hasSystemData ? 'self-heal' : 'version-upgrade';
 
   // SQLite escapes single quotes inside string literals by doubling them.
   // The seed-db path is internal (asset cache dir on iOS/Android, controlled
@@ -76,15 +70,9 @@ export async function loadFromSeedDb(
   try {
     await db.run(sql.raw('BEGIN TRANSACTION'));
     try {
-      await db.run(
-        sql.raw(`DELETE FROM main.locations WHERE is_system_seed = 1`),
-      );
-      await db.run(
-        sql.raw(`DELETE FROM main.operators WHERE is_system_seed = 1`),
-      );
-      await db.run(
-        sql.raw(`DELETE FROM main.vehicles  WHERE is_system_seed = 1`),
-      );
+      await db.run(sql.raw(`DELETE FROM main.locations WHERE is_system_seed = 1`));
+      await db.run(sql.raw(`DELETE FROM main.operators WHERE is_system_seed = 1`));
+      await db.run(sql.raw(`DELETE FROM main.vehicles  WHERE is_system_seed = 1`));
 
       await db.run(
         sql.raw(
