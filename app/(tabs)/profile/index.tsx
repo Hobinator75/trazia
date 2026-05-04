@@ -7,7 +7,7 @@ import { ProfileHeader } from '@/components/domain/ProfileHeader';
 import { useIsPremium } from '@/hooks/useIsPremium';
 import { showRewardedAd } from '@/lib/ads/rewarded';
 import { usePremiumStore } from '@/stores/premiumStore';
-import { type DistanceUnit, type ThemePreference, useSettingsStore } from '@/stores/settings.store';
+import { type DistanceUnit, useSettingsStore } from '@/stores/settings.store';
 import { useSnackbarStore } from '@/stores/snackbarStore';
 import { colors } from '@/theme/colors';
 
@@ -123,12 +123,6 @@ function NavRowGroup({ rows }: { rows: NavRowSpec[] }) {
   );
 }
 
-const THEME_OPTIONS = [
-  { value: 'dark' as const, label: 'Dunkel' },
-  { value: 'light' as const, label: 'Hell' },
-  { value: 'system' as const, label: 'System' },
-];
-
 const UNIT_OPTIONS = [
   { value: 'km' as const, label: 'km' },
   { value: 'mi' as const, label: 'Meilen' },
@@ -155,8 +149,6 @@ export default function ProfileScreen() {
   const router = useRouter();
   const showSnackbar = useSnackbarStore((s) => s.show);
 
-  const theme = useSettingsStore((s) => s.theme);
-  const setTheme = useSettingsStore((s) => s.setTheme);
   const distanceUnit = useSettingsStore((s) => s.distanceUnit);
   const setDistanceUnit = useSettingsStore((s) => s.setDistanceUnit);
   const soundEnabled = useSettingsStore((s) => s.soundEnabled);
@@ -239,12 +231,15 @@ export default function ProfileScreen() {
       </Pressable>
 
       <View className="gap-3">
-        <SegmentedRow<ThemePreference>
-          label="Erscheinungsbild"
-          options={THEME_OPTIONS}
-          value={theme}
-          onChange={setTheme}
-        />
+        <View className="rounded-2xl border border-border-dark bg-surface-dark p-4">
+          <Text className="mb-1 text-xs font-semibold uppercase tracking-wider text-text-muted">
+            Erscheinungsbild
+          </Text>
+          <Text className="text-sm text-text-light">Dunkel</Text>
+          <Text className="mt-1 text-xs text-text-muted">
+            Light Mode kommt in einem späteren Update.
+          </Text>
+        </View>
         <SegmentedRow<DistanceUnit>
           label="Einheiten"
           options={UNIT_OPTIONS}

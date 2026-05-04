@@ -1,8 +1,7 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { DarkTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
-import { useColorScheme } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
@@ -23,8 +22,11 @@ import { useOnboardingStore } from '@/stores/onboardingStore';
 import { colors } from '@/theme/colors';
 
 export default function RootLayout() {
+  // Phase-1 ships dark-only. The theme setting (and useThemeBinding) is
+  // kept in the store for forward-compat, but the navigation chrome and
+  // status bar are hard-coded so light/system surfaces never appear half-
+  // styled while individual screens still hard-code dark utility classes.
   useThemeBinding();
-  const scheme = useColorScheme();
 
   const hydrateOnboarding = useOnboardingStore((s) => s.hydrate);
   const onboardingHydrated = useOnboardingStore((s) => s.hydrated);
@@ -41,30 +43,17 @@ export default function RootLayout() {
     })();
   }, [hydrateOnboarding]);
 
-  const navTheme =
-    scheme === 'light'
-      ? {
-          ...DefaultTheme,
-          colors: {
-            ...DefaultTheme.colors,
-            background: colors.background.light,
-            card: colors.surface.light,
-            text: colors.text.dark,
-            primary: colors.primary,
-            border: colors.border.light,
-          },
-        }
-      : {
-          ...DarkTheme,
-          colors: {
-            ...DarkTheme.colors,
-            background: colors.background.dark,
-            card: colors.surface.dark,
-            text: colors.text.light,
-            primary: colors.primary,
-            border: colors.border.dark,
-          },
-        };
+  const navTheme = {
+    ...DarkTheme,
+    colors: {
+      ...DarkTheme.colors,
+      background: colors.background.dark,
+      card: colors.surface.dark,
+      text: colors.text.light,
+      primary: colors.primary,
+      border: colors.border.dark,
+    },
+  };
 
   const { ready, error } = useDbReady();
 
@@ -90,7 +79,7 @@ export default function RootLayout() {
             <ConfettiLayer />
             <Snackbar />
           </ErrorBoundary>
-          <StatusBar style={scheme === 'light' ? 'dark' : 'light'} />
+          <StatusBar style="light" />
         </ThemeProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
