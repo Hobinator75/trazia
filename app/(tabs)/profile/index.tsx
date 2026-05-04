@@ -7,11 +7,7 @@ import { ProfileHeader } from '@/components/domain/ProfileHeader';
 import { useIsPremium } from '@/hooks/useIsPremium';
 import { showRewardedAd } from '@/lib/ads/rewarded';
 import { usePremiumStore } from '@/stores/premiumStore';
-import {
-  type DistanceUnit,
-  type ThemePreference,
-  useSettingsStore,
-} from '@/stores/settings.store';
+import { type DistanceUnit, type ThemePreference, useSettingsStore } from '@/stores/settings.store';
 import { useSnackbarStore } from '@/stores/snackbarStore';
 import { colors } from '@/theme/colors';
 

@@ -85,7 +85,14 @@ describe('buildDbSnapshot + restore roundtrip', () => {
     expect(snap.locations).toHaveLength(2);
     expect(snap.operators).toHaveLength(1);
     expect(snap.journeys).toHaveLength(1);
-    expect(snap.journeyTags).toEqual([{ journeyId: journey.id, tag: 'urlaub', createdAt: expect.any(Date), updatedAt: expect.any(Date) }]);
+    expect(snap.journeyTags).toEqual([
+      {
+        journeyId: journey.id,
+        tag: 'urlaub',
+        createdAt: expect.any(Date),
+        updatedAt: expect.any(Date),
+      },
+    ]);
     expect(snap.achievementUnlocks).toHaveLength(1);
     expect(snap.trips).toEqual([]);
   });
@@ -147,8 +154,7 @@ describe('buildDbSnapshot + restore roundtrip', () => {
     if (snap.journeys.length > 0) await handle.db.insert(journeys).values(snap.journeys);
     if (snap.journeyCompanions.length > 0)
       await handle.db.insert(journeyCompanions).values(snap.journeyCompanions);
-    if (snap.journeyTags.length > 0)
-      await handle.db.insert(journeyTags).values(snap.journeyTags);
+    if (snap.journeyTags.length > 0) await handle.db.insert(journeyTags).values(snap.journeyTags);
     if (snap.journeyPhotos.length > 0)
       await handle.db.insert(journeyPhotos).values(snap.journeyPhotos);
     if (snap.trips.length > 0) await handle.db.insert(trips).values(snap.trips);

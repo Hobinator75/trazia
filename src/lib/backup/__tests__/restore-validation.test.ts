@@ -107,9 +107,9 @@ describe('validateSnapshot — required NOT NULL columns', () => {
     });
     const result = validateSnapshot(snapshot);
     expect(result.ok).toBe(false);
-    expect(
-      result.errors.some((e) => /locations row 0 missing required field 'lat'/.test(e)),
-    ).toBe(true);
+    expect(result.errors.some((e) => /locations row 0 missing required field 'lat'/.test(e))).toBe(
+      true,
+    );
   });
 
   it('rejects an achievement_unlock missing achievementId', () => {
@@ -134,9 +134,9 @@ describe('validateSnapshot — parentJourneyId self-reference + FK', () => {
     });
     const result = validateSnapshot(snapshot);
     expect(result.ok).toBe(false);
-    expect(
-      result.errors.some((e) => /references missing parentJourney j-missing/.test(e)),
-    ).toBe(true);
+    expect(result.errors.some((e) => /references missing parentJourney j-missing/.test(e))).toBe(
+      true,
+    );
   });
 
   it('rejects a journey whose parentJourneyId is its own id', () => {
@@ -146,9 +146,7 @@ describe('validateSnapshot — parentJourneyId self-reference + FK', () => {
     });
     const result = validateSnapshot(snapshot);
     expect(result.ok).toBe(false);
-    expect(result.errors.some((e) => /j-self parentJourneyId points at itself/.test(e))).toBe(
-      true,
-    );
+    expect(result.errors.some((e) => /j-self parentJourneyId points at itself/.test(e))).toBe(true);
   });
 
   it('accepts a parent/child pair when both journeys are in the snapshot', () => {

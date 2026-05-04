@@ -6,14 +6,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import {
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  ScrollView,
-  Text,
-  View,
-} from 'react-native';
+import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { db } from '@/db/client';
@@ -136,7 +129,7 @@ export function OtherForm({ editing }: OtherFormProps = {}) {
   // derive synchronously from `editing.journey.id`.
   useEffect(() => {
     if (editing) reset(defaults);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editing?.journey.id]);
 
   const photoUri = watch('photoUri');
@@ -182,9 +175,7 @@ export function OtherForm({ editing }: OtherFormProps = {}) {
       }
 
       if (values.tags.length > 0) {
-        await db
-          .insert(journeyTags)
-          .values(values.tags.map((tag) => ({ journeyId, tag })));
+        await db.insert(journeyTags).values(values.tags.map((tag) => ({ journeyId, tag })));
       }
       if (values.photoUri) {
         await db.insert(journeyPhotos).values({ journeyId, photoUri: values.photoUri });
@@ -359,11 +350,7 @@ export function OtherForm({ editing }: OtherFormProps = {}) {
           className={`items-center rounded-full px-4 py-4 ${submitting ? 'bg-primary/50' : 'bg-primary active:opacity-80'}`}
         >
           <Text className="text-base font-semibold text-white">
-            {submitting
-              ? 'Speichern…'
-              : isEdit
-                ? 'Änderungen speichern'
-                : 'Reise speichern'}
+            {submitting ? 'Speichern…' : isEdit ? 'Änderungen speichern' : 'Reise speichern'}
           </Text>
         </Pressable>
       </View>

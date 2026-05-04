@@ -347,7 +347,32 @@
     "appliesTo": "flight",
     "rule": {
       "type": "operator_set",
-      "operatorCodes": ["LH", "UA", "AC", "SQ", "TG", "NH", "OS", "LX", "SK", "TK", "ET", "NZ", "OZ", "MS", "TP", "SA", "AV", "BR", "CA", "CM", "JP", "ZH", "OU", "A3"]
+      "operatorCodes": [
+        "LH",
+        "UA",
+        "AC",
+        "SQ",
+        "TG",
+        "NH",
+        "OS",
+        "LX",
+        "SK",
+        "TK",
+        "ET",
+        "NZ",
+        "OZ",
+        "MS",
+        "TP",
+        "SA",
+        "AV",
+        "BR",
+        "CA",
+        "CM",
+        "JP",
+        "ZH",
+        "OU",
+        "A3"
+      ]
     }
   },
   {
@@ -359,7 +384,21 @@
     "appliesTo": "flight",
     "rule": {
       "type": "operator_set",
-      "operatorCodes": ["BA", "AA", "CX", "JL", "IB", "AY", "QF", "QR", "RJ", "MH", "S7", "UL", "AT"]
+      "operatorCodes": [
+        "BA",
+        "AA",
+        "CX",
+        "JL",
+        "IB",
+        "AY",
+        "QF",
+        "QR",
+        "RJ",
+        "MH",
+        "S7",
+        "UL",
+        "AT"
+      ]
     }
   },
   {
@@ -371,7 +410,27 @@
     "appliesTo": "flight",
     "rule": {
       "type": "operator_set",
-      "operatorCodes": ["DL", "AF", "KL", "AZ", "KE", "VS", "UX", "MU", "CZ", "SU", "VN", "GA", "SV", "ME", "OK", "AR", "RO", "KQ", "AM"]
+      "operatorCodes": [
+        "DL",
+        "AF",
+        "KL",
+        "AZ",
+        "KE",
+        "VS",
+        "UX",
+        "MU",
+        "CZ",
+        "SU",
+        "VN",
+        "GA",
+        "SV",
+        "ME",
+        "OK",
+        "AR",
+        "RO",
+        "KQ",
+        "AM"
+      ]
     }
   },
   {
@@ -573,7 +632,23 @@
     "appliesTo": "train",
     "rule": {
       "type": "operator_set",
-      "operatorCodes": ["DB", "OBB", "SBB", "SNCF", "TI", "ITA", "NS", "RENFE", "CP", "SNCB", "EUS", "DSB", "SJ", "VR", "NSB"]
+      "operatorCodes": [
+        "DB",
+        "OBB",
+        "SBB",
+        "SNCF",
+        "TI",
+        "ITA",
+        "NS",
+        "RENFE",
+        "CP",
+        "SNCB",
+        "EUS",
+        "DSB",
+        "SJ",
+        "VR",
+        "NSB"
+      ]
     }
   }
 ]

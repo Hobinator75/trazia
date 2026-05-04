@@ -124,12 +124,12 @@ describe('restoreFromSnapshot', () => {
     handle = createTestDb();
     handle.sqlite
       .prepare(
-        "INSERT INTO locations (id, name, lat, lng, type, is_system_seed) VALUES (?, ?, ?, ?, ?, ?)",
+        'INSERT INTO locations (id, name, lat, lng, type, is_system_seed) VALUES (?, ?, ?, ?, ?, ?)',
       )
       .run('loc-keep', 'Keep', 50, 8, 'airport', 0);
     handle.sqlite
       .prepare(
-        "INSERT INTO journeys (id, mode, from_location_id, to_location_id, date) VALUES (?, ?, ?, ?, ?)",
+        'INSERT INTO journeys (id, mode, from_location_id, to_location_id, date) VALUES (?, ?, ?, ?, ?)',
       )
       .run('j-keep', 'flight', 'loc-keep', 'loc-keep', '2026-04-01');
   });

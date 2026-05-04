@@ -45,12 +45,8 @@ describe('flightFormSchema', () => {
   });
 
   it('caps notes at 500 chars', () => {
-    expect(
-      flightFormSchema.safeParse({ ...valid, notes: 'a'.repeat(500) }).success,
-    ).toBe(true);
-    expect(
-      flightFormSchema.safeParse({ ...valid, notes: 'a'.repeat(501) }).success,
-    ).toBe(false);
+    expect(flightFormSchema.safeParse({ ...valid, notes: 'a'.repeat(500) }).success).toBe(true);
+    expect(flightFormSchema.safeParse({ ...valid, notes: 'a'.repeat(501) }).success).toBe(false);
   });
 });
 

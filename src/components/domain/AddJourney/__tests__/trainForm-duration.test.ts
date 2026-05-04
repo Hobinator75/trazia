@@ -43,10 +43,7 @@ describe('TrainForm onSubmit → buildTrainJourneyPatch', () => {
   });
 
   it('writes null durationMinutes when end time is missing', () => {
-    const patch = buildTrainJourneyPatch(
-      baseValues({ startTimeLocal: '14:00' }),
-      450,
-    );
+    const patch = buildTrainJourneyPatch(baseValues({ startTimeLocal: '14:00' }), 450);
     expect(patch.durationMinutes).toBeNull();
   });
 

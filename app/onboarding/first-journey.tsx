@@ -93,9 +93,9 @@ export default function OnboardingFirstJourneyScreen() {
           Lust auf eine Beispielreise?
         </Text>
         <Text className="mt-2 text-base text-text-muted">
-          Wir können dir gerne einen Beispielflug eintragen — Frankfurt nach New York mit
-          Lufthansa, gestern. So siehst du sofort, wie sich Karte, Statistik und Achievements
-          füllen. Du kannst die Reise jederzeit löschen.
+          Wir können dir gerne einen Beispielflug eintragen — Frankfurt nach New York mit Lufthansa,
+          gestern. So siehst du sofort, wie sich Karte, Statistik und Achievements füllen. Du kannst
+          die Reise jederzeit löschen.
         </Text>
 
         <View className="mt-6 rounded-3xl border border-border-dark bg-surface-dark p-5">
@@ -115,7 +115,9 @@ export default function OnboardingFirstJourneyScreen() {
             working ? 'bg-primary/40' : 'bg-primary active:opacity-80'
           }`}
         >
-          {working ? <ActivityIndicator color="#FFFFFF" /> : (
+          {working ? (
+            <ActivityIndicator color="#FFFFFF" />
+          ) : (
             <Ionicons name="add-circle-outline" size={18} color="white" />
           )}
           <Text className="text-base font-semibold text-white">
@@ -129,4 +131,3 @@ export default function OnboardingFirstJourneyScreen() {
     </View>
   );
 }
-

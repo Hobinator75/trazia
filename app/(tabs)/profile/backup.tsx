@@ -59,15 +59,13 @@ export default function BackupScreen() {
                   variant: 'error',
                 });
               } else if (result.reason === 'invalid-snapshot') {
-                showSnackbar(
-                  'Backup-Datei ist beschädigt — deine Daten sind unverändert.',
-                  { variant: 'error' },
-                );
+                showSnackbar('Backup-Datei ist beschädigt — deine Daten sind unverändert.', {
+                  variant: 'error',
+                });
               } else if (result.reason === 'transaction-failed') {
-                showSnackbar(
-                  'Restore fehlgeschlagen — deine Daten sind unverändert.',
-                  { variant: 'error' },
-                );
+                showSnackbar('Restore fehlgeschlagen — deine Daten sind unverändert.', {
+                  variant: 'error',
+                });
               } else {
                 showSnackbar(`Restore fehlgeschlagen: ${result.message}`, { variant: 'error' });
               }

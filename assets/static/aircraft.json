@@ -1,149 +1,1031 @@
 [
-  { "code": "B712", "manufacturer": "Boeing", "model": "717-200", "category": "narrowbody", "capacity": 117 },
-  { "code": "B731", "manufacturer": "Boeing", "model": "737-100", "category": "narrowbody", "capacity": 124 },
-  { "code": "B732", "manufacturer": "Boeing", "model": "737-200", "category": "narrowbody", "capacity": 130 },
-  { "code": "B733", "manufacturer": "Boeing", "model": "737-300", "category": "narrowbody", "capacity": 149 },
-  { "code": "B734", "manufacturer": "Boeing", "model": "737-400", "category": "narrowbody", "capacity": 168 },
-  { "code": "B735", "manufacturer": "Boeing", "model": "737-500", "category": "narrowbody", "capacity": 132 },
-  { "code": "B736", "manufacturer": "Boeing", "model": "737-600", "category": "narrowbody", "capacity": 132 },
-  { "code": "B737", "manufacturer": "Boeing", "model": "737-700", "category": "narrowbody", "capacity": 149 },
-  { "code": "B738", "manufacturer": "Boeing", "model": "737-800", "category": "narrowbody", "capacity": 189 },
-  { "code": "B739", "manufacturer": "Boeing", "model": "737-900", "category": "narrowbody", "capacity": 215 },
-  { "code": "B73G", "manufacturer": "Boeing", "model": "737-700ER", "category": "narrowbody", "capacity": 126 },
-  { "code": "B73H", "manufacturer": "Boeing", "model": "737-900ER", "category": "narrowbody", "capacity": 220 },
-  { "code": "B37M", "manufacturer": "Boeing", "model": "737 MAX 7", "category": "narrowbody", "capacity": 172 },
-  { "code": "B38M", "manufacturer": "Boeing", "model": "737 MAX 8", "category": "narrowbody", "capacity": 210 },
-  { "code": "B39M", "manufacturer": "Boeing", "model": "737 MAX 9", "category": "narrowbody", "capacity": 220 },
-  { "code": "B3XM", "manufacturer": "Boeing", "model": "737 MAX 10", "category": "narrowbody", "capacity": 230 },
-  { "code": "B741", "manufacturer": "Boeing", "model": "747-100", "category": "jumbo", "capacity": 452 },
-  { "code": "B742", "manufacturer": "Boeing", "model": "747-200", "category": "jumbo", "capacity": 452 },
-  { "code": "B743", "manufacturer": "Boeing", "model": "747-300", "category": "jumbo", "capacity": 496 },
-  { "code": "B744", "manufacturer": "Boeing", "model": "747-400", "category": "jumbo", "capacity": 524 },
-  { "code": "B748", "manufacturer": "Boeing", "model": "747-8", "category": "jumbo", "capacity": 410 },
-  { "code": "B752", "manufacturer": "Boeing", "model": "757-200", "category": "narrowbody", "capacity": 200 },
-  { "code": "B753", "manufacturer": "Boeing", "model": "757-300", "category": "narrowbody", "capacity": 243 },
-  { "code": "B762", "manufacturer": "Boeing", "model": "767-200", "category": "widebody", "capacity": 245 },
-  { "code": "B763", "manufacturer": "Boeing", "model": "767-300", "category": "widebody", "capacity": 269 },
-  { "code": "B764", "manufacturer": "Boeing", "model": "767-400", "category": "widebody", "capacity": 304 },
-  { "code": "B772", "manufacturer": "Boeing", "model": "777-200", "category": "widebody", "capacity": 314 },
-  { "code": "B77E", "manufacturer": "Boeing", "model": "777-200ER", "category": "widebody", "capacity": 314 },
-  { "code": "B77L", "manufacturer": "Boeing", "model": "777-200LR", "category": "widebody", "capacity": 317 },
-  { "code": "B773", "manufacturer": "Boeing", "model": "777-300", "category": "widebody", "capacity": 365 },
-  { "code": "B77W", "manufacturer": "Boeing", "model": "777-300ER", "category": "widebody", "capacity": 396 },
-  { "code": "B77F", "manufacturer": "Boeing", "model": "777 Freighter", "category": "freighter", "capacity": 0 },
-  { "code": "B778", "manufacturer": "Boeing", "model": "777-8", "category": "widebody", "capacity": 384 },
-  { "code": "B779", "manufacturer": "Boeing", "model": "777-9", "category": "widebody", "capacity": 426 },
-  { "code": "B788", "manufacturer": "Boeing", "model": "787-8 Dreamliner", "category": "widebody", "capacity": 248 },
-  { "code": "B789", "manufacturer": "Boeing", "model": "787-9 Dreamliner", "category": "widebody", "capacity": 296 },
-  { "code": "B78X", "manufacturer": "Boeing", "model": "787-10 Dreamliner", "category": "widebody", "capacity": 336 },
-  { "code": "A124", "manufacturer": "Antonov", "model": "An-124", "category": "freighter", "capacity": 0 },
-  { "code": "A19N", "manufacturer": "Airbus", "model": "A319neo", "category": "narrowbody", "capacity": 156 },
-  { "code": "A20N", "manufacturer": "Airbus", "model": "A320neo", "category": "narrowbody", "capacity": 195 },
-  { "code": "A21N", "manufacturer": "Airbus", "model": "A321neo", "category": "narrowbody", "capacity": 244 },
-  { "code": "A21X", "manufacturer": "Airbus", "model": "A321XLR", "category": "narrowbody", "capacity": 244 },
-  { "code": "A220", "manufacturer": "Airbus", "model": "A220-100", "category": "narrowbody", "capacity": 135 },
-  { "code": "A223", "manufacturer": "Airbus", "model": "A220-300", "category": "narrowbody", "capacity": 160 },
-  { "code": "A300", "manufacturer": "Airbus", "model": "A300", "category": "widebody", "capacity": 266 },
-  { "code": "A306", "manufacturer": "Airbus", "model": "A300-600", "category": "widebody", "capacity": 266 },
-  { "code": "A310", "manufacturer": "Airbus", "model": "A310", "category": "widebody", "capacity": 240 },
-  { "code": "A318", "manufacturer": "Airbus", "model": "A318", "category": "narrowbody", "capacity": 132 },
-  { "code": "A319", "manufacturer": "Airbus", "model": "A319", "category": "narrowbody", "capacity": 156 },
-  { "code": "A320", "manufacturer": "Airbus", "model": "A320", "category": "narrowbody", "capacity": 180 },
-  { "code": "A321", "manufacturer": "Airbus", "model": "A321", "category": "narrowbody", "capacity": 220 },
-  { "code": "A332", "manufacturer": "Airbus", "model": "A330-200", "category": "widebody", "capacity": 247 },
-  { "code": "A333", "manufacturer": "Airbus", "model": "A330-300", "category": "widebody", "capacity": 277 },
-  { "code": "A338", "manufacturer": "Airbus", "model": "A330-800neo", "category": "widebody", "capacity": 257 },
-  { "code": "A339", "manufacturer": "Airbus", "model": "A330-900neo", "category": "widebody", "capacity": 287 },
-  { "code": "A342", "manufacturer": "Airbus", "model": "A340-200", "category": "widebody", "capacity": 261 },
-  { "code": "A343", "manufacturer": "Airbus", "model": "A340-300", "category": "widebody", "capacity": 295 },
-  { "code": "A345", "manufacturer": "Airbus", "model": "A340-500", "category": "widebody", "capacity": 313 },
-  { "code": "A346", "manufacturer": "Airbus", "model": "A340-600", "category": "widebody", "capacity": 380 },
-  { "code": "A359", "manufacturer": "Airbus", "model": "A350-900", "category": "widebody", "capacity": 325 },
-  { "code": "A35K", "manufacturer": "Airbus", "model": "A350-1000", "category": "widebody", "capacity": 369 },
-  { "code": "A388", "manufacturer": "Airbus", "model": "A380-800", "category": "jumbo", "capacity": 555 },
-  { "code": "AT43", "manufacturer": "ATR", "model": "ATR 42-300/320", "category": "regional", "capacity": 48 },
-  { "code": "AT45", "manufacturer": "ATR", "model": "ATR 42-500", "category": "regional", "capacity": 48 },
-  { "code": "AT46", "manufacturer": "ATR", "model": "ATR 42-600", "category": "regional", "capacity": 50 },
-  { "code": "AT72", "manufacturer": "ATR", "model": "ATR 72", "category": "regional", "capacity": 70 },
-  { "code": "AT75", "manufacturer": "ATR", "model": "ATR 72-500", "category": "regional", "capacity": 72 },
-  { "code": "AT76", "manufacturer": "ATR", "model": "ATR 72-600", "category": "regional", "capacity": 78 },
-  { "code": "BCS1", "manufacturer": "Bombardier", "model": "CS100 (now A220-100)", "category": "narrowbody", "capacity": 135 },
-  { "code": "BCS3", "manufacturer": "Bombardier", "model": "CS300 (now A220-300)", "category": "narrowbody", "capacity": 160 },
-  { "code": "CRJ1", "manufacturer": "Bombardier", "model": "CRJ-100", "category": "regional", "capacity": 50 },
-  { "code": "CRJ2", "manufacturer": "Bombardier", "model": "CRJ-200", "category": "regional", "capacity": 50 },
-  { "code": "CRJ7", "manufacturer": "Bombardier", "model": "CRJ-700", "category": "regional", "capacity": 70 },
-  { "code": "CRJ9", "manufacturer": "Bombardier", "model": "CRJ-900", "category": "regional", "capacity": 88 },
-  { "code": "CRJX", "manufacturer": "Bombardier", "model": "CRJ-1000", "category": "regional", "capacity": 104 },
-  { "code": "DH8A", "manufacturer": "Bombardier", "model": "Dash 8 Q100", "category": "regional", "capacity": 39 },
-  { "code": "DH8B", "manufacturer": "Bombardier", "model": "Dash 8 Q200", "category": "regional", "capacity": 39 },
-  { "code": "DH8C", "manufacturer": "Bombardier", "model": "Dash 8 Q300", "category": "regional", "capacity": 56 },
-  { "code": "DH8D", "manufacturer": "Bombardier", "model": "Dash 8 Q400", "category": "regional", "capacity": 78 },
-  { "code": "E170", "manufacturer": "Embraer", "model": "E170", "category": "regional", "capacity": 76 },
-  { "code": "E75L", "manufacturer": "Embraer", "model": "E175 (long wing)", "category": "regional", "capacity": 88 },
-  { "code": "E75S", "manufacturer": "Embraer", "model": "E175 (short wing)", "category": "regional", "capacity": 76 },
-  { "code": "E190", "manufacturer": "Embraer", "model": "E190", "category": "regional", "capacity": 100 },
-  { "code": "E195", "manufacturer": "Embraer", "model": "E195", "category": "regional", "capacity": 124 },
-  { "code": "E290", "manufacturer": "Embraer", "model": "E190-E2", "category": "regional", "capacity": 106 },
-  { "code": "E295", "manufacturer": "Embraer", "model": "E195-E2", "category": "regional", "capacity": 132 },
-  { "code": "F70", "manufacturer": "Fokker", "model": "Fokker 70", "category": "regional", "capacity": 79 },
-  { "code": "F100", "manufacturer": "Fokker", "model": "Fokker 100", "category": "regional", "capacity": 109 },
-  { "code": "MD11", "manufacturer": "McDonnell Douglas", "model": "MD-11", "category": "widebody", "capacity": 293 },
-  { "code": "MD81", "manufacturer": "McDonnell Douglas", "model": "MD-81", "category": "narrowbody", "capacity": 155 },
-  { "code": "MD82", "manufacturer": "McDonnell Douglas", "model": "MD-82", "category": "narrowbody", "capacity": 155 },
-  { "code": "MD83", "manufacturer": "McDonnell Douglas", "model": "MD-83", "category": "narrowbody", "capacity": 155 },
-  { "code": "MD87", "manufacturer": "McDonnell Douglas", "model": "MD-87", "category": "narrowbody", "capacity": 130 },
-  { "code": "MD88", "manufacturer": "McDonnell Douglas", "model": "MD-88", "category": "narrowbody", "capacity": 142 },
-  { "code": "MD90", "manufacturer": "McDonnell Douglas", "model": "MD-90", "category": "narrowbody", "capacity": 153 },
-  { "code": "DC10", "manufacturer": "McDonnell Douglas", "model": "DC-10", "category": "widebody", "capacity": 380 },
-  { "code": "DC93", "manufacturer": "McDonnell Douglas", "model": "DC-9-30", "category": "narrowbody", "capacity": 115 },
-  { "code": "DC95", "manufacturer": "McDonnell Douglas", "model": "DC-9-50", "category": "narrowbody", "capacity": 139 },
-  { "code": "CONC", "manufacturer": "Aérospatiale/BAC", "model": "Concorde", "category": "supersonic", "capacity": 100 },
-  { "code": "B461", "manufacturer": "BAe", "model": "146-100", "category": "regional", "capacity": 70 },
-  { "code": "B462", "manufacturer": "BAe", "model": "146-200", "category": "regional", "capacity": 85 },
-  { "code": "B463", "manufacturer": "BAe", "model": "146-300", "category": "regional", "capacity": 100 },
-  { "code": "RJ70", "manufacturer": "BAe", "model": "Avro RJ70", "category": "regional", "capacity": 70 },
-  { "code": "RJ85", "manufacturer": "BAe", "model": "Avro RJ85", "category": "regional", "capacity": 85 },
-  { "code": "RJ1H", "manufacturer": "BAe", "model": "Avro RJ100", "category": "regional", "capacity": 100 },
-  { "code": "SU95", "manufacturer": "Sukhoi", "model": "Superjet 100", "category": "regional", "capacity": 98 },
-  { "code": "TU54", "manufacturer": "Tupolev", "model": "Tu-154", "category": "narrowbody", "capacity": 180 },
-  { "code": "TU34", "manufacturer": "Tupolev", "model": "Tu-134", "category": "narrowbody", "capacity": 84 },
-  { "code": "IL62", "manufacturer": "Ilyushin", "model": "Il-62", "category": "narrowbody", "capacity": 174 },
-  { "code": "IL76", "manufacturer": "Ilyushin", "model": "Il-76", "category": "freighter", "capacity": 0 },
-  { "code": "IL96", "manufacturer": "Ilyushin", "model": "Il-96", "category": "widebody", "capacity": 300 },
-  { "code": "AN24", "manufacturer": "Antonov", "model": "An-24", "category": "regional", "capacity": 50 },
-  { "code": "AN26", "manufacturer": "Antonov", "model": "An-26", "category": "regional", "capacity": 40 },
-  { "code": "AN72", "manufacturer": "Antonov", "model": "An-72", "category": "regional", "capacity": 52 },
-  { "code": "AN140", "manufacturer": "Antonov", "model": "An-140", "category": "regional", "capacity": 52 },
-  { "code": "AN148", "manufacturer": "Antonov", "model": "An-148", "category": "regional", "capacity": 80 },
-  { "code": "C919", "manufacturer": "COMAC", "model": "C919", "category": "narrowbody", "capacity": 168 },
-  { "code": "ARJ2", "manufacturer": "COMAC", "model": "ARJ21", "category": "regional", "capacity": 90 },
-  { "code": "MRJ9", "manufacturer": "Mitsubishi", "model": "SpaceJet M90", "category": "regional", "capacity": 88 },
-  { "code": "BE17", "manufacturer": "Beechcraft", "model": "Model 17 Staggerwing", "category": "heritage", "capacity": 5 },
-  { "code": "DH06", "manufacturer": "de Havilland Canada", "model": "DHC-6 Twin Otter", "category": "regional", "capacity": 19 },
-  { "code": "DH3T", "manufacturer": "de Havilland Canada", "model": "Dash 7", "category": "regional", "capacity": 50 },
-  { "code": "C208", "manufacturer": "Cessna", "model": "208 Caravan", "category": "regional", "capacity": 14 },
-  { "code": "PC12", "manufacturer": "Pilatus", "model": "PC-12", "category": "regional", "capacity": 9 },
-  { "code": "L101", "manufacturer": "Lockheed", "model": "L-1011 TriStar", "category": "widebody", "capacity": 400 },
-  { "code": "L188", "manufacturer": "Lockheed", "model": "L-188 Electra", "category": "regional", "capacity": 98 },
-  { "code": "B722", "manufacturer": "Boeing", "model": "727-200", "category": "narrowbody", "capacity": 189 },
-  { "code": "B721", "manufacturer": "Boeing", "model": "727-100", "category": "narrowbody", "capacity": 131 },
-  { "code": "B701", "manufacturer": "Boeing", "model": "707", "category": "narrowbody", "capacity": 189 },
-  { "code": "DC8", "manufacturer": "McDonnell Douglas", "model": "DC-8", "category": "narrowbody", "capacity": 189 },
-  { "code": "B377", "manufacturer": "Boeing", "model": "377 Stratocruiser", "category": "heritage", "capacity": 100 },
-  { "code": "DC3", "manufacturer": "Douglas", "model": "DC-3", "category": "heritage", "capacity": 32 },
-  { "code": "DC6", "manufacturer": "Douglas", "model": "DC-6", "category": "heritage", "capacity": 102 },
-  { "code": "L749", "manufacturer": "Lockheed", "model": "Constellation L-749", "category": "heritage", "capacity": 64 },
-  { "code": "VC10", "manufacturer": "Vickers", "model": "VC10", "category": "narrowbody", "capacity": 151 },
-  { "code": "JU52", "manufacturer": "Junkers", "model": "Ju 52", "category": "heritage", "capacity": 17 },
-  { "code": "F50", "manufacturer": "Fokker", "model": "Fokker 50", "category": "regional", "capacity": 58 },
-  { "code": "S340", "manufacturer": "Saab", "model": "340", "category": "regional", "capacity": 34 },
-  { "code": "S2000", "manufacturer": "Saab", "model": "2000", "category": "regional", "capacity": 50 },
-  { "code": "AT43F", "manufacturer": "ATR", "model": "ATR 42 Freighter", "category": "freighter", "capacity": 0 },
-  { "code": "B190", "manufacturer": "Beechcraft", "model": "1900", "category": "regional", "capacity": 19 },
-  { "code": "BE20", "manufacturer": "Beechcraft", "model": "King Air 200", "category": "regional", "capacity": 13 },
-  { "code": "BE99", "manufacturer": "Beechcraft", "model": "Model 99", "category": "regional", "capacity": 17 },
-  { "code": "JS31", "manufacturer": "BAe", "model": "Jetstream 31", "category": "regional", "capacity": 19 },
-  { "code": "JS41", "manufacturer": "BAe", "model": "Jetstream 41", "category": "regional", "capacity": 29 },
-  { "code": "DO228", "manufacturer": "Dornier", "model": "228", "category": "regional", "capacity": 19 },
-  { "code": "D328", "manufacturer": "Dornier", "model": "328", "category": "regional", "capacity": 32 }
+  {
+    "code": "B712",
+    "manufacturer": "Boeing",
+    "model": "717-200",
+    "category": "narrowbody",
+    "capacity": 117
+  },
+  {
+    "code": "B731",
+    "manufacturer": "Boeing",
+    "model": "737-100",
+    "category": "narrowbody",
+    "capacity": 124
+  },
+  {
+    "code": "B732",
+    "manufacturer": "Boeing",
+    "model": "737-200",
+    "category": "narrowbody",
+    "capacity": 130
+  },
+  {
+    "code": "B733",
+    "manufacturer": "Boeing",
+    "model": "737-300",
+    "category": "narrowbody",
+    "capacity": 149
+  },
+  {
+    "code": "B734",
+    "manufacturer": "Boeing",
+    "model": "737-400",
+    "category": "narrowbody",
+    "capacity": 168
+  },
+  {
+    "code": "B735",
+    "manufacturer": "Boeing",
+    "model": "737-500",
+    "category": "narrowbody",
+    "capacity": 132
+  },
+  {
+    "code": "B736",
+    "manufacturer": "Boeing",
+    "model": "737-600",
+    "category": "narrowbody",
+    "capacity": 132
+  },
+  {
+    "code": "B737",
+    "manufacturer": "Boeing",
+    "model": "737-700",
+    "category": "narrowbody",
+    "capacity": 149
+  },
+  {
+    "code": "B738",
+    "manufacturer": "Boeing",
+    "model": "737-800",
+    "category": "narrowbody",
+    "capacity": 189
+  },
+  {
+    "code": "B739",
+    "manufacturer": "Boeing",
+    "model": "737-900",
+    "category": "narrowbody",
+    "capacity": 215
+  },
+  {
+    "code": "B73G",
+    "manufacturer": "Boeing",
+    "model": "737-700ER",
+    "category": "narrowbody",
+    "capacity": 126
+  },
+  {
+    "code": "B73H",
+    "manufacturer": "Boeing",
+    "model": "737-900ER",
+    "category": "narrowbody",
+    "capacity": 220
+  },
+  {
+    "code": "B37M",
+    "manufacturer": "Boeing",
+    "model": "737 MAX 7",
+    "category": "narrowbody",
+    "capacity": 172
+  },
+  {
+    "code": "B38M",
+    "manufacturer": "Boeing",
+    "model": "737 MAX 8",
+    "category": "narrowbody",
+    "capacity": 210
+  },
+  {
+    "code": "B39M",
+    "manufacturer": "Boeing",
+    "model": "737 MAX 9",
+    "category": "narrowbody",
+    "capacity": 220
+  },
+  {
+    "code": "B3XM",
+    "manufacturer": "Boeing",
+    "model": "737 MAX 10",
+    "category": "narrowbody",
+    "capacity": 230
+  },
+  {
+    "code": "B741",
+    "manufacturer": "Boeing",
+    "model": "747-100",
+    "category": "jumbo",
+    "capacity": 452
+  },
+  {
+    "code": "B742",
+    "manufacturer": "Boeing",
+    "model": "747-200",
+    "category": "jumbo",
+    "capacity": 452
+  },
+  {
+    "code": "B743",
+    "manufacturer": "Boeing",
+    "model": "747-300",
+    "category": "jumbo",
+    "capacity": 496
+  },
+  {
+    "code": "B744",
+    "manufacturer": "Boeing",
+    "model": "747-400",
+    "category": "jumbo",
+    "capacity": 524
+  },
+  {
+    "code": "B748",
+    "manufacturer": "Boeing",
+    "model": "747-8",
+    "category": "jumbo",
+    "capacity": 410
+  },
+  {
+    "code": "B752",
+    "manufacturer": "Boeing",
+    "model": "757-200",
+    "category": "narrowbody",
+    "capacity": 200
+  },
+  {
+    "code": "B753",
+    "manufacturer": "Boeing",
+    "model": "757-300",
+    "category": "narrowbody",
+    "capacity": 243
+  },
+  {
+    "code": "B762",
+    "manufacturer": "Boeing",
+    "model": "767-200",
+    "category": "widebody",
+    "capacity": 245
+  },
+  {
+    "code": "B763",
+    "manufacturer": "Boeing",
+    "model": "767-300",
+    "category": "widebody",
+    "capacity": 269
+  },
+  {
+    "code": "B764",
+    "manufacturer": "Boeing",
+    "model": "767-400",
+    "category": "widebody",
+    "capacity": 304
+  },
+  {
+    "code": "B772",
+    "manufacturer": "Boeing",
+    "model": "777-200",
+    "category": "widebody",
+    "capacity": 314
+  },
+  {
+    "code": "B77E",
+    "manufacturer": "Boeing",
+    "model": "777-200ER",
+    "category": "widebody",
+    "capacity": 314
+  },
+  {
+    "code": "B77L",
+    "manufacturer": "Boeing",
+    "model": "777-200LR",
+    "category": "widebody",
+    "capacity": 317
+  },
+  {
+    "code": "B773",
+    "manufacturer": "Boeing",
+    "model": "777-300",
+    "category": "widebody",
+    "capacity": 365
+  },
+  {
+    "code": "B77W",
+    "manufacturer": "Boeing",
+    "model": "777-300ER",
+    "category": "widebody",
+    "capacity": 396
+  },
+  {
+    "code": "B77F",
+    "manufacturer": "Boeing",
+    "model": "777 Freighter",
+    "category": "freighter",
+    "capacity": 0
+  },
+  {
+    "code": "B778",
+    "manufacturer": "Boeing",
+    "model": "777-8",
+    "category": "widebody",
+    "capacity": 384
+  },
+  {
+    "code": "B779",
+    "manufacturer": "Boeing",
+    "model": "777-9",
+    "category": "widebody",
+    "capacity": 426
+  },
+  {
+    "code": "B788",
+    "manufacturer": "Boeing",
+    "model": "787-8 Dreamliner",
+    "category": "widebody",
+    "capacity": 248
+  },
+  {
+    "code": "B789",
+    "manufacturer": "Boeing",
+    "model": "787-9 Dreamliner",
+    "category": "widebody",
+    "capacity": 296
+  },
+  {
+    "code": "B78X",
+    "manufacturer": "Boeing",
+    "model": "787-10 Dreamliner",
+    "category": "widebody",
+    "capacity": 336
+  },
+  {
+    "code": "A124",
+    "manufacturer": "Antonov",
+    "model": "An-124",
+    "category": "freighter",
+    "capacity": 0
+  },
+  {
+    "code": "A19N",
+    "manufacturer": "Airbus",
+    "model": "A319neo",
+    "category": "narrowbody",
+    "capacity": 156
+  },
+  {
+    "code": "A20N",
+    "manufacturer": "Airbus",
+    "model": "A320neo",
+    "category": "narrowbody",
+    "capacity": 195
+  },
+  {
+    "code": "A21N",
+    "manufacturer": "Airbus",
+    "model": "A321neo",
+    "category": "narrowbody",
+    "capacity": 244
+  },
+  {
+    "code": "A21X",
+    "manufacturer": "Airbus",
+    "model": "A321XLR",
+    "category": "narrowbody",
+    "capacity": 244
+  },
+  {
+    "code": "A220",
+    "manufacturer": "Airbus",
+    "model": "A220-100",
+    "category": "narrowbody",
+    "capacity": 135
+  },
+  {
+    "code": "A223",
+    "manufacturer": "Airbus",
+    "model": "A220-300",
+    "category": "narrowbody",
+    "capacity": 160
+  },
+  {
+    "code": "A300",
+    "manufacturer": "Airbus",
+    "model": "A300",
+    "category": "widebody",
+    "capacity": 266
+  },
+  {
+    "code": "A306",
+    "manufacturer": "Airbus",
+    "model": "A300-600",
+    "category": "widebody",
+    "capacity": 266
+  },
+  {
+    "code": "A310",
+    "manufacturer": "Airbus",
+    "model": "A310",
+    "category": "widebody",
+    "capacity": 240
+  },
+  {
+    "code": "A318",
+    "manufacturer": "Airbus",
+    "model": "A318",
+    "category": "narrowbody",
+    "capacity": 132
+  },
+  {
+    "code": "A319",
+    "manufacturer": "Airbus",
+    "model": "A319",
+    "category": "narrowbody",
+    "capacity": 156
+  },
+  {
+    "code": "A320",
+    "manufacturer": "Airbus",
+    "model": "A320",
+    "category": "narrowbody",
+    "capacity": 180
+  },
+  {
+    "code": "A321",
+    "manufacturer": "Airbus",
+    "model": "A321",
+    "category": "narrowbody",
+    "capacity": 220
+  },
+  {
+    "code": "A332",
+    "manufacturer": "Airbus",
+    "model": "A330-200",
+    "category": "widebody",
+    "capacity": 247
+  },
+  {
+    "code": "A333",
+    "manufacturer": "Airbus",
+    "model": "A330-300",
+    "category": "widebody",
+    "capacity": 277
+  },
+  {
+    "code": "A338",
+    "manufacturer": "Airbus",
+    "model": "A330-800neo",
+    "category": "widebody",
+    "capacity": 257
+  },
+  {
+    "code": "A339",
+    "manufacturer": "Airbus",
+    "model": "A330-900neo",
+    "category": "widebody",
+    "capacity": 287
+  },
+  {
+    "code": "A342",
+    "manufacturer": "Airbus",
+    "model": "A340-200",
+    "category": "widebody",
+    "capacity": 261
+  },
+  {
+    "code": "A343",
+    "manufacturer": "Airbus",
+    "model": "A340-300",
+    "category": "widebody",
+    "capacity": 295
+  },
+  {
+    "code": "A345",
+    "manufacturer": "Airbus",
+    "model": "A340-500",
+    "category": "widebody",
+    "capacity": 313
+  },
+  {
+    "code": "A346",
+    "manufacturer": "Airbus",
+    "model": "A340-600",
+    "category": "widebody",
+    "capacity": 380
+  },
+  {
+    "code": "A359",
+    "manufacturer": "Airbus",
+    "model": "A350-900",
+    "category": "widebody",
+    "capacity": 325
+  },
+  {
+    "code": "A35K",
+    "manufacturer": "Airbus",
+    "model": "A350-1000",
+    "category": "widebody",
+    "capacity": 369
+  },
+  {
+    "code": "A388",
+    "manufacturer": "Airbus",
+    "model": "A380-800",
+    "category": "jumbo",
+    "capacity": 555
+  },
+  {
+    "code": "AT43",
+    "manufacturer": "ATR",
+    "model": "ATR 42-300/320",
+    "category": "regional",
+    "capacity": 48
+  },
+  {
+    "code": "AT45",
+    "manufacturer": "ATR",
+    "model": "ATR 42-500",
+    "category": "regional",
+    "capacity": 48
+  },
+  {
+    "code": "AT46",
+    "manufacturer": "ATR",
+    "model": "ATR 42-600",
+    "category": "regional",
+    "capacity": 50
+  },
+  {
+    "code": "AT72",
+    "manufacturer": "ATR",
+    "model": "ATR 72",
+    "category": "regional",
+    "capacity": 70
+  },
+  {
+    "code": "AT75",
+    "manufacturer": "ATR",
+    "model": "ATR 72-500",
+    "category": "regional",
+    "capacity": 72
+  },
+  {
+    "code": "AT76",
+    "manufacturer": "ATR",
+    "model": "ATR 72-600",
+    "category": "regional",
+    "capacity": 78
+  },
+  {
+    "code": "BCS1",
+    "manufacturer": "Bombardier",
+    "model": "CS100 (now A220-100)",
+    "category": "narrowbody",
+    "capacity": 135
+  },
+  {
+    "code": "BCS3",
+    "manufacturer": "Bombardier",
+    "model": "CS300 (now A220-300)",
+    "category": "narrowbody",
+    "capacity": 160
+  },
+  {
+    "code": "CRJ1",
+    "manufacturer": "Bombardier",
+    "model": "CRJ-100",
+    "category": "regional",
+    "capacity": 50
+  },
+  {
+    "code": "CRJ2",
+    "manufacturer": "Bombardier",
+    "model": "CRJ-200",
+    "category": "regional",
+    "capacity": 50
+  },
+  {
+    "code": "CRJ7",
+    "manufacturer": "Bombardier",
+    "model": "CRJ-700",
+    "category": "regional",
+    "capacity": 70
+  },
+  {
+    "code": "CRJ9",
+    "manufacturer": "Bombardier",
+    "model": "CRJ-900",
+    "category": "regional",
+    "capacity": 88
+  },
+  {
+    "code": "CRJX",
+    "manufacturer": "Bombardier",
+    "model": "CRJ-1000",
+    "category": "regional",
+    "capacity": 104
+  },
+  {
+    "code": "DH8A",
+    "manufacturer": "Bombardier",
+    "model": "Dash 8 Q100",
+    "category": "regional",
+    "capacity": 39
+  },
+  {
+    "code": "DH8B",
+    "manufacturer": "Bombardier",
+    "model": "Dash 8 Q200",
+    "category": "regional",
+    "capacity": 39
+  },
+  {
+    "code": "DH8C",
+    "manufacturer": "Bombardier",
+    "model": "Dash 8 Q300",
+    "category": "regional",
+    "capacity": 56
+  },
+  {
+    "code": "DH8D",
+    "manufacturer": "Bombardier",
+    "model": "Dash 8 Q400",
+    "category": "regional",
+    "capacity": 78
+  },
+  {
+    "code": "E170",
+    "manufacturer": "Embraer",
+    "model": "E170",
+    "category": "regional",
+    "capacity": 76
+  },
+  {
+    "code": "E75L",
+    "manufacturer": "Embraer",
+    "model": "E175 (long wing)",
+    "category": "regional",
+    "capacity": 88
+  },
+  {
+    "code": "E75S",
+    "manufacturer": "Embraer",
+    "model": "E175 (short wing)",
+    "category": "regional",
+    "capacity": 76
+  },
+  {
+    "code": "E190",
+    "manufacturer": "Embraer",
+    "model": "E190",
+    "category": "regional",
+    "capacity": 100
+  },
+  {
+    "code": "E195",
+    "manufacturer": "Embraer",
+    "model": "E195",
+    "category": "regional",
+    "capacity": 124
+  },
+  {
+    "code": "E290",
+    "manufacturer": "Embraer",
+    "model": "E190-E2",
+    "category": "regional",
+    "capacity": 106
+  },
+  {
+    "code": "E295",
+    "manufacturer": "Embraer",
+    "model": "E195-E2",
+    "category": "regional",
+    "capacity": 132
+  },
+  {
+    "code": "F70",
+    "manufacturer": "Fokker",
+    "model": "Fokker 70",
+    "category": "regional",
+    "capacity": 79
+  },
+  {
+    "code": "F100",
+    "manufacturer": "Fokker",
+    "model": "Fokker 100",
+    "category": "regional",
+    "capacity": 109
+  },
+  {
+    "code": "MD11",
+    "manufacturer": "McDonnell Douglas",
+    "model": "MD-11",
+    "category": "widebody",
+    "capacity": 293
+  },
+  {
+    "code": "MD81",
+    "manufacturer": "McDonnell Douglas",
+    "model": "MD-81",
+    "category": "narrowbody",
+    "capacity": 155
+  },
+  {
+    "code": "MD82",
+    "manufacturer": "McDonnell Douglas",
+    "model": "MD-82",
+    "category": "narrowbody",
+    "capacity": 155
+  },
+  {
+    "code": "MD83",
+    "manufacturer": "McDonnell Douglas",
+    "model": "MD-83",
+    "category": "narrowbody",
+    "capacity": 155
+  },
+  {
+    "code": "MD87",
+    "manufacturer": "McDonnell Douglas",
+    "model": "MD-87",
+    "category": "narrowbody",
+    "capacity": 130
+  },
+  {
+    "code": "MD88",
+    "manufacturer": "McDonnell Douglas",
+    "model": "MD-88",
+    "category": "narrowbody",
+    "capacity": 142
+  },
+  {
+    "code": "MD90",
+    "manufacturer": "McDonnell Douglas",
+    "model": "MD-90",
+    "category": "narrowbody",
+    "capacity": 153
+  },
+  {
+    "code": "DC10",
+    "manufacturer": "McDonnell Douglas",
+    "model": "DC-10",
+    "category": "widebody",
+    "capacity": 380
+  },
+  {
+    "code": "DC93",
+    "manufacturer": "McDonnell Douglas",
+    "model": "DC-9-30",
+    "category": "narrowbody",
+    "capacity": 115
+  },
+  {
+    "code": "DC95",
+    "manufacturer": "McDonnell Douglas",
+    "model": "DC-9-50",
+    "category": "narrowbody",
+    "capacity": 139
+  },
+  {
+    "code": "CONC",
+    "manufacturer": "Aérospatiale/BAC",
+    "model": "Concorde",
+    "category": "supersonic",
+    "capacity": 100
+  },
+  {
+    "code": "B461",
+    "manufacturer": "BAe",
+    "model": "146-100",
+    "category": "regional",
+    "capacity": 70
+  },
+  {
+    "code": "B462",
+    "manufacturer": "BAe",
+    "model": "146-200",
+    "category": "regional",
+    "capacity": 85
+  },
+  {
+    "code": "B463",
+    "manufacturer": "BAe",
+    "model": "146-300",
+    "category": "regional",
+    "capacity": 100
+  },
+  {
+    "code": "RJ70",
+    "manufacturer": "BAe",
+    "model": "Avro RJ70",
+    "category": "regional",
+    "capacity": 70
+  },
+  {
+    "code": "RJ85",
+    "manufacturer": "BAe",
+    "model": "Avro RJ85",
+    "category": "regional",
+    "capacity": 85
+  },
+  {
+    "code": "RJ1H",
+    "manufacturer": "BAe",
+    "model": "Avro RJ100",
+    "category": "regional",
+    "capacity": 100
+  },
+  {
+    "code": "SU95",
+    "manufacturer": "Sukhoi",
+    "model": "Superjet 100",
+    "category": "regional",
+    "capacity": 98
+  },
+  {
+    "code": "TU54",
+    "manufacturer": "Tupolev",
+    "model": "Tu-154",
+    "category": "narrowbody",
+    "capacity": 180
+  },
+  {
+    "code": "TU34",
+    "manufacturer": "Tupolev",
+    "model": "Tu-134",
+    "category": "narrowbody",
+    "capacity": 84
+  },
+  {
+    "code": "IL62",
+    "manufacturer": "Ilyushin",
+    "model": "Il-62",
+    "category": "narrowbody",
+    "capacity": 174
+  },
+  {
+    "code": "IL76",
+    "manufacturer": "Ilyushin",
+    "model": "Il-76",
+    "category": "freighter",
+    "capacity": 0
+  },
+  {
+    "code": "IL96",
+    "manufacturer": "Ilyushin",
+    "model": "Il-96",
+    "category": "widebody",
+    "capacity": 300
+  },
+  {
+    "code": "AN24",
+    "manufacturer": "Antonov",
+    "model": "An-24",
+    "category": "regional",
+    "capacity": 50
+  },
+  {
+    "code": "AN26",
+    "manufacturer": "Antonov",
+    "model": "An-26",
+    "category": "regional",
+    "capacity": 40
+  },
+  {
+    "code": "AN72",
+    "manufacturer": "Antonov",
+    "model": "An-72",
+    "category": "regional",
+    "capacity": 52
+  },
+  {
+    "code": "AN140",
+    "manufacturer": "Antonov",
+    "model": "An-140",
+    "category": "regional",
+    "capacity": 52
+  },
+  {
+    "code": "AN148",
+    "manufacturer": "Antonov",
+    "model": "An-148",
+    "category": "regional",
+    "capacity": 80
+  },
+  {
+    "code": "C919",
+    "manufacturer": "COMAC",
+    "model": "C919",
+    "category": "narrowbody",
+    "capacity": 168
+  },
+  {
+    "code": "ARJ2",
+    "manufacturer": "COMAC",
+    "model": "ARJ21",
+    "category": "regional",
+    "capacity": 90
+  },
+  {
+    "code": "MRJ9",
+    "manufacturer": "Mitsubishi",
+    "model": "SpaceJet M90",
+    "category": "regional",
+    "capacity": 88
+  },
+  {
+    "code": "BE17",
+    "manufacturer": "Beechcraft",
+    "model": "Model 17 Staggerwing",
+    "category": "heritage",
+    "capacity": 5
+  },
+  {
+    "code": "DH06",
+    "manufacturer": "de Havilland Canada",
+    "model": "DHC-6 Twin Otter",
+    "category": "regional",
+    "capacity": 19
+  },
+  {
+    "code": "DH3T",
+    "manufacturer": "de Havilland Canada",
+    "model": "Dash 7",
+    "category": "regional",
+    "capacity": 50
+  },
+  {
+    "code": "C208",
+    "manufacturer": "Cessna",
+    "model": "208 Caravan",
+    "category": "regional",
+    "capacity": 14
+  },
+  {
+    "code": "PC12",
+    "manufacturer": "Pilatus",
+    "model": "PC-12",
+    "category": "regional",
+    "capacity": 9
+  },
+  {
+    "code": "L101",
+    "manufacturer": "Lockheed",
+    "model": "L-1011 TriStar",
+    "category": "widebody",
+    "capacity": 400
+  },
+  {
+    "code": "L188",
+    "manufacturer": "Lockheed",
+    "model": "L-188 Electra",
+    "category": "regional",
+    "capacity": 98
+  },
+  {
+    "code": "B722",
+    "manufacturer": "Boeing",
+    "model": "727-200",
+    "category": "narrowbody",
+    "capacity": 189
+  },
+  {
+    "code": "B721",
+    "manufacturer": "Boeing",
+    "model": "727-100",
+    "category": "narrowbody",
+    "capacity": 131
+  },
+  {
+    "code": "B701",
+    "manufacturer": "Boeing",
+    "model": "707",
+    "category": "narrowbody",
+    "capacity": 189
+  },
+  {
+    "code": "DC8",
+    "manufacturer": "McDonnell Douglas",
+    "model": "DC-8",
+    "category": "narrowbody",
+    "capacity": 189
+  },
+  {
+    "code": "B377",
+    "manufacturer": "Boeing",
+    "model": "377 Stratocruiser",
+    "category": "heritage",
+    "capacity": 100
+  },
+  {
+    "code": "DC3",
+    "manufacturer": "Douglas",
+    "model": "DC-3",
+    "category": "heritage",
+    "capacity": 32
+  },
+  {
+    "code": "DC6",
+    "manufacturer": "Douglas",
+    "model": "DC-6",
+    "category": "heritage",
+    "capacity": 102
+  },
+  {
+    "code": "L749",
+    "manufacturer": "Lockheed",
+    "model": "Constellation L-749",
+    "category": "heritage",
+    "capacity": 64
+  },
+  {
+    "code": "VC10",
+    "manufacturer": "Vickers",
+    "model": "VC10",
+    "category": "narrowbody",
+    "capacity": 151
+  },
+  {
+    "code": "JU52",
+    "manufacturer": "Junkers",
+    "model": "Ju 52",
+    "category": "heritage",
+    "capacity": 17
+  },
+  {
+    "code": "F50",
+    "manufacturer": "Fokker",
+    "model": "Fokker 50",
+    "category": "regional",
+    "capacity": 58
+  },
+  {
+    "code": "S340",
+    "manufacturer": "Saab",
+    "model": "340",
+    "category": "regional",
+    "capacity": 34
+  },
+  {
+    "code": "S2000",
+    "manufacturer": "Saab",
+    "model": "2000",
+    "category": "regional",
+    "capacity": 50
+  },
+  {
+    "code": "AT43F",
+    "manufacturer": "ATR",
+    "model": "ATR 42 Freighter",
+    "category": "freighter",
+    "capacity": 0
+  },
+  {
+    "code": "B190",
+    "manufacturer": "Beechcraft",
+    "model": "1900",
+    "category": "regional",
+    "capacity": 19
+  },
+  {
+    "code": "BE20",
+    "manufacturer": "Beechcraft",
+    "model": "King Air 200",
+    "category": "regional",
+    "capacity": 13
+  },
+  {
+    "code": "BE99",
+    "manufacturer": "Beechcraft",
+    "model": "Model 99",
+    "category": "regional",
+    "capacity": 17
+  },
+  {
+    "code": "JS31",
+    "manufacturer": "BAe",
+    "model": "Jetstream 31",
+    "category": "regional",
+    "capacity": 19
+  },
+  {
+    "code": "JS41",
+    "manufacturer": "BAe",
+    "model": "Jetstream 41",
+    "category": "regional",
+    "capacity": 29
+  },
+  {
+    "code": "DO228",
+    "manufacturer": "Dornier",
+    "model": "228",
+    "category": "regional",
+    "capacity": 19
+  },
+  {
+    "code": "D328",
+    "manufacturer": "Dornier",
+    "model": "328",
+    "category": "regional",
+    "capacity": 32
+  }
 ]

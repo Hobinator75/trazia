@@ -239,8 +239,6 @@ describe('seedFromStatic', () => {
       .select()
       .from(locations)
       .where(eq(locations.isSystemSeed, true));
-    expect(seededRows).toHaveLength(
-      TEST_DATA.airports.length + TEST_DATA.trainStations.length,
-    );
+    expect(seededRows).toHaveLength(TEST_DATA.airports.length + TEST_DATA.trainStations.length);
   });
 });

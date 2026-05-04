@@ -72,10 +72,7 @@ export function evaluateAll(
 // Rule-level `mode` filtering still happens further down — the two
 // guards are complementary: appliesTo gates the achievement's overall
 // scope, rule.mode applies within `count`/`distance_total` etc.
-function scopeByAppliesTo(
-  achievement: Achievement,
-  ctx: AchievementContext,
-): AchievementContext {
+function scopeByAppliesTo(achievement: Achievement, ctx: AchievementContext): AchievementContext {
   const appliesTo = achievement.appliesTo;
   if (!appliesTo || appliesTo === 'cross') return ctx;
   const filtered = ctx.allJourneys.filter((j) => j.mode === appliesTo);

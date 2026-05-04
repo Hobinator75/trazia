@@ -44,10 +44,7 @@ describe('FlightForm onSubmit → buildFlightJourneyPatch', () => {
   });
 
   it('writes null durationMinutes when end time is missing', () => {
-    const patch = buildFlightJourneyPatch(
-      baseValues({ startTimeLocal: '14:00' }),
-      6204,
-    );
+    const patch = buildFlightJourneyPatch(baseValues({ startTimeLocal: '14:00' }), 6204);
     expect(patch.durationMinutes).toBeNull();
   });
 

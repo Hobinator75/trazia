@@ -32,7 +32,10 @@ if (files.length === 0) {
 
 const exports: string[] = [];
 for (const file of files) {
-  const constName = `M_${file.replace(/\.sql$/, '').replace(/[^A-Za-z0-9_]/g, '_').toUpperCase()}`;
+  const constName = `M_${file
+    .replace(/\.sql$/, '')
+    .replace(/[^A-Za-z0-9_]/g, '_')
+    .toUpperCase()}`;
   const sqlText = fs.readFileSync(path.join(MIGRATIONS_DIR, file), 'utf-8');
   exports.push(`export const ${constName} = ${JSON.stringify(sqlText)};`);
 }

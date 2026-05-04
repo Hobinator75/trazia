@@ -49,10 +49,7 @@ describe('OtherForm onSubmit → buildOtherJourneyPatch', () => {
   });
 
   it('writes null durationMinutes when end time is missing', () => {
-    const patch = buildOtherJourneyPatch(
-      baseValues({ startTimeLocal: '14:00' }),
-      baseInputs,
-    );
+    const patch = buildOtherJourneyPatch(baseValues({ startTimeLocal: '14:00' }), baseInputs);
     expect(patch.durationMinutes).toBeNull();
   });
 

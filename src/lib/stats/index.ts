@@ -289,9 +289,7 @@ export interface ModePieSlice {
 // Pure helper for the Stats Modi-Verteilung pie. Pulled out of
 // ChartsSection so the bucket logic is testable without React Native.
 // Returns null when there are no journeys (caller renders empty state).
-export function computeModePieData(
-  journeys: Pick<Journey, 'mode'>[],
-): ModePieSlice[] | null {
+export function computeModePieData(journeys: Pick<Journey, 'mode'>[]): ModePieSlice[] | null {
   const counts: Record<ModePieKey, number> = {
     flight: 0,
     train: 0,
@@ -309,7 +307,5 @@ export function computeModePieData(
   const total = counts.flight + counts.train + counts.car + counts.ship + counts.other;
   if (total === 0) return null;
   const order: ModePieKey[] = ['flight', 'train', 'car', 'ship', 'other'];
-  return order
-    .map((key) => ({ key, value: counts[key] }))
-    .filter((slice) => slice.value > 0);
+  return order.map((key) => ({ key, value: counts[key] })).filter((slice) => slice.value > 0);
 }

@@ -41,10 +41,10 @@ describe('launch-blocker reproductions', () => {
   // delegates the rename to the idempotent code-migration.
   it('SQL-0002 is conflict-safe when both legacy and canonical rows exist', () => {
     handle.sqlite
-      .prepare("INSERT INTO achievement_unlocks (id, achievement_id) VALUES (?, ?)")
+      .prepare('INSERT INTO achievement_unlocks (id, achievement_id) VALUES (?, ?)')
       .run('unlock-old', 'atlantic_crosser');
     handle.sqlite
-      .prepare("INSERT INTO achievement_unlocks (id, achievement_id) VALUES (?, ?)")
+      .prepare('INSERT INTO achievement_unlocks (id, achievement_id) VALUES (?, ?)')
       .run('unlock-new', 'transatlantic');
 
     const sqlText = fs.readFileSync(SQL_0002_PATH, 'utf-8');
@@ -66,7 +66,7 @@ describe('launch-blocker reproductions', () => {
   // must leave the achievement_unlocks table untouched.
   it('SQL-0002 is idempotent — running it twice is a no-op', () => {
     handle.sqlite
-      .prepare("INSERT INTO achievement_unlocks (id, achievement_id) VALUES (?, ?)")
+      .prepare('INSERT INTO achievement_unlocks (id, achievement_id) VALUES (?, ?)')
       .run('unlock-keep', 'transatlantic');
 
     const sqlText = fs.readFileSync(SQL_0002_PATH, 'utf-8');
@@ -152,12 +152,12 @@ describe('launch-blocker reproductions', () => {
     // Seed: one real journey the user wouldn't want to lose.
     handle.sqlite
       .prepare(
-        "INSERT INTO locations (id, name, lat, lng, type, is_system_seed) VALUES (?, ?, ?, ?, ?, ?)",
+        'INSERT INTO locations (id, name, lat, lng, type, is_system_seed) VALUES (?, ?, ?, ?, ?, ?)',
       )
       .run('loc-keep', 'Keep Location', 50, 8, 'airport', 0);
     handle.sqlite
       .prepare(
-        "INSERT INTO journeys (id, mode, from_location_id, to_location_id, date) VALUES (?, ?, ?, ?, ?)",
+        'INSERT INTO journeys (id, mode, from_location_id, to_location_id, date) VALUES (?, ?, ?, ?, ?)',
       )
       .run('j-keep', 'flight', 'loc-keep', 'loc-keep', '2026-04-01');
 

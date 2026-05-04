@@ -25,16 +25,19 @@ describe('reportMigrationOutcome', () => {
     const reportMessage = vi.fn(async () => {});
     const err = new Error('boom');
 
-    await reportMigrationOutcome(
-      sample({ error: err, applied: [migration], conflicts: [] }),
-      { reportException, reportMessage },
-    );
+    await reportMigrationOutcome(sample({ error: err, applied: [migration], conflicts: [] }), {
+      reportException,
+      reportMessage,
+    });
 
     expect(reportException).toHaveBeenCalledTimes(1);
-    expect(reportException).toHaveBeenCalledWith(err, expect.objectContaining({
-      origin: 'achievement-id-migration',
-      applied: ['atlantic_crosser'],
-    }));
+    expect(reportException).toHaveBeenCalledWith(
+      err,
+      expect.objectContaining({
+        origin: 'achievement-id-migration',
+        applied: ['atlantic_crosser'],
+      }),
+    );
     expect(reportMessage).not.toHaveBeenCalled();
   });
 
@@ -89,10 +92,10 @@ describe('reportMigrationOutcome', () => {
     const reportException = vi.fn(async () => {});
     const reportMessage = vi.fn(async () => {});
 
-    await reportMigrationOutcome(
-      sample({ applied: [migration], conflicts: [] }),
-      { reportException, reportMessage },
-    );
+    await reportMigrationOutcome(sample({ applied: [migration], conflicts: [] }), {
+      reportException,
+      reportMessage,
+    });
 
     expect(reportException).not.toHaveBeenCalled();
     expect(reportMessage).not.toHaveBeenCalled();

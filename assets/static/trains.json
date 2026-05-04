@@ -1,92 +1,617 @@
 [
-  { "code": "ICE1", "manufacturer": "Siemens / Bombardier", "model": "ICE 1 (BR 401)", "category": "highspeed", "country": "DE", "name_short": "ICE 1" },
-  { "code": "ICE2", "manufacturer": "Siemens / Bombardier", "model": "ICE 2 (BR 402)", "category": "highspeed", "country": "DE", "name_short": "ICE 2" },
-  { "code": "ICE3", "manufacturer": "Siemens", "model": "ICE 3 (BR 403/406)", "category": "highspeed", "country": "DE", "name_short": "ICE 3" },
-  { "code": "ICE3N", "manufacturer": "Siemens", "model": "ICE 3neo (BR 408)", "category": "highspeed", "country": "DE", "name_short": "ICE 3neo" },
-  { "code": "ICE4", "manufacturer": "Siemens / Bombardier", "model": "ICE 4 (BR 412)", "category": "highspeed", "country": "DE", "name_short": "ICE 4" },
-  { "code": "ICET", "manufacturer": "Bombardier", "model": "ICE T (BR 411/415)", "category": "highspeed", "country": "DE", "name_short": "ICE T" },
-  { "code": "ICETD", "manufacturer": "Siemens", "model": "ICE TD (BR 605)", "category": "highspeed", "country": "DE", "name_short": "ICE TD" },
-  { "code": "IC2", "manufacturer": "Bombardier", "model": "IC 2 (Doppelstock-IC, BR 146.5)", "category": "intercity", "country": "DE", "name_short": "IC 2" },
-  { "code": "IC", "manufacturer": "Various", "model": "InterCity (klassisch)", "category": "intercity", "country": "DE", "name_short": "IC" },
-  { "code": "EC", "manufacturer": "Various", "model": "EuroCity", "category": "intercity", "country": "DE", "name_short": "EC" },
-  { "code": "RE", "manufacturer": "Various", "model": "Regional Express", "category": "regional", "country": "DE", "name_short": "RE" },
-  { "code": "RB", "manufacturer": "Various", "model": "Regionalbahn", "category": "regional", "country": "DE", "name_short": "RB" },
-  { "code": "S-DE", "manufacturer": "Various", "model": "S-Bahn (Deutschland)", "category": "suburban", "country": "DE", "name_short": "S-Bahn" },
+  {
+    "code": "ICE1",
+    "manufacturer": "Siemens / Bombardier",
+    "model": "ICE 1 (BR 401)",
+    "category": "highspeed",
+    "country": "DE",
+    "name_short": "ICE 1"
+  },
+  {
+    "code": "ICE2",
+    "manufacturer": "Siemens / Bombardier",
+    "model": "ICE 2 (BR 402)",
+    "category": "highspeed",
+    "country": "DE",
+    "name_short": "ICE 2"
+  },
+  {
+    "code": "ICE3",
+    "manufacturer": "Siemens",
+    "model": "ICE 3 (BR 403/406)",
+    "category": "highspeed",
+    "country": "DE",
+    "name_short": "ICE 3"
+  },
+  {
+    "code": "ICE3N",
+    "manufacturer": "Siemens",
+    "model": "ICE 3neo (BR 408)",
+    "category": "highspeed",
+    "country": "DE",
+    "name_short": "ICE 3neo"
+  },
+  {
+    "code": "ICE4",
+    "manufacturer": "Siemens / Bombardier",
+    "model": "ICE 4 (BR 412)",
+    "category": "highspeed",
+    "country": "DE",
+    "name_short": "ICE 4"
+  },
+  {
+    "code": "ICET",
+    "manufacturer": "Bombardier",
+    "model": "ICE T (BR 411/415)",
+    "category": "highspeed",
+    "country": "DE",
+    "name_short": "ICE T"
+  },
+  {
+    "code": "ICETD",
+    "manufacturer": "Siemens",
+    "model": "ICE TD (BR 605)",
+    "category": "highspeed",
+    "country": "DE",
+    "name_short": "ICE TD"
+  },
+  {
+    "code": "IC2",
+    "manufacturer": "Bombardier",
+    "model": "IC 2 (Doppelstock-IC, BR 146.5)",
+    "category": "intercity",
+    "country": "DE",
+    "name_short": "IC 2"
+  },
+  {
+    "code": "IC",
+    "manufacturer": "Various",
+    "model": "InterCity (klassisch)",
+    "category": "intercity",
+    "country": "DE",
+    "name_short": "IC"
+  },
+  {
+    "code": "EC",
+    "manufacturer": "Various",
+    "model": "EuroCity",
+    "category": "intercity",
+    "country": "DE",
+    "name_short": "EC"
+  },
+  {
+    "code": "RE",
+    "manufacturer": "Various",
+    "model": "Regional Express",
+    "category": "regional",
+    "country": "DE",
+    "name_short": "RE"
+  },
+  {
+    "code": "RB",
+    "manufacturer": "Various",
+    "model": "Regionalbahn",
+    "category": "regional",
+    "country": "DE",
+    "name_short": "RB"
+  },
+  {
+    "code": "S-DE",
+    "manufacturer": "Various",
+    "model": "S-Bahn (Deutschland)",
+    "category": "suburban",
+    "country": "DE",
+    "name_short": "S-Bahn"
+  },
 
-  { "code": "RAILJET", "manufacturer": "Siemens", "model": "Railjet", "category": "intercity", "country": "AT", "name_short": "RJ" },
-  { "code": "NJ", "manufacturer": "Siemens", "model": "Nightjet", "category": "intercity", "country": "AT", "name_short": "NJ" },
-  { "code": "CJX", "manufacturer": "Siemens", "model": "Cityjet Xpress", "category": "intercity", "country": "AT", "name_short": "CJX" },
+  {
+    "code": "RAILJET",
+    "manufacturer": "Siemens",
+    "model": "Railjet",
+    "category": "intercity",
+    "country": "AT",
+    "name_short": "RJ"
+  },
+  {
+    "code": "NJ",
+    "manufacturer": "Siemens",
+    "model": "Nightjet",
+    "category": "intercity",
+    "country": "AT",
+    "name_short": "NJ"
+  },
+  {
+    "code": "CJX",
+    "manufacturer": "Siemens",
+    "model": "Cityjet Xpress",
+    "category": "intercity",
+    "country": "AT",
+    "name_short": "CJX"
+  },
 
-  { "code": "TGVSE", "manufacturer": "Alstom", "model": "TGV Sud-Est", "category": "highspeed", "country": "FR", "name_short": "TGV Sud-Est" },
-  { "code": "TGVA", "manufacturer": "Alstom", "model": "TGV Atlantique", "category": "highspeed", "country": "FR", "name_short": "TGV Atlantique" },
-  { "code": "TGVR", "manufacturer": "Alstom", "model": "TGV Réseau", "category": "highspeed", "country": "FR", "name_short": "TGV Réseau" },
-  { "code": "TGVD", "manufacturer": "Alstom", "model": "TGV Duplex", "category": "highspeed", "country": "FR", "name_short": "TGV Duplex" },
-  { "code": "TGVPOS", "manufacturer": "Alstom", "model": "TGV POS", "category": "highspeed", "country": "FR", "name_short": "TGV POS" },
-  { "code": "TGVE", "manufacturer": "Alstom", "model": "TGV Euroduplex", "category": "highspeed", "country": "FR", "name_short": "TGV Euroduplex" },
-  { "code": "TGVM", "manufacturer": "Alstom", "model": "TGV M (Avelia Horizon)", "category": "highspeed", "country": "FR", "name_short": "TGV M" },
-  { "code": "TER", "manufacturer": "Various", "model": "TER", "category": "regional", "country": "FR", "name_short": "TER" },
-  { "code": "INTERCITES", "manufacturer": "Various", "model": "Intercités", "category": "intercity", "country": "FR", "name_short": "Intercités" },
+  {
+    "code": "TGVSE",
+    "manufacturer": "Alstom",
+    "model": "TGV Sud-Est",
+    "category": "highspeed",
+    "country": "FR",
+    "name_short": "TGV Sud-Est"
+  },
+  {
+    "code": "TGVA",
+    "manufacturer": "Alstom",
+    "model": "TGV Atlantique",
+    "category": "highspeed",
+    "country": "FR",
+    "name_short": "TGV Atlantique"
+  },
+  {
+    "code": "TGVR",
+    "manufacturer": "Alstom",
+    "model": "TGV Réseau",
+    "category": "highspeed",
+    "country": "FR",
+    "name_short": "TGV Réseau"
+  },
+  {
+    "code": "TGVD",
+    "manufacturer": "Alstom",
+    "model": "TGV Duplex",
+    "category": "highspeed",
+    "country": "FR",
+    "name_short": "TGV Duplex"
+  },
+  {
+    "code": "TGVPOS",
+    "manufacturer": "Alstom",
+    "model": "TGV POS",
+    "category": "highspeed",
+    "country": "FR",
+    "name_short": "TGV POS"
+  },
+  {
+    "code": "TGVE",
+    "manufacturer": "Alstom",
+    "model": "TGV Euroduplex",
+    "category": "highspeed",
+    "country": "FR",
+    "name_short": "TGV Euroduplex"
+  },
+  {
+    "code": "TGVM",
+    "manufacturer": "Alstom",
+    "model": "TGV M (Avelia Horizon)",
+    "category": "highspeed",
+    "country": "FR",
+    "name_short": "TGV M"
+  },
+  {
+    "code": "TER",
+    "manufacturer": "Various",
+    "model": "TER",
+    "category": "regional",
+    "country": "FR",
+    "name_short": "TER"
+  },
+  {
+    "code": "INTERCITES",
+    "manufacturer": "Various",
+    "model": "Intercités",
+    "category": "intercity",
+    "country": "FR",
+    "name_short": "Intercités"
+  },
 
-  { "code": "EUROSTAR", "manufacturer": "Alstom", "model": "Eurostar (Class 373)", "category": "highspeed", "country": "GB", "name_short": "Eurostar" },
-  { "code": "ES320", "manufacturer": "Siemens", "model": "Eurostar e320 (Class 374)", "category": "highspeed", "country": "GB", "name_short": "e320" },
+  {
+    "code": "EUROSTAR",
+    "manufacturer": "Alstom",
+    "model": "Eurostar (Class 373)",
+    "category": "highspeed",
+    "country": "GB",
+    "name_short": "Eurostar"
+  },
+  {
+    "code": "ES320",
+    "manufacturer": "Siemens",
+    "model": "Eurostar e320 (Class 374)",
+    "category": "highspeed",
+    "country": "GB",
+    "name_short": "e320"
+  },
 
-  { "code": "FR1000", "manufacturer": "Hitachi / Bombardier", "model": "Frecciarossa 1000 (ETR 400)", "category": "highspeed", "country": "IT", "name_short": "Frecciarossa 1000" },
-  { "code": "FR500", "manufacturer": "Alstom / FIAT", "model": "Frecciarossa (ETR 500)", "category": "highspeed", "country": "IT", "name_short": "Frecciarossa" },
-  { "code": "FA", "manufacturer": "Alstom", "model": "Frecciargento (ETR 600/610)", "category": "highspeed", "country": "IT", "name_short": "Frecciargento" },
-  { "code": "FB", "manufacturer": "Alstom", "model": "Frecciabianca", "category": "highspeed", "country": "IT", "name_short": "Frecciabianca" },
-  { "code": "ITALOAGV", "manufacturer": "Alstom", "model": "Italo AGV (ETR 575)", "category": "highspeed", "country": "IT", "name_short": "Italo AGV" },
-  { "code": "ITALOEVO", "manufacturer": "Alstom", "model": "Italo EVO (ETR 675)", "category": "highspeed", "country": "IT", "name_short": "Italo EVO" },
+  {
+    "code": "FR1000",
+    "manufacturer": "Hitachi / Bombardier",
+    "model": "Frecciarossa 1000 (ETR 400)",
+    "category": "highspeed",
+    "country": "IT",
+    "name_short": "Frecciarossa 1000"
+  },
+  {
+    "code": "FR500",
+    "manufacturer": "Alstom / FIAT",
+    "model": "Frecciarossa (ETR 500)",
+    "category": "highspeed",
+    "country": "IT",
+    "name_short": "Frecciarossa"
+  },
+  {
+    "code": "FA",
+    "manufacturer": "Alstom",
+    "model": "Frecciargento (ETR 600/610)",
+    "category": "highspeed",
+    "country": "IT",
+    "name_short": "Frecciargento"
+  },
+  {
+    "code": "FB",
+    "manufacturer": "Alstom",
+    "model": "Frecciabianca",
+    "category": "highspeed",
+    "country": "IT",
+    "name_short": "Frecciabianca"
+  },
+  {
+    "code": "ITALOAGV",
+    "manufacturer": "Alstom",
+    "model": "Italo AGV (ETR 575)",
+    "category": "highspeed",
+    "country": "IT",
+    "name_short": "Italo AGV"
+  },
+  {
+    "code": "ITALOEVO",
+    "manufacturer": "Alstom",
+    "model": "Italo EVO (ETR 675)",
+    "category": "highspeed",
+    "country": "IT",
+    "name_short": "Italo EVO"
+  },
 
-  { "code": "AVE103", "manufacturer": "Siemens", "model": "AVE S-103", "category": "highspeed", "country": "ES", "name_short": "AVE S-103" },
-  { "code": "AVE100", "manufacturer": "Alstom", "model": "AVE S-100", "category": "highspeed", "country": "ES", "name_short": "AVE S-100" },
-  { "code": "AVE112", "manufacturer": "Talgo / Bombardier", "model": "AVE S-112", "category": "highspeed", "country": "ES", "name_short": "AVE S-112" },
-  { "code": "AVE102", "manufacturer": "Talgo / Bombardier", "model": "AVE S-102 (Pato)", "category": "highspeed", "country": "ES", "name_short": "AVE S-102" },
-  { "code": "AVLO", "manufacturer": "Talgo / Bombardier", "model": "Avlo (S-106)", "category": "highspeed", "country": "ES", "name_short": "Avlo" },
-  { "code": "ALVIA", "manufacturer": "Talgo", "model": "Alvia", "category": "intercity", "country": "ES", "name_short": "Alvia" },
-  { "code": "AVANT", "manufacturer": "Various", "model": "Avant", "category": "highspeed", "country": "ES", "name_short": "Avant" },
+  {
+    "code": "AVE103",
+    "manufacturer": "Siemens",
+    "model": "AVE S-103",
+    "category": "highspeed",
+    "country": "ES",
+    "name_short": "AVE S-103"
+  },
+  {
+    "code": "AVE100",
+    "manufacturer": "Alstom",
+    "model": "AVE S-100",
+    "category": "highspeed",
+    "country": "ES",
+    "name_short": "AVE S-100"
+  },
+  {
+    "code": "AVE112",
+    "manufacturer": "Talgo / Bombardier",
+    "model": "AVE S-112",
+    "category": "highspeed",
+    "country": "ES",
+    "name_short": "AVE S-112"
+  },
+  {
+    "code": "AVE102",
+    "manufacturer": "Talgo / Bombardier",
+    "model": "AVE S-102 (Pato)",
+    "category": "highspeed",
+    "country": "ES",
+    "name_short": "AVE S-102"
+  },
+  {
+    "code": "AVLO",
+    "manufacturer": "Talgo / Bombardier",
+    "model": "Avlo (S-106)",
+    "category": "highspeed",
+    "country": "ES",
+    "name_short": "Avlo"
+  },
+  {
+    "code": "ALVIA",
+    "manufacturer": "Talgo",
+    "model": "Alvia",
+    "category": "intercity",
+    "country": "ES",
+    "name_short": "Alvia"
+  },
+  {
+    "code": "AVANT",
+    "manufacturer": "Various",
+    "model": "Avant",
+    "category": "highspeed",
+    "country": "ES",
+    "name_short": "Avant"
+  },
 
-  { "code": "AP", "manufacturer": "Alstom", "model": "Alfa Pendular", "category": "highspeed", "country": "PT", "name_short": "Alfa Pendular" },
+  {
+    "code": "AP",
+    "manufacturer": "Alstom",
+    "model": "Alfa Pendular",
+    "category": "highspeed",
+    "country": "PT",
+    "name_short": "Alfa Pendular"
+  },
 
-  { "code": "SHIN0", "manufacturer": "Hitachi / Kawasaki", "model": "Shinkansen 0 series", "category": "highspeed", "country": "JP", "name_short": "0系" },
-  { "code": "SHIN300", "manufacturer": "Various", "model": "Shinkansen 300 series", "category": "highspeed", "country": "JP", "name_short": "300系" },
-  { "code": "SHIN500", "manufacturer": "Hitachi / Kawasaki", "model": "Shinkansen 500 series", "category": "highspeed", "country": "JP", "name_short": "500系" },
-  { "code": "SHIN700", "manufacturer": "Various", "model": "Shinkansen 700 series", "category": "highspeed", "country": "JP", "name_short": "700系" },
-  { "code": "SHIN800", "manufacturer": "Hitachi", "model": "Shinkansen 800 series", "category": "highspeed", "country": "JP", "name_short": "800系" },
-  { "code": "SHINN700S", "manufacturer": "Various", "model": "Shinkansen N700S", "category": "highspeed", "country": "JP", "name_short": "N700S" },
-  { "code": "SHINE5", "manufacturer": "Hitachi / Kawasaki", "model": "Shinkansen E5", "category": "highspeed", "country": "JP", "name_short": "E5" },
-  { "code": "SHINE6", "manufacturer": "Hitachi / Kawasaki", "model": "Shinkansen E6", "category": "highspeed", "country": "JP", "name_short": "E6" },
-  { "code": "SHINE7", "manufacturer": "Hitachi / Kawasaki", "model": "Shinkansen E7/W7", "category": "highspeed", "country": "JP", "name_short": "E7/W7" },
-  { "code": "SHINH5", "manufacturer": "Kawasaki / Hitachi", "model": "Shinkansen H5", "category": "highspeed", "country": "JP", "name_short": "H5" },
+  {
+    "code": "SHIN0",
+    "manufacturer": "Hitachi / Kawasaki",
+    "model": "Shinkansen 0 series",
+    "category": "highspeed",
+    "country": "JP",
+    "name_short": "0系"
+  },
+  {
+    "code": "SHIN300",
+    "manufacturer": "Various",
+    "model": "Shinkansen 300 series",
+    "category": "highspeed",
+    "country": "JP",
+    "name_short": "300系"
+  },
+  {
+    "code": "SHIN500",
+    "manufacturer": "Hitachi / Kawasaki",
+    "model": "Shinkansen 500 series",
+    "category": "highspeed",
+    "country": "JP",
+    "name_short": "500系"
+  },
+  {
+    "code": "SHIN700",
+    "manufacturer": "Various",
+    "model": "Shinkansen 700 series",
+    "category": "highspeed",
+    "country": "JP",
+    "name_short": "700系"
+  },
+  {
+    "code": "SHIN800",
+    "manufacturer": "Hitachi",
+    "model": "Shinkansen 800 series",
+    "category": "highspeed",
+    "country": "JP",
+    "name_short": "800系"
+  },
+  {
+    "code": "SHINN700S",
+    "manufacturer": "Various",
+    "model": "Shinkansen N700S",
+    "category": "highspeed",
+    "country": "JP",
+    "name_short": "N700S"
+  },
+  {
+    "code": "SHINE5",
+    "manufacturer": "Hitachi / Kawasaki",
+    "model": "Shinkansen E5",
+    "category": "highspeed",
+    "country": "JP",
+    "name_short": "E5"
+  },
+  {
+    "code": "SHINE6",
+    "manufacturer": "Hitachi / Kawasaki",
+    "model": "Shinkansen E6",
+    "category": "highspeed",
+    "country": "JP",
+    "name_short": "E6"
+  },
+  {
+    "code": "SHINE7",
+    "manufacturer": "Hitachi / Kawasaki",
+    "model": "Shinkansen E7/W7",
+    "category": "highspeed",
+    "country": "JP",
+    "name_short": "E7/W7"
+  },
+  {
+    "code": "SHINH5",
+    "manufacturer": "Kawasaki / Hitachi",
+    "model": "Shinkansen H5",
+    "category": "highspeed",
+    "country": "JP",
+    "name_short": "H5"
+  },
 
-  { "code": "ACELA", "manufacturer": "Alstom / Bombardier", "model": "Acela", "category": "highspeed", "country": "US", "name_short": "Acela" },
-  { "code": "AMTRACK", "manufacturer": "Various", "model": "Amtrak Northeast Regional", "category": "intercity", "country": "US", "name_short": "Amtrak" },
-  { "code": "AMTLD", "manufacturer": "Various", "model": "Amtrak Long Distance", "category": "intercity", "country": "US", "name_short": "Amtrak LD" },
+  {
+    "code": "ACELA",
+    "manufacturer": "Alstom / Bombardier",
+    "model": "Acela",
+    "category": "highspeed",
+    "country": "US",
+    "name_short": "Acela"
+  },
+  {
+    "code": "AMTRACK",
+    "manufacturer": "Various",
+    "model": "Amtrak Northeast Regional",
+    "category": "intercity",
+    "country": "US",
+    "name_short": "Amtrak"
+  },
+  {
+    "code": "AMTLD",
+    "manufacturer": "Various",
+    "model": "Amtrak Long Distance",
+    "category": "intercity",
+    "country": "US",
+    "name_short": "Amtrak LD"
+  },
 
-  { "code": "VIACAN", "manufacturer": "Various", "model": "VIA Rail Corridor", "category": "intercity", "country": "CA", "name_short": "VIA Rail" },
+  {
+    "code": "VIACAN",
+    "manufacturer": "Various",
+    "model": "VIA Rail Corridor",
+    "category": "intercity",
+    "country": "CA",
+    "name_short": "VIA Rail"
+  },
 
-  { "code": "CRH380A", "manufacturer": "CRRC", "model": "CRH380A", "category": "highspeed", "country": "CN", "name_short": "CRH380A" },
-  { "code": "CRH380B", "manufacturer": "CRRC", "model": "CRH380B", "category": "highspeed", "country": "CN", "name_short": "CRH380B" },
-  { "code": "CR400AF", "manufacturer": "CRRC", "model": "CR400AF (Fuxing)", "category": "highspeed", "country": "CN", "name_short": "复兴号 CR400AF" },
-  { "code": "CR400BF", "manufacturer": "CRRC", "model": "CR400BF (Fuxing)", "category": "highspeed", "country": "CN", "name_short": "复兴号 CR400BF" },
+  {
+    "code": "CRH380A",
+    "manufacturer": "CRRC",
+    "model": "CRH380A",
+    "category": "highspeed",
+    "country": "CN",
+    "name_short": "CRH380A"
+  },
+  {
+    "code": "CRH380B",
+    "manufacturer": "CRRC",
+    "model": "CRH380B",
+    "category": "highspeed",
+    "country": "CN",
+    "name_short": "CRH380B"
+  },
+  {
+    "code": "CR400AF",
+    "manufacturer": "CRRC",
+    "model": "CR400AF (Fuxing)",
+    "category": "highspeed",
+    "country": "CN",
+    "name_short": "复兴号 CR400AF"
+  },
+  {
+    "code": "CR400BF",
+    "manufacturer": "CRRC",
+    "model": "CR400BF (Fuxing)",
+    "category": "highspeed",
+    "country": "CN",
+    "name_short": "复兴号 CR400BF"
+  },
 
-  { "code": "KTX1", "manufacturer": "Alstom / Hyundai Rotem", "model": "KTX-I", "category": "highspeed", "country": "KR", "name_short": "KTX-I" },
-  { "code": "KTXSAN", "manufacturer": "Hyundai Rotem", "model": "KTX-Sancheon", "category": "highspeed", "country": "KR", "name_short": "KTX-산천" },
+  {
+    "code": "KTX1",
+    "manufacturer": "Alstom / Hyundai Rotem",
+    "model": "KTX-I",
+    "category": "highspeed",
+    "country": "KR",
+    "name_short": "KTX-I"
+  },
+  {
+    "code": "KTXSAN",
+    "manufacturer": "Hyundai Rotem",
+    "model": "KTX-Sancheon",
+    "category": "highspeed",
+    "country": "KR",
+    "name_short": "KTX-산천"
+  },
 
-  { "code": "THSR700T", "manufacturer": "Kawasaki", "model": "THSR 700T", "category": "highspeed", "country": "TW", "name_short": "700T" },
+  {
+    "code": "THSR700T",
+    "manufacturer": "Kawasaki",
+    "model": "THSR 700T",
+    "category": "highspeed",
+    "country": "TW",
+    "name_short": "700T"
+  },
 
-  { "code": "GIATTI", "manufacturer": "Various", "model": "Bullet Train (Vande Bharat)", "category": "highspeed", "country": "IN", "name_short": "Vande Bharat" },
-  { "code": "RAJDHANI", "manufacturer": "Various", "model": "Rajdhani Express", "category": "intercity", "country": "IN", "name_short": "Rajdhani" },
-  { "code": "SHATABDI", "manufacturer": "Various", "model": "Shatabdi Express", "category": "intercity", "country": "IN", "name_short": "Shatabdi" },
+  {
+    "code": "GIATTI",
+    "manufacturer": "Various",
+    "model": "Bullet Train (Vande Bharat)",
+    "category": "highspeed",
+    "country": "IN",
+    "name_short": "Vande Bharat"
+  },
+  {
+    "code": "RAJDHANI",
+    "manufacturer": "Various",
+    "model": "Rajdhani Express",
+    "category": "intercity",
+    "country": "IN",
+    "name_short": "Rajdhani"
+  },
+  {
+    "code": "SHATABDI",
+    "manufacturer": "Various",
+    "model": "Shatabdi Express",
+    "category": "intercity",
+    "country": "IN",
+    "name_short": "Shatabdi"
+  },
 
-  { "code": "PENDOLINO", "manufacturer": "Alstom", "model": "Pendolino", "category": "highspeed", "country": "EU", "name_short": "Pendolino" },
-  { "code": "FLIRT", "manufacturer": "Stadler", "model": "FLIRT", "category": "regional", "country": "EU", "name_short": "FLIRT" },
-  { "code": "KISS", "manufacturer": "Stadler", "model": "KISS (Doppelstock)", "category": "regional", "country": "EU", "name_short": "KISS" },
-  { "code": "GIRUNO", "manufacturer": "Stadler", "model": "Giruno (RABe 501)", "category": "highspeed", "country": "CH", "name_short": "Giruno" },
-  { "code": "ASTORO", "manufacturer": "Alstom", "model": "Astoro / ICN", "category": "intercity", "country": "CH", "name_short": "ICN" },
+  {
+    "code": "PENDOLINO",
+    "manufacturer": "Alstom",
+    "model": "Pendolino",
+    "category": "highspeed",
+    "country": "EU",
+    "name_short": "Pendolino"
+  },
+  {
+    "code": "FLIRT",
+    "manufacturer": "Stadler",
+    "model": "FLIRT",
+    "category": "regional",
+    "country": "EU",
+    "name_short": "FLIRT"
+  },
+  {
+    "code": "KISS",
+    "manufacturer": "Stadler",
+    "model": "KISS (Doppelstock)",
+    "category": "regional",
+    "country": "EU",
+    "name_short": "KISS"
+  },
+  {
+    "code": "GIRUNO",
+    "manufacturer": "Stadler",
+    "model": "Giruno (RABe 501)",
+    "category": "highspeed",
+    "country": "CH",
+    "name_short": "Giruno"
+  },
+  {
+    "code": "ASTORO",
+    "manufacturer": "Alstom",
+    "model": "Astoro / ICN",
+    "category": "intercity",
+    "country": "CH",
+    "name_short": "ICN"
+  },
 
-  { "code": "TRAM", "manufacturer": "Various", "model": "Tram / Light Rail", "category": "tram", "country": "EU", "name_short": "Tram" },
-  { "code": "METRO", "manufacturer": "Various", "model": "Metro / U-Bahn / Subway", "category": "metro", "country": "EU", "name_short": "Metro" },
-  { "code": "SBAHN", "manufacturer": "Various", "model": "S-Bahn (generic)", "category": "suburban", "country": "EU", "name_short": "S-Bahn" },
-  { "code": "HERITAGE_RAIL", "manufacturer": "Various", "model": "Heritage / Steam railway", "category": "heritage", "country": "EU", "name_short": "Dampfzug" },
-  { "code": "RACK", "manufacturer": "Various", "model": "Zahnradbahn / Rack railway", "category": "heritage", "country": "EU", "name_short": "Zahnradbahn" }
+  {
+    "code": "TRAM",
+    "manufacturer": "Various",
+    "model": "Tram / Light Rail",
+    "category": "tram",
+    "country": "EU",
+    "name_short": "Tram"
+  },
+  {
+    "code": "METRO",
+    "manufacturer": "Various",
+    "model": "Metro / U-Bahn / Subway",
+    "category": "metro",
+    "country": "EU",
+    "name_short": "Metro"
+  },
+  {
+    "code": "SBAHN",
+    "manufacturer": "Various",
+    "model": "S-Bahn (generic)",
+    "category": "suburban",
+    "country": "EU",
+    "name_short": "S-Bahn"
+  },
+  {
+    "code": "HERITAGE_RAIL",
+    "manufacturer": "Various",
+    "model": "Heritage / Steam railway",
+    "category": "heritage",
+    "country": "EU",
+    "name_short": "Dampfzug"
+  },
+  {
+    "code": "RACK",
+    "manufacturer": "Various",
+    "model": "Zahnradbahn / Rack railway",
+    "category": "heritage",
+    "country": "EU",
+    "name_short": "Zahnradbahn"
+  }
 ]

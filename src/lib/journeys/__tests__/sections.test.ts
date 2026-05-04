@@ -134,12 +134,8 @@ describe('applyFilters', () => {
   });
 
   it('combines filter + search (intersection)', () => {
-    expect(
-      applyFilters(ALL, { ...EMPTY_FILTERS, modes: ['flight'] }, 'munich'),
-    ).toHaveLength(0);
-    expect(
-      applyFilters(ALL, { ...EMPTY_FILTERS, modes: ['train'] }, 'munich'),
-    ).toHaveLength(2);
+    expect(applyFilters(ALL, { ...EMPTY_FILTERS, modes: ['flight'] }, 'munich')).toHaveLength(0);
+    expect(applyFilters(ALL, { ...EMPTY_FILTERS, modes: ['train'] }, 'munich')).toHaveLength(2);
   });
 });
 

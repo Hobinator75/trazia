@@ -257,11 +257,7 @@ describe('computeModePieData', () => {
   });
 
   it('returns two slices for Phase-1 mixed Flight + Other', () => {
-    const slices = computeModePieData([
-      { mode: 'flight' },
-      { mode: 'flight' },
-      { mode: 'other' },
-    ]);
+    const slices = computeModePieData([{ mode: 'flight' }, { mode: 'flight' }, { mode: 'other' }]);
     expect(slices).toEqual([
       { key: 'flight', value: 2 },
       { key: 'other', value: 1 },
@@ -271,11 +267,7 @@ describe('computeModePieData', () => {
   it('keeps existing train data honest in the pie even when Train is hidden in the picker', () => {
     // Existing user data may contain train journeys recorded before
     // Phase-1 launch; the pie should reflect what's actually in the DB.
-    const slices = computeModePieData([
-      { mode: 'flight' },
-      { mode: 'train' },
-      { mode: 'other' },
-    ]);
+    const slices = computeModePieData([{ mode: 'flight' }, { mode: 'train' }, { mode: 'other' }]);
     expect(slices).toHaveLength(3);
     expect(slices?.map((s) => s.key)).toEqual(['flight', 'train', 'other']);
   });

@@ -70,7 +70,10 @@ describe('achievements catalog (docs/achievements.json)', () => {
       'widebody',
     ];
     for (const id of required) {
-      expect(ALL.find((a) => a.id === id), `achievement ${id} missing`).toBeDefined();
+      expect(
+        ALL.find((a) => a.id === id),
+        `achievement ${id} missing`,
+      ).toBeDefined();
     }
   });
 

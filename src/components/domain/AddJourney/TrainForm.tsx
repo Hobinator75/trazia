@@ -6,14 +6,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import {
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  ScrollView,
-  Text,
-  View,
-} from 'react-native';
+import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { db } from '@/db/client';
@@ -138,7 +131,7 @@ export function TrainForm({ editing }: TrainFormProps = {}) {
   // derive synchronously from `editing.journey.id`.
   useEffect(() => {
     if (editing) reset(defaults);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editing?.journey.id]);
 
   const photoUri = watch('photoUri');
@@ -275,7 +268,10 @@ export function TrainForm({ editing }: TrainFormProps = {}) {
           </View>
         </View>
 
-        <FormField label="Bahnbetreiber" hint="DB, ÖBB, SBB, SNCF — wird für Achievements ausgewertet.">
+        <FormField
+          label="Bahnbetreiber"
+          hint="DB, ÖBB, SBB, SNCF — wird für Achievements ausgewertet."
+        >
           <SelectButton
             value={operatorLabel}
             placeholder="Betreiber wählen"
@@ -412,11 +408,7 @@ export function TrainForm({ editing }: TrainFormProps = {}) {
           className={`items-center rounded-full px-4 py-4 ${submitting ? 'bg-secondary/50' : 'bg-secondary active:opacity-80'}`}
         >
           <Text className="text-base font-semibold text-white">
-            {submitting
-              ? 'Speichern…'
-              : isEdit
-                ? 'Änderungen speichern'
-                : 'Reise speichern'}
+            {submitting ? 'Speichern…' : isEdit ? 'Änderungen speichern' : 'Reise speichern'}
           </Text>
         </Pressable>
       </View>

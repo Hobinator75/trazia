@@ -155,4 +155,3 @@ export function bezierPath(a: LatLng, b: LatLng, curvature = 0.2, points = 32): 
   }
   return out;
 }
-

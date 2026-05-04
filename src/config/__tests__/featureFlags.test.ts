@@ -1,11 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { FEATURE_FLAGS } from '../featureFlags';
-import {
-  ALL_MODES,
-  MODES,
-  PHASE_1_VISIBLE_MODES,
-} from '@/components/domain/modePickerConfig';
+import { ALL_MODES, MODES, PHASE_1_VISIBLE_MODES } from '@/components/domain/modePickerConfig';
 
 describe('Phase-1 launch feature flags', () => {
   it('hides train, car, ship, bus by default for the launch build', () => {
