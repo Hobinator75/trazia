@@ -1,4 +1,6 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
+import { createJSONStorage, persist } from 'zustand/middleware';
 
 export type ThemePreference = 'dark' | 'light' | 'system';
 export type DistanceUnit = 'km' | 'mi';
@@ -29,21 +31,45 @@ interface SettingsState {
   setAvatarUri: (uri: string | null) => void;
 }
 
-export const useSettingsStore = create<SettingsState>((set) => ({
-  theme: 'dark',
-  distanceUnit: 'km',
-  soundEnabled: true,
-  notificationsEnabled: false,
-  crashReportsEnabled: true,
-  analyticsEnabled: false,
-  profileName: null,
-  avatarUri: null,
-  setTheme: (theme) => set({ theme }),
-  setDistanceUnit: (distanceUnit) => set({ distanceUnit }),
-  setSoundEnabled: (soundEnabled) => set({ soundEnabled }),
-  setNotificationsEnabled: (notificationsEnabled) => set({ notificationsEnabled }),
-  setCrashReportsEnabled: (crashReportsEnabled) => set({ crashReportsEnabled }),
-  setAnalyticsEnabled: (analyticsEnabled) => set({ analyticsEnabled }),
-  setProfileName: (profileName) => set({ profileName }),
-  setAvatarUri: (avatarUri) => set({ avatarUri }),
-}));
+// Persisted via AsyncStorage so privacy opt-outs (crash reports,
+// analytics) survive an app restart. Keep `version` in lock-step with
+// the migration function below — bump and add a branch when changing
+// the persisted shape.
+export const useSettingsStore = create<SettingsState>()(
+  persist(
+    (set) => ({
+      theme: 'dark',
+      distanceUnit: 'km',
+      soundEnabled: true,
+      notificationsEnabled: false,
+      crashReportsEnabled: true,
+      analyticsEnabled: false,
+      profileName: null,
+      avatarUri: null,
+      setTheme: (theme) => set({ theme }),
+      setDistanceUnit: (distanceUnit) => set({ distanceUnit }),
+      setSoundEnabled: (soundEnabled) => set({ soundEnabled }),
+      setNotificationsEnabled: (notificationsEnabled) => set({ notificationsEnabled }),
+      setCrashReportsEnabled: (crashReportsEnabled) => set({ crashReportsEnabled }),
+      setAnalyticsEnabled: (analyticsEnabled) => set({ analyticsEnabled }),
+      setProfileName: (profileName) => set({ profileName }),
+      setAvatarUri: (avatarUri) => set({ avatarUri }),
+    }),
+    {
+      name: 'trazia-settings',
+      storage: createJSONStorage(() => AsyncStorage),
+      version: 1,
+      migrate: (persistedState) => persistedState as SettingsState,
+      partialize: (state) => ({
+        theme: state.theme,
+        distanceUnit: state.distanceUnit,
+        soundEnabled: state.soundEnabled,
+        notificationsEnabled: state.notificationsEnabled,
+        crashReportsEnabled: state.crashReportsEnabled,
+        analyticsEnabled: state.analyticsEnabled,
+        profileName: state.profileName,
+        avatarUri: state.avatarUri,
+      }),
+    },
+  ),
+);
