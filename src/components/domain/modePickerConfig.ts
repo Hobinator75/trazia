@@ -12,11 +12,10 @@ export interface ModeDef {
   comingIn?: 'Phase 2';
 }
 
-// Phase-1 launch hides Train; the code path stays in the bundle so
-// existing user-recorded train journeys still show read-only and the
-// engine keeps cross-mode achievements correct. Flip the feature flag
-// in src/config/featureFlags.ts to re-enable.
-export const MODES: readonly ModeDef[] = [
+// All modes stay defined so existing user-recorded journeys (e.g. train)
+// remain editable without crashing — only the visible list passed to the
+// picker is filtered for Phase 1.
+export const ALL_MODES: readonly ModeDef[] = [
   { value: 'flight', label: 'Flug', icon: 'airplane', enabled: true },
   {
     value: 'train',
@@ -30,3 +29,15 @@ export const MODES: readonly ModeDef[] = [
   { value: 'bus', label: 'Bus', icon: 'bus', enabled: false, comingIn: 'Phase 2' },
   { value: 'other', label: 'Sonstiges', icon: 'ellipsis-horizontal', enabled: true },
 ];
+
+// Phase-1 product decision: only Flight + Other are visible in the
+// picker. No locked-tile teaser for Train/Car/Ship/Bus until those modes
+// actually ship.
+export const PHASE_1_VISIBLE_MODES: readonly ModeDef[] = ALL_MODES.filter(
+  (m) => m.value === 'flight' || m.value === 'other',
+);
+
+// Backwards-compatible alias used throughout the codebase. The picker
+// renders this list; tests can import ALL_MODES to assert the full set
+// remains available for editing existing data.
+export const MODES: readonly ModeDef[] = PHASE_1_VISIBLE_MODES;

@@ -5,6 +5,7 @@ import type { Journey, Location, Operator } from '@/db/schema';
 import {
   aggregateStats,
   aggregateStatsMemo,
+  computeModePieData,
   EARTH_CIRCUMFERENCE_KM,
   EARTH_TO_MOON_KM,
   memoize,
@@ -242,5 +243,45 @@ describe('memoize', () => {
     const a = aggregateStatsMemo(SAMPLE_JOURNEYS, REFS);
     const b = aggregateStatsMemo(SAMPLE_JOURNEYS, REFS);
     expect(a).toBe(b);
+  });
+});
+
+describe('computeModePieData', () => {
+  it('returns null for empty input', () => {
+    expect(computeModePieData([])).toBeNull();
+  });
+
+  it('returns a single slice for flight-only data', () => {
+    const slices = computeModePieData([{ mode: 'flight' }, { mode: 'flight' }]);
+    expect(slices).toEqual([{ key: 'flight', value: 2 }]);
+  });
+
+  it('returns two slices for Phase-1 mixed Flight + Other', () => {
+    const slices = computeModePieData([
+      { mode: 'flight' },
+      { mode: 'flight' },
+      { mode: 'other' },
+    ]);
+    expect(slices).toEqual([
+      { key: 'flight', value: 2 },
+      { key: 'other', value: 1 },
+    ]);
+  });
+
+  it('keeps existing train data honest in the pie even when Train is hidden in the picker', () => {
+    // Existing user data may contain train journeys recorded before
+    // Phase-1 launch; the pie should reflect what's actually in the DB.
+    const slices = computeModePieData([
+      { mode: 'flight' },
+      { mode: 'train' },
+      { mode: 'other' },
+    ]);
+    expect(slices).toHaveLength(3);
+    expect(slices?.map((s) => s.key)).toEqual(['flight', 'train', 'other']);
+  });
+
+  it('buckets walk/bike into the other slice', () => {
+    const slices = computeModePieData([{ mode: 'walk' }, { mode: 'bike' }]);
+    expect(slices).toEqual([{ key: 'other', value: 2 }]);
   });
 });

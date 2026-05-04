@@ -322,4 +322,61 @@ describe('journey.repository', () => {
     const all = await listJourneys(handle.db);
     expect(all).toHaveLength(2);
   });
+
+  it('existing train journeys remain loadable via getJourneyWithRefsById even when Train is not in PHASE_1_VISIBLE_MODES', async () => {
+    // Phase-1 hides Train from the picker, but Tim's test database may
+    // already contain train journeys. Edit must keep working without
+    // crashing — the edit screen branches on `journey.mode` independent
+    // of the visible-mode list.
+    await handle.db.insert(locations).values([
+      {
+        name: 'Berlin Hbf',
+        city: 'Berlin',
+        country: 'DE',
+        lat: 52.5251,
+        lng: 13.3694,
+        type: 'train_station',
+        ibnr: '8011160',
+        isSystemSeed: true,
+      },
+      {
+        name: 'München Hbf',
+        city: 'München',
+        country: 'DE',
+        lat: 48.1402,
+        lng: 11.5586,
+        type: 'train_station',
+        ibnr: '8000261',
+        isSystemSeed: true,
+      },
+    ]);
+    const berlin = (
+      await handle.db.select().from(locations).where(eq(locations.ibnr, '8011160'))
+    )[0]!;
+    const munich = (
+      await handle.db.select().from(locations).where(eq(locations.ibnr, '8000261'))
+    )[0]!;
+    const train = await createJourney(
+      handle.db,
+      {
+        mode: 'train',
+        fromLocationId: berlin.id,
+        toLocationId: munich.id,
+        date: '2026-03-20',
+        serviceNumber: 'ICE 73',
+        distanceKm: 504,
+        isManualEntry: true,
+      },
+      NO_NOTIFY_NO_ADS,
+    );
+
+    const { PHASE_1_VISIBLE_MODES } = await import('@/components/domain/modePickerConfig');
+    const visibleIds = PHASE_1_VISIBLE_MODES.map((m) => m.value);
+    expect(visibleIds).not.toContain('train');
+
+    const reloaded = await getJourneyWithRefsById(handle.db, train.id);
+    expect(reloaded).toBeDefined();
+    expect(reloaded?.mode).toBe('train');
+    expect(reloaded?.serviceNumber).toBe('ICE 73');
+  });
 });

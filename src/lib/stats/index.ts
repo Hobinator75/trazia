@@ -278,3 +278,38 @@ export function memoize<Args extends unknown[], R>(fn: (...args: Args) => R): (.
 }
 
 export const aggregateStatsMemo = memoize(aggregateStats);
+
+export type ModePieKey = 'flight' | 'train' | 'car' | 'ship' | 'other';
+
+export interface ModePieSlice {
+  key: ModePieKey;
+  value: number;
+}
+
+// Pure helper for the Stats Modi-Verteilung pie. Pulled out of
+// ChartsSection so the bucket logic is testable without React Native.
+// Returns null when there are no journeys (caller renders empty state).
+export function computeModePieData(
+  journeys: Pick<Journey, 'mode'>[],
+): ModePieSlice[] | null {
+  const counts: Record<ModePieKey, number> = {
+    flight: 0,
+    train: 0,
+    car: 0,
+    ship: 0,
+    other: 0,
+  };
+  for (const j of journeys) {
+    const key: ModePieKey =
+      j.mode === 'flight' || j.mode === 'train' || j.mode === 'car' || j.mode === 'ship'
+        ? j.mode
+        : 'other';
+    counts[key] += 1;
+  }
+  const total = counts.flight + counts.train + counts.car + counts.ship + counts.other;
+  if (total === 0) return null;
+  const order: ModePieKey[] = ['flight', 'train', 'car', 'ship', 'other'];
+  return order
+    .map((key) => ({ key, value: counts[key] }))
+    .filter((slice) => slice.value > 0);
+}

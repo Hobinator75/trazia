@@ -3,7 +3,16 @@ import { Dimensions, Text, View } from 'react-native';
 import { BarChart, LineChart, PieChart } from 'react-native-gifted-charts';
 
 import type { JourneyWithRefs } from '@/db/repositories/journey.repository';
+import { computeModePieData, type ModePieKey } from '@/lib/stats';
 import { colors, modeColors } from '@/theme/colors';
+
+const MODE_PIE_LABEL: Record<ModePieKey, string> = {
+  flight: 'Flug',
+  train: 'Zug',
+  car: 'Auto',
+  ship: 'Schiff',
+  other: 'Sonstiges',
+};
 
 const yearOf = (iso: string): number => Number.parseInt(iso.slice(0, 4), 10);
 const monthOf = (iso: string): number => Number.parseInt(iso.slice(5, 7), 10);
@@ -44,23 +53,13 @@ export function ChartsSection({ journeys }: ChartsSectionProps) {
   }, [journeys]);
 
   const modePieData = useMemo(() => {
-    const counts = { flight: 0, train: 0, car: 0, ship: 0, other: 0 };
-    for (const j of journeys) {
-      const key =
-        j.mode === 'flight' || j.mode === 'train' || j.mode === 'car' || j.mode === 'ship'
-          ? j.mode
-          : 'other';
-      counts[key] += 1;
-    }
-    const total = counts.flight + counts.train + counts.car + counts.ship + counts.other;
-    if (total === 0) return null;
-    return [
-      { value: counts.flight, color: modeColors.flight, text: 'Flug' },
-      { value: counts.train, color: modeColors.train, text: 'Zug' },
-      { value: counts.car, color: modeColors.car, text: 'Auto' },
-      { value: counts.ship, color: modeColors.ship, text: 'Schiff' },
-      { value: counts.other, color: modeColors.other, text: 'Sonstiges' },
-    ].filter((d) => d.value > 0);
+    const slices = computeModePieData(journeys);
+    if (slices === null) return null;
+    return slices.map((s) => ({
+      value: s.value,
+      color: modeColors[s.key],
+      text: MODE_PIE_LABEL[s.key],
+    }));
   }, [journeys]);
 
   const monthlyDistanceData = useMemo(() => {

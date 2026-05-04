@@ -4,28 +4,23 @@ import { useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { FEATURE_FLAGS } from '@/config/featureFlags';
 import { useOnboardingStore } from '@/stores/onboardingStore';
 import { colors } from '@/theme/colors';
 import type { TransportMode } from '@/types/domain-types';
 
 interface ModeOption {
-  id: TransportMode | 'bus';
+  id: TransportMode;
   label: string;
   icon: React.ComponentProps<typeof Ionicons>['name'];
-  enabled: boolean;
 }
 
-// Phase-1 hides Train completely; showing it as a locked tile would
-// mislead first-run users about what they can actually log today.
+// Phase-1 product decision: only Flight + Other are shown. Train/Car/
+// Ship/Bus are not surfaced in the UI at all (no locked-tile teaser),
+// because showing them would mislead first-run users about what they
+// can actually log today.
 const OPTIONS: ModeOption[] = [
-  { id: 'flight', label: 'Flüge', icon: 'airplane', enabled: true },
-  ...(FEATURE_FLAGS.PHASE_2_TRAIN_VISIBLE
-    ? ([{ id: 'train', label: 'Züge', icon: 'train', enabled: true }] as const)
-    : []),
-  { id: 'car', label: 'Auto', icon: 'car', enabled: false },
-  { id: 'ship', label: 'Schiff', icon: 'boat', enabled: false },
-  { id: 'bus', label: 'Bus', icon: 'bus', enabled: false },
+  { id: 'flight', label: 'Flüge', icon: 'airplane' },
+  { id: 'other', label: 'Sonstiges', icon: 'ellipsis-horizontal' },
 ];
 
 export default function OnboardingModesScreen() {
@@ -36,12 +31,11 @@ export default function OnboardingModesScreen() {
   const [selected, setSelected] = useState<Set<TransportMode>>(new Set(initial));
 
   const toggle = (option: ModeOption) => {
-    if (!option.enabled) return;
     const next = new Set(selected);
-    if (next.has(option.id as TransportMode)) {
-      next.delete(option.id as TransportMode);
+    if (next.has(option.id)) {
+      next.delete(option.id);
     } else {
-      next.add(option.id as TransportMode);
+      next.add(option.id);
     }
     setSelected(next);
   };
@@ -61,24 +55,17 @@ export default function OnboardingModesScreen() {
 
         <View className="mt-6 gap-3">
           {OPTIONS.map((option) => {
-            const isOn = selected.has(option.id as TransportMode);
-            const isDisabled = !option.enabled;
+            const isOn = selected.has(option.id);
             return (
               <Pressable
                 key={option.id}
                 onPress={() => toggle(option)}
-                disabled={isDisabled}
                 className={`flex-row items-center gap-3 rounded-2xl border-2 px-4 py-4 ${
                   isOn
                     ? 'border-primary bg-primary/15'
-                    : isDisabled
-                      ? 'border-border-dark bg-surface-dark/40 opacity-60'
-                      : 'border-border-dark bg-surface-dark active:opacity-80'
+                    : 'border-border-dark bg-surface-dark active:opacity-80'
                 }`}
               >
-                {isDisabled ? (
-                  <Ionicons name="lock-closed" size={16} color={colors.text.muted} />
-                ) : null}
                 <Ionicons
                   name={option.icon}
                   size={22}
@@ -91,9 +78,7 @@ export default function OnboardingModesScreen() {
                 >
                   {option.label}
                 </Text>
-                {isDisabled ? (
-                  <Text className="text-xs text-text-muted">Phase 2</Text>
-                ) : isOn ? (
+                {isOn ? (
                   <Ionicons name="checkmark-circle" size={22} color={colors.primary} />
                 ) : null}
               </Pressable>
