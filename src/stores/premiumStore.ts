@@ -1,32 +1,37 @@
 import { create } from 'zustand';
 
 export interface PremiumState {
-  // True iff the user holds an active premium entitlement, OR a temporary
-  // ad-free window from a rewarded video (those don't unlock premium-only
-  // features but they do silence ads — see isAdFree()).
+  // Active RevenueCat subscription. Source of truth for "paid Pro".
   isPremium: boolean;
-  // Epoch ms; if in the future, ads are suppressed even for free users.
-  adFreeUntil: number | null;
+  // Local 7-day Pro trial earned via rewarded ad. When the timestamp is in
+  // the future the user gets the full Pro feature set (ads silenced, cloud
+  // sync writable, etc.) — the subscription path remains the canonical
+  // entitlement, but `isProActive` ORs both sources.
+  proTrialUntil: number | null;
   // True when the IAP layer hasn't completed its first sync yet. The UI
   // should treat this as "not premium" (safe default) but can show a
   // subtle pending indicator on the paywall instead of zero offerings.
   hydrating: boolean;
   setIsPremium: (value: boolean) => void;
-  setAdFreeUntil: (epochMs: number | null) => void;
+  setProTrialUntil: (epochMs: number | null) => void;
   setHydrating: (value: boolean) => void;
 }
 
 export const usePremiumStore = create<PremiumState>((set) => ({
   isPremium: false,
-  adFreeUntil: null,
+  proTrialUntil: null,
   hydrating: true,
   setIsPremium: (value) => set({ isPremium: value }),
-  setAdFreeUntil: (adFreeUntil) => set({ adFreeUntil }),
+  setProTrialUntil: (proTrialUntil) => set({ proTrialUntil }),
   setHydrating: (value) => set({ hydrating: value }),
 }));
 
-export const isAdFreeNow = (): boolean => {
-  const { isPremium, adFreeUntil } = usePremiumStore.getState();
-  if (isPremium) return true;
-  return adFreeUntil !== null && adFreeUntil > Date.now();
+const trialActive = (proTrialUntil: number | null, now: number = Date.now()): boolean =>
+  proTrialUntil !== null && proTrialUntil > now;
+
+export const isProActive = (now: number = Date.now()): boolean => {
+  const { isPremium, proTrialUntil } = usePremiumStore.getState();
+  return isPremium || trialActive(proTrialUntil, now);
 };
+
+export const isAdFreeNow = (now: number = Date.now()): boolean => isProActive(now);

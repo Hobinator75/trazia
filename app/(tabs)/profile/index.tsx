@@ -6,16 +6,21 @@ import { Linking, Pressable, ScrollView, Switch, Text, View } from 'react-native
 import { ProfileHeader } from '@/components/domain/ProfileHeader';
 import { useIsPremium } from '@/hooks/useIsPremium';
 import { showRewardedAd } from '@/lib/ads/rewarded';
+import { adFrequency } from '@/lib/ads/units';
+import {
+  canGrantRewardedTrial,
+  grantTemporaryProEntitlement,
+} from '@/lib/iap/temporaryEntitlement';
 import { usePremiumStore } from '@/stores/premiumStore';
 import { type DistanceUnit, useSettingsStore } from '@/stores/settings.store';
 import { useSnackbarStore } from '@/stores/snackbarStore';
 import { colors } from '@/theme/colors';
 
-const ONE_DAY_MS = 24 * 60 * 60 * 1000;
-
 const formatRemaining = (epochMs: number): string => {
   const ms = Math.max(0, epochMs - Date.now());
-  const hours = Math.floor(ms / (60 * 60 * 1000));
+  const days = Math.floor(ms / (24 * 60 * 60 * 1000));
+  const hours = Math.floor((ms % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
+  if (days > 0) return `${days}d ${hours}h`;
   const minutes = Math.floor((ms % (60 * 60 * 1000)) / (60 * 1000));
   return `${hours}h ${minutes}m`;
 };
@@ -160,22 +165,43 @@ export default function ProfileScreen() {
   const analyticsEnabled = useSettingsStore((s) => s.analyticsEnabled);
   const setAnalyticsEnabled = useSettingsStore((s) => s.setAnalyticsEnabled);
 
-  const adFreeUntil = usePremiumStore((s) => s.adFreeUntil);
-  const setAdFreeUntil = usePremiumStore((s) => s.setAdFreeUntil);
+  const proTrialUntil = usePremiumStore((s) => s.proTrialUntil);
+  const setProTrialUntil = usePremiumStore((s) => s.setProTrialUntil);
   const { isPremium } = useIsPremium();
 
   const [busyRewarded, setBusyRewarded] = useState(false);
 
-  const adFreeActive = adFreeUntil !== null && adFreeUntil > Date.now();
+  const trialActive = proTrialUntil !== null && proTrialUntil > Date.now();
 
   const handleRewardedAd = async () => {
     setBusyRewarded(true);
     try {
+      // Anti-abuse: at most one rewarded trial per device per 30 days.
+      // Check before showing the ad so a blocked user doesn't waste a
+      // video impression.
+      const status = await canGrantRewardedTrial();
+      if (!status.allowed) {
+        const days = status.nextEligibleAt
+          ? Math.max(1, Math.ceil((status.nextEligibleAt - Date.now()) / (24 * 60 * 60 * 1000)))
+          : 30;
+        showSnackbar(`Du hast den Pro-Trial bereits genutzt. Nochmal möglich in ~${days} Tagen.`, {
+          variant: 'info',
+        });
+        return;
+      }
       const result = await showRewardedAd();
-      if (result === 'rewarded') {
-        setAdFreeUntil(Date.now() + ONE_DAY_MS);
-        showSnackbar('24 Stunden werbefrei aktiviert.', { variant: 'success' });
-      } else if (result === 'cancelled') {
+      if (result.kind === 'rewarded') {
+        const grant = await grantTemporaryProEntitlement(
+          adFrequency.rewardedTrialDays,
+          'rewarded_ad',
+        );
+        if (grant.granted && grant.entitlement) {
+          setProTrialUntil(grant.entitlement.expiresAt);
+          showSnackbar('7 Tage Trazia Pro freigeschaltet.', { variant: 'success' });
+        } else {
+          showSnackbar('Pro-Trial konnte nicht aktiviert werden.', { variant: 'error' });
+        }
+      } else if (result.kind === 'cancelled') {
         showSnackbar('Werbe-Video wurde abgebrochen.', { variant: 'info' });
       } else {
         showSnackbar('Werbe-Video gerade nicht verfügbar.', { variant: 'error' });
@@ -260,7 +286,7 @@ export default function ProfileScreen() {
         />
         <ToggleRow
           label="Crash-Reports erlauben"
-          description="Anonyme Stack-Traces an Sentry — keine PII, kein Tracking."
+          description="Anonyme Stack-Traces — aktuell nicht aktiv. Wir kündigen die Integration mind. 14 Tage vor dem Update an."
           value={crashReportsEnabled}
           onValueChange={setCrashReportsEnabled}
         />
@@ -276,26 +302,28 @@ export default function ProfileScreen() {
         <View className="mt-6 rounded-2xl border border-warning/40 bg-warning/10 p-4">
           <View className="flex-row items-center gap-2">
             <Ionicons name="play-circle-outline" size={20} color={colors.warning} />
-            <Text className="text-base font-semibold text-text-light">24 h werbefrei</Text>
+            <Text className="text-base font-semibold text-text-light">
+              {adFrequency.rewardedTrialDays} Tage Trazia Pro
+            </Text>
           </View>
           <Text className="mt-1 text-xs text-text-muted">
-            Schaue ein kurzes Werbe-Video und nutze Trazia für 24 Stunden ohne Banner und
-            Interstitials.
+            Schaue ein kurzes Werbe-Video und schalte Pro für {adFrequency.rewardedTrialDays} Tage
+            frei (werbefrei, alle Premium-Features). Pro 30 Tage einmal pro Gerät.
           </Text>
-          {adFreeActive ? (
+          {trialActive ? (
             <Text className="mt-2 text-xs text-success">
-              Werbefrei aktiv · noch {formatRemaining(adFreeUntil ?? 0)}
+              Pro-Trial aktiv · noch {formatRemaining(proTrialUntil ?? 0)}
             </Text>
           ) : null}
           <Pressable
             onPress={handleRewardedAd}
-            disabled={busyRewarded}
+            disabled={busyRewarded || trialActive}
             className={`mt-3 items-center rounded-full py-3 ${
-              busyRewarded ? 'bg-warning/40' : 'bg-warning active:opacity-80'
+              busyRewarded || trialActive ? 'bg-warning/40' : 'bg-warning active:opacity-80'
             }`}
           >
             <Text className="text-sm font-semibold text-background-dark">
-              {busyRewarded ? 'Lädt…' : adFreeActive ? 'Verlängern' : 'Werbe-Video starten'}
+              {busyRewarded ? 'Lädt…' : trialActive ? 'Bereits aktiv' : 'Werbe-Video starten'}
             </Text>
           </Pressable>
         </View>
