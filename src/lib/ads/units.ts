@@ -1,82 +1,99 @@
 import { Platform } from 'react-native';
 
-// BEFORE PRODUCTION BUILD: replace the AdMob test fallbacks with real
-// IDs from the production AdMob account, set via EAS Secrets. The
-// constants below are Google's published test units — they always
-// serve a "Test Ad" placeholder. Shipping a Production build with
-// these still active means zero ad revenue, so we hard-fail at module
-// load when EXPO_PUBLIC_ENV=production has no real IDs configured.
+// Production AdMob unit IDs are baked into the binary — there is no env-var
+// override path. Publisher: pub-6316860881127013 (Tim Hobrlant). Slots that
+// Trazia does not currently render (banner, app-open) resolve to `null`;
+// callers must short-circuit on null instead of passing it to the SDK.
 //
-// Required EAS Secrets:
-//   EXPO_PUBLIC_ADMOB_BANNER_{ANDROID,IOS}
-//   EXPO_PUBLIC_ADMOB_INTERSTITIAL_{ANDROID,IOS}
-//   EXPO_PUBLIC_ADMOB_REWARDED_{ANDROID,IOS}
-// AND: app.json plugins.react-native-google-mobile-ads.{android,ios}AppId
-//      → real ca-app-pub-XXXX~YYYY values.
-//
-// See RELEASE_CHECKLIST.md → "Hard-Stops vor erstem Production-Build".
+// Dev / preview / Expo-Go / vitest builds resolve to Google's published
+// test units instead, which always serve a "Test Ad" placeholder. The
+// switch is `EXPO_PUBLIC_ENV === 'production'` (eas.json sets this for
+// production builds only).
+
+const PROD_NATIVE_IOS = 'ca-app-pub-6316860881127013/5488275799';
+const PROD_INTERSTITIAL_IOS = 'ca-app-pub-6316860881127013/6284376351';
+const PROD_REWARDED_IOS = 'ca-app-pub-6316860881127013/4971294683';
+
+const PROD_NATIVE_ANDROID = 'ca-app-pub-6316860881127013/4508260252';
+const PROD_INTERSTITIAL_ANDROID = 'ca-app-pub-6316860881127013/4839432748';
+const PROD_REWARDED_ANDROID = 'ca-app-pub-6316860881127013/7405886336';
+
 const TEST_BANNER_ANDROID = 'ca-app-pub-3940256099942544/6300978111';
 const TEST_BANNER_IOS = 'ca-app-pub-3940256099942544/2934735716';
 const TEST_INTERSTITIAL_ANDROID = 'ca-app-pub-3940256099942544/1033173712';
 const TEST_INTERSTITIAL_IOS = 'ca-app-pub-3940256099942544/4411468910';
 const TEST_REWARDED_ANDROID = 'ca-app-pub-3940256099942544/5224354917';
 const TEST_REWARDED_IOS = 'ca-app-pub-3940256099942544/1712485313';
+const TEST_NATIVE_ANDROID = 'ca-app-pub-3940256099942544/2247696110';
+const TEST_NATIVE_IOS = 'ca-app-pub-3940256099942544/3986624511';
 
 const isProductionBuild = (): boolean => process.env.EXPO_PUBLIC_ENV === 'production';
 
-const requireRealUnit = (slot: string, value: string | undefined): string => {
-  if (!value || value.length === 0) {
+const SENTINEL_RE = /^(REPLACE_WITH_|XXXXX|TODO|placeholder)/i;
+
+const requireRealUnit = (slot: string, value: string): string => {
+  if (!value || value.length === 0 || SENTINEL_RE.test(value)) {
     throw new Error(
-      `[ads] Production build requires real AdMob unit IDs but ${slot} is empty. ` +
-        'Set EXPO_PUBLIC_ADMOB_* via EAS Secrets, or build with ' +
-        'EXPO_PUBLIC_ENV != production for development/preview.',
+      `[ads] Production build requires real AdMob unit IDs but ${slot} is unset or a sentinel ` +
+        `("${value}"). Update src/lib/ads/units.ts before shipping.`,
     );
   }
   return value;
 };
 
-const pickFromEnv = (
-  slot: 'banner' | 'interstitial' | 'rewarded',
-  android: string | undefined,
-  ios: string | undefined,
-  fallbackAndroid: string,
-  fallbackIos: string,
-): string => {
-  if (isProductionBuild()) {
-    return Platform.OS === 'android'
-      ? requireRealUnit(`${slot} (android)`, android)
-      : requireRealUnit(`${slot} (ios)`, ios);
+interface AdUnits {
+  // Slots actively rendered today.
+  native: string | null;
+  interstitial: string | null;
+  rewarded: string | null;
+  // Reserved slots — never read by the current UI. Production IDs are
+  // intentionally `null`; consumers must short-circuit.
+  banner: string | null;
+  appOpen: string | null;
+}
+
+const buildProdUnits = (): AdUnits => {
+  if (Platform.OS === 'ios') {
+    return {
+      native: requireRealUnit('native (ios)', PROD_NATIVE_IOS),
+      interstitial: requireRealUnit('interstitial (ios)', PROD_INTERSTITIAL_IOS),
+      rewarded: requireRealUnit('rewarded (ios)', PROD_REWARDED_IOS),
+      banner: null,
+      appOpen: null,
+    };
   }
-  if (Platform.OS === 'android') return android && android.length > 0 ? android : fallbackAndroid;
-  return ios && ios.length > 0 ? ios : fallbackIos;
+  return {
+    native: requireRealUnit('native (android)', PROD_NATIVE_ANDROID),
+    interstitial: requireRealUnit('interstitial (android)', PROD_INTERSTITIAL_ANDROID),
+    rewarded: requireRealUnit('rewarded (android)', PROD_REWARDED_ANDROID),
+    banner: null,
+    appOpen: null,
+  };
 };
 
-export const adUnits = {
-  banner: pickFromEnv(
-    'banner',
-    process.env.EXPO_PUBLIC_ADMOB_BANNER_ANDROID,
-    process.env.EXPO_PUBLIC_ADMOB_BANNER_IOS,
-    TEST_BANNER_ANDROID,
-    TEST_BANNER_IOS,
-  ),
-  interstitial: pickFromEnv(
-    'interstitial',
-    process.env.EXPO_PUBLIC_ADMOB_INTERSTITIAL_ANDROID,
-    process.env.EXPO_PUBLIC_ADMOB_INTERSTITIAL_IOS,
-    TEST_INTERSTITIAL_ANDROID,
-    TEST_INTERSTITIAL_IOS,
-  ),
-  rewarded: pickFromEnv(
-    'rewarded',
-    process.env.EXPO_PUBLIC_ADMOB_REWARDED_ANDROID,
-    process.env.EXPO_PUBLIC_ADMOB_REWARDED_IOS,
-    TEST_REWARDED_ANDROID,
-    TEST_REWARDED_IOS,
-  ),
+const buildTestUnits = (): AdUnits => {
+  const ios = Platform.OS === 'ios';
+  return {
+    native: ios ? TEST_NATIVE_IOS : TEST_NATIVE_ANDROID,
+    interstitial: ios ? TEST_INTERSTITIAL_IOS : TEST_INTERSTITIAL_ANDROID,
+    rewarded: ios ? TEST_REWARDED_IOS : TEST_REWARDED_ANDROID,
+    banner: ios ? TEST_BANNER_IOS : TEST_BANNER_ANDROID,
+    appOpen: null,
+  };
 };
 
-export const isUsingTestUnits =
-  !process.env.EXPO_PUBLIC_ADMOB_BANNER_ANDROID &&
-  !process.env.EXPO_PUBLIC_ADMOB_BANNER_IOS &&
-  !process.env.EXPO_PUBLIC_ADMOB_INTERSTITIAL_ANDROID &&
-  !process.env.EXPO_PUBLIC_ADMOB_INTERSTITIAL_IOS;
+export const adUnits: AdUnits = isProductionBuild() ? buildProdUnits() : buildTestUnits();
+
+export const isUsingTestUnits = !isProductionBuild();
+
+// Frequency-cap config. Centralised so the controllers and any future
+// dashboards reference the same numbers.
+export const adFrequency = {
+  interstitialEveryNthInsert: 5,
+  interstitialMinIntervalMs: 90 * 1000,
+  nativeEveryNthRow: 10,
+  newInstallGraceMs: 60 * 1000,
+  rewardedTrialDays: 7,
+  rewardedTrialItem: 'Trazia Pro days',
+  rewardedTrialAntiAbuseWindowMs: 30 * 24 * 60 * 60 * 1000,
+} as const;

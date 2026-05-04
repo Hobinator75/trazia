@@ -6,66 +6,57 @@ vi.mock('react-native', () => ({
   Platform: { OS: 'ios' },
 }));
 
-const ENV_KEYS = [
-  'EXPO_PUBLIC_ENV',
-  'EXPO_PUBLIC_ADMOB_BANNER_ANDROID',
-  'EXPO_PUBLIC_ADMOB_BANNER_IOS',
-  'EXPO_PUBLIC_ADMOB_INTERSTITIAL_ANDROID',
-  'EXPO_PUBLIC_ADMOB_INTERSTITIAL_IOS',
-  'EXPO_PUBLIC_ADMOB_REWARDED_ANDROID',
-  'EXPO_PUBLIC_ADMOB_REWARDED_IOS',
-];
-
-const snapshot: Record<string, string | undefined> = {};
+const ENV_KEY = 'EXPO_PUBLIC_ENV';
+let snapshot: string | undefined;
 
 describe('AdMob unit selection', () => {
   beforeEach(() => {
-    for (const key of ENV_KEYS) {
-      snapshot[key] = process.env[key];
-      delete process.env[key];
-    }
+    snapshot = process.env[ENV_KEY];
+    delete process.env[ENV_KEY];
     vi.resetModules();
   });
 
   afterEach(() => {
-    for (const key of ENV_KEYS) {
-      const previous = snapshot[key];
-      if (previous === undefined) {
-        delete process.env[key];
-      } else {
-        process.env[key] = previous;
-      }
+    if (snapshot === undefined) {
+      delete process.env[ENV_KEY];
+    } else {
+      process.env[ENV_KEY] = snapshot;
     }
   });
 
-  it('falls back to Google test unit IDs when no env vars are set in dev', async () => {
+  it('falls back to Google test units in dev/preview builds', async () => {
     const mod = await import('../units');
     expect(mod.adUnits.banner).toMatch(/^ca-app-pub-3940256099942544/);
+    expect(mod.adUnits.native).toMatch(/^ca-app-pub-3940256099942544/);
+    expect(mod.adUnits.interstitial).toMatch(/^ca-app-pub-3940256099942544/);
+    expect(mod.adUnits.rewarded).toMatch(/^ca-app-pub-3940256099942544/);
     expect(mod.isUsingTestUnits).toBe(true);
   });
 
-  it('uses configured iOS banner unit ID when provided', async () => {
-    process.env.EXPO_PUBLIC_ADMOB_BANNER_IOS = 'ca-app-pub-1234567890123456/9999999999';
+  it('uses real production unit IDs when EXPO_PUBLIC_ENV=production', async () => {
+    process.env[ENV_KEY] = 'production';
     const mod = await import('../units');
-    expect(mod.adUnits.banner).toBe('ca-app-pub-1234567890123456/9999999999');
+    expect(mod.adUnits.native).toBe('ca-app-pub-6316860881127013/5488275799');
+    expect(mod.adUnits.interstitial).toBe('ca-app-pub-6316860881127013/6284376351');
+    expect(mod.adUnits.rewarded).toBe('ca-app-pub-6316860881127013/4971294683');
+    expect(mod.isUsingTestUnits).toBe(false);
   });
 
-  it('hard-fails at module load when EXPO_PUBLIC_ENV=production has no real unit IDs', async () => {
-    process.env.EXPO_PUBLIC_ENV = 'production';
-    await expect(import('../units')).rejects.toThrow(/Production build requires real AdMob/);
+  it('exposes banner and appOpen as null in production (slots not rendered)', async () => {
+    process.env[ENV_KEY] = 'production';
+    const mod = await import('../units');
+    expect(mod.adUnits.banner).toBeNull();
+    expect(mod.adUnits.appOpen).toBeNull();
   });
 
-  it('accepts all real unit IDs in production', async () => {
-    process.env.EXPO_PUBLIC_ENV = 'production';
-    process.env.EXPO_PUBLIC_ADMOB_BANNER_IOS = 'ca-app-pub-1111111111111111/1';
-    process.env.EXPO_PUBLIC_ADMOB_BANNER_ANDROID = 'ca-app-pub-1111111111111111/2';
-    process.env.EXPO_PUBLIC_ADMOB_INTERSTITIAL_IOS = 'ca-app-pub-1111111111111111/3';
-    process.env.EXPO_PUBLIC_ADMOB_INTERSTITIAL_ANDROID = 'ca-app-pub-1111111111111111/4';
-    process.env.EXPO_PUBLIC_ADMOB_REWARDED_IOS = 'ca-app-pub-1111111111111111/5';
-    process.env.EXPO_PUBLIC_ADMOB_REWARDED_ANDROID = 'ca-app-pub-1111111111111111/6';
+  it('exports the frequency-cap config used by controllers', async () => {
     const mod = await import('../units');
-    expect(mod.adUnits.banner).toBe('ca-app-pub-1111111111111111/1');
-    expect(mod.adUnits.interstitial).toBe('ca-app-pub-1111111111111111/3');
-    expect(mod.adUnits.rewarded).toBe('ca-app-pub-1111111111111111/5');
+    expect(mod.adFrequency.interstitialEveryNthInsert).toBe(5);
+    expect(mod.adFrequency.interstitialMinIntervalMs).toBe(90 * 1000);
+    expect(mod.adFrequency.nativeEveryNthRow).toBe(10);
+    expect(mod.adFrequency.newInstallGraceMs).toBe(60 * 1000);
+    expect(mod.adFrequency.rewardedTrialDays).toBe(7);
+    expect(mod.adFrequency.rewardedTrialItem).toBe('Trazia Pro days');
+    expect(mod.adFrequency.rewardedTrialAntiAbuseWindowMs).toBe(30 * 24 * 60 * 60 * 1000);
   });
 });

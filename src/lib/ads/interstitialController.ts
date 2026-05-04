@@ -13,6 +13,7 @@ let preloaded: { show: () => void } | null = null;
 
 async function preloadInterstitial(): Promise<void> {
   if (preloaded) return;
+  if (!adUnits.interstitial) return;
   const { available } = await configureAds();
   if (!available) return;
   try {

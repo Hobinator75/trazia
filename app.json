@@ -68,8 +68,8 @@
       [
         "react-native-google-mobile-ads",
         {
-          "androidAppId": "ca-app-pub-3940256099942544~3347511713",
-          "iosAppId": "ca-app-pub-3940256099942544~1458002511",
+          "androidAppId": "ca-app-pub-6316860881127013~6899543319",
+          "iosAppId": "ca-app-pub-6316860881127013~6600160415",
           "userTrackingUsageDescription": "Trazia fragt nur, wenn du personalisierte Werbung erlauben möchtest."
         }
       ],

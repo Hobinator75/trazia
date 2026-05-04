@@ -37,6 +37,9 @@ export function AdaptiveBannerAd({ reservedHeight = 56 }: AdaptiveBannerAdProps)
   }, [isAdFree]);
 
   if (isAdFree) return null;
+  // Production builds explicitly opt out of banner ads (adUnits.banner is
+  // null on prod). Render nothing instead of crashing the SDK.
+  if (adUnits.banner === null) return null;
   if (!sdk) return <View style={{ height: reservedHeight }} />;
 
   const { BannerAd, BannerAdSize } = sdk;
