@@ -73,13 +73,6 @@
           "userTrackingUsageDescription": "Trazia fragt nur, wenn du personalisierte Werbung erlauben möchtest."
         }
       ],
-      [
-        "@sentry/react-native/expo",
-        {
-          "organization": "trazia",
-          "project": "trazia"
-        }
-      ],
       "expo-tracking-transparency",
       "expo-asset",
       [

@@ -4,10 +4,16 @@ import { IMPRINT_DE, PRIVACY_POLICY_DE, TERMS_DE } from '../content';
 
 describe('legal content (DE)', () => {
   it('privacy policy mentions every embedded SDK by name', () => {
-    expect(PRIVACY_POLICY_DE).toContain('Sentry');
+    // Sentry is intentionally absent at launch — crash reporting is
+    // deferred to post-launch (see docs/post-launch-roadmap.md).
+    expect(PRIVACY_POLICY_DE).not.toContain('Sentry');
     expect(PRIVACY_POLICY_DE).toContain('PostHog');
     expect(PRIVACY_POLICY_DE).toContain('AdMob');
     expect(PRIVACY_POLICY_DE).toContain('RevenueCat');
+  });
+
+  it('privacy policy promises a 14-day pre-announcement before crash reporting goes live', () => {
+    expect(PRIVACY_POLICY_DE).toMatch(/14\s*Tage/);
   });
 
   it('privacy policy explains where to opt out of crash reports + analytics', () => {

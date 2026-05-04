@@ -24,18 +24,14 @@ verlassen dein Gerät nur, wenn du selbst einen **Daten-Export** anstößt.
 Trazia bindet die folgenden Drittanbieter ein. Du kannst die jeweils
 relevanten Datenströme über **Profil → Einstellungen** abschalten.
 
-### Sentry — Crash-Reports
+### Crash-Reports
 
-- Zweck: anonyme Stack-Traces, wenn die App abstürzt, damit wir Fehler
-  reproduzieren und beheben können.
-- Datenkategorien: Stack-Trace, App-Version, OS-Version, Geräteklasse
-  (z. B. „iPhone 15"). **Keine** Reise-, Foto- oder Standortdaten.
-- Hosting: Sentry GmbH, Frankfurt am Main (EU, DSGVO).
-- Steuerung: standardmäßig **eingeschaltet**, abschaltbar in
-  „Profil → Einstellungen → Crash-Reports senden". Die Einstellung wird
-  lokal gespeichert und überlebt einen App-Neustart.
-- Pseudonymisierung: Sentry erhält von uns keine User-ID; das SDK ist mit
-  \`sendDefaultPii: false\` konfiguriert.
+Trazia versendet **derzeit keine** Crash-Reports an Dritte. Die App-interne
+Einstellung „Crash-Reports senden" steuert eine zukünftige Integration:
+Sollten wir später ein DSGVO-konformes Crash-Reporting mit EU-Hosting
+einbinden, kündigen wir das **mindestens 14 Tage vor dem Update** im
+Release-Hinweis an. Du kannst den Toggle bereits jetzt ausschalten — die
+Voreinstellung wird respektiert, sobald die Integration aktiv ist.
 
 ### PostHog — anonyme Nutzungsstatistiken
 
@@ -74,7 +70,7 @@ Daten verbleiben beim jeweiligen App-Store.
   exportieren** als JSON herunterladen.
 - Du kannst alle Daten jederzeit über **Profil → Einstellungen → Alle
   Daten löschen** unwiderruflich entfernen.
-- Du kannst Sentry-/PostHog-Übermittlung jederzeit in den Einstellungen
+- Du kannst die PostHog-Übermittlung jederzeit in den Einstellungen
   abschalten — bereits gesendete Events sind anonymisiert und nicht zu
   dir rückverfolgbar.
 - Eine Auskunfts- oder Löschanfrage an einen Trazia-Server entfällt,
