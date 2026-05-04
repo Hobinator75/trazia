@@ -15,35 +15,77 @@ sie weitergegeben werden.
 ## Lokale Datenverarbeitung
 
 Alle erfassten Reisedaten (Routen, Fotos, Tags, Notizen) werden ausschließlich
-lokal auf deinem Gerät gespeichert. Es gibt im MVP keinen Server-Sync, keinen
-Account und keine zentrale Datenbank.
+lokal auf deinem Gerät in einer SQLite-Datenbank gespeichert. Es gibt keinen
+Server-Sync, keinen Account und keine zentrale Cloud-Datenbank. Lokale Daten
+verlassen dein Gerät nur, wenn du selbst einen **Daten-Export** anstößt.
 
-## Werbung und Consent
+## Verarbeitete Daten und Drittanbieter
 
-Trazia zeigt Werbung über **Google AdMob**. Vor der ersten Anzeige fragen wir
-über das Consent-Sheet (Google UMP) deine Einwilligung ab. Ohne Zustimmung
-werden ausschließlich nicht-personalisierte Anzeigen ausgeliefert. Premium-
-Nutzer:innen sehen keinerlei Werbung.
+Trazia bindet die folgenden Drittanbieter ein. Du kannst die jeweils
+relevanten Datenströme über **Profil → Einstellungen** abschalten.
 
-## In-App-Käufe
+### Sentry — Crash-Reports
 
-Premium-Abonnements werden über **RevenueCat** (Apple App Store / Google Play)
-abgewickelt. Wir erhalten von RevenueCat lediglich pseudonyme Status-Informationen
-zum Abo (aktiv / inaktiv). Zahlungs- und persönliche Daten verbleiben beim
-jeweiligen App-Store.
+- Zweck: anonyme Stack-Traces, wenn die App abstürzt, damit wir Fehler
+  reproduzieren und beheben können.
+- Datenkategorien: Stack-Trace, App-Version, OS-Version, Geräteklasse
+  (z. B. „iPhone 15"). **Keine** Reise-, Foto- oder Standortdaten.
+- Hosting: Sentry GmbH, Frankfurt am Main (EU, DSGVO).
+- Steuerung: standardmäßig **eingeschaltet**, abschaltbar in
+  „Profil → Einstellungen → Crash-Reports senden". Die Einstellung wird
+  lokal gespeichert und überlebt einen App-Neustart.
+- Pseudonymisierung: Sentry erhält von uns keine User-ID; das SDK ist mit
+  \`sendDefaultPii: false\` konfiguriert.
+
+### PostHog — anonyme Nutzungsstatistiken
+
+- Zweck: aggregierte, anonyme Nutzungsmetriken (z. B. „wie viele Nutzer
+  öffnen den Statistik-Tab pro Woche?"), um Produktentscheidungen zu
+  treffen.
+- Datenkategorien: Event-Name, Zeitstempel, App-Version. **Keine**
+  personenbezogenen Daten und keine Reise-Inhalte.
+- Hosting: PostHog EU (Frankfurt).
+- Steuerung: standardmäßig **ausgeschaltet** (Opt-In). Du musst PostHog
+  in „Profil → Einstellungen → Anonyme Nutzungsstatistiken" aktiv
+  einschalten.
+
+### Google AdMob — Werbung
+
+Trazia zeigt Werbung über **Google AdMob**. Vor der ersten Anzeige
+fragen wir über das Consent-Sheet (Google UMP) deine Einwilligung ab.
+Ohne Zustimmung werden ausschließlich nicht-personalisierte Anzeigen
+ausgeliefert. Premium-Nutzer:innen sehen keinerlei Werbung.
+
+Trazia ruft auf iOS aktuell **kein App-Tracking-Transparency (ATT)**-
+Sheet auf — wir nutzen kein IDFA und kein Cross-App-Tracking. Sollte
+sich das ändern, wird der ATT-Prompt vor jeglicher entsprechender
+Anzeige eingeholt.
+
+### RevenueCat — In-App-Käufe
+
+Premium-Abonnements werden über **RevenueCat** (Apple App Store / Google
+Play) abgewickelt. Wir erhalten von RevenueCat lediglich pseudonyme
+Status-Informationen zum Abo (aktiv / inaktiv). Zahlungs- und persönliche
+Daten verbleiben beim jeweiligen App-Store.
 
 ## Auskunft, Löschung, Widerspruch
 
-- Du kannst alle Daten jederzeit per **Daten-Export** als JSON herunterladen.
-- Du kannst alle Daten jederzeit über **Profil → Daten → Alle Daten löschen**
-  unwiderruflich entfernen.
-- Eine Auskunfts- oder Löschanfrage an einen Server entfällt, weil keine Daten
+- Du kannst alle Daten jederzeit per **Profil → Einstellungen → Daten
+  exportieren** als JSON herunterladen.
+- Du kannst alle Daten jederzeit über **Profil → Einstellungen → Alle
+  Daten löschen** unwiderruflich entfernen.
+- Du kannst Sentry-/PostHog-Übermittlung jederzeit in den Einstellungen
+  abschalten — bereits gesendete Events sind anonymisiert und nicht zu
+  dir rückverfolgbar.
+- Eine Auskunfts- oder Löschanfrage an einen Trazia-Server entfällt,
+  weil außer den oben genannten Drittanbieter-Streams keine Daten
   zentral gespeichert werden.
 
 ## Kontakt
 
-Bei Fragen zu dieser Datenschutzerklärung erreichst du den Verantwortlichen
-unter [tim.hobrlant@gmail.com](mailto:tim.hobrlant@gmail.com).
+Bei Fragen zu dieser Datenschutzerklärung erreichst du den
+Verantwortlichen unter
+[tim.hobrlant@gmail.com](mailto:tim.hobrlant@gmail.com).
 `;
 
 export const IMPRINT_DE = `## Impressum
