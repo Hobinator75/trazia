@@ -29,7 +29,7 @@ import { searchVehicles } from '@/db/repositories/vehicle.repository';
 import { eq } from 'drizzle-orm';
 import type { Location, Operator, Vehicle } from '@/db/schema';
 import { haversineDistance, initialBearing } from '@/lib/geo';
-import { computeDurationMinutes } from '@/lib/journeys/duration';
+import { buildFlightJourneyPatch } from '@/lib/journeys/buildJourneyPatch';
 import {
   type CabinClass,
   type FlightFormValues,
@@ -183,31 +183,7 @@ export function FlightForm({ editing }: FlightFormProps = {}) {
             ) / 10
           : null;
 
-      const durationMinutes = computeDurationMinutes(
-        values.startTimeLocal,
-        values.endTimeLocal,
-        values.date,
-      );
-
-      const journeyPatch = {
-        mode: 'flight' as const,
-        fromLocationId: values.fromLocationId,
-        toLocationId: values.toLocationId,
-        date: values.date,
-        startTimeLocal: values.startTimeLocal ?? null,
-        endTimeLocal: values.endTimeLocal ?? null,
-        operatorId: values.operatorId ?? null,
-        vehicleId: values.vehicleId ?? null,
-        serviceNumber: values.serviceNumber ?? null,
-        seatNumber: values.seatNumber ?? null,
-        cabinClass: values.cabinClass ?? null,
-        distanceKm,
-        durationMinutes: durationMinutes ?? null,
-        routeType: 'great_circle' as const,
-        notes: values.notes ?? null,
-        isManualEntry: true,
-        source: 'manual',
-      };
+      const journeyPatch = buildFlightJourneyPatch(values, distanceKm);
 
       let journeyId: string;
       if (editing) {

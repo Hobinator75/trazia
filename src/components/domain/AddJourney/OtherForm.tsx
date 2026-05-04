@@ -31,7 +31,7 @@ import {
   type OtherSubmode,
   parseDistanceInput,
 } from '@/lib/forms/journeySchemas';
-import { computeDurationMinutes } from '@/lib/journeys/duration';
+import { buildOtherJourneyPatch } from '@/lib/journeys/buildJourneyPatch';
 import { useSnackbarStore } from '@/stores/snackbarStore';
 import { colors } from '@/theme/colors';
 
@@ -70,16 +70,9 @@ async function ensureAdhocLocation(label: string): Promise<string> {
   return id;
 }
 
-// Each submode is persisted to its own TransportMode so stats / charts
-// reflect the user's actual movement type. Legacy journeys created before
-// this fix had mode='car' regardless of submode, with the real submode
-// encoded in `source` ("manual:walk" etc.); we honor that on edit.
-function modeFromSubmode(submode: OtherSubmode): 'walk' | 'bike' | 'other' {
-  if (submode === 'walk') return 'walk';
-  if (submode === 'bike') return 'bike';
-  return 'other';
-}
-
+// Legacy journeys created before the per-submode fix had mode='car'
+// regardless of submode, with the real submode encoded in `source`
+// ("manual:walk" etc.); we honor that on edit.
 function submodeFromJourney(journey: JourneyWithRefs): OtherSubmode {
   if (journey.mode === 'walk') return 'walk';
   if (journey.mode === 'bike') return 'bike';
@@ -171,26 +164,11 @@ export function OtherForm({ editing }: OtherFormProps = {}) {
         ensureAdhocLocation(values.toText),
       ]);
 
-      const durationMinutes = computeDurationMinutes(
-        values.startTimeLocal,
-        values.endTimeLocal,
-        values.date,
-      );
-
-      const journeyPatch = {
-        mode: modeFromSubmode(values.submode),
+      const journeyPatch = buildOtherJourneyPatch(values, {
         fromLocationId: fromId,
         toLocationId: toId,
-        date: values.date,
-        startTimeLocal: values.startTimeLocal ?? null,
-        endTimeLocal: values.endTimeLocal ?? null,
         distanceKm: parseDistanceInput(values.distanceKm),
-        durationMinutes: durationMinutes ?? null,
-        routeType: 'bezier' as const,
-        notes: values.notes ?? null,
-        isManualEntry: true,
-        source: `manual:${values.submode}`,
-      };
+      });
 
       let journeyId: string;
       if (editing) {

@@ -29,7 +29,7 @@ import { searchVehicles } from '@/db/repositories/vehicle.repository';
 import { journeyCompanions, journeyPhotos, journeyTags } from '@/db/schema';
 import type { Location, Operator, Vehicle } from '@/db/schema';
 import { haversineDistance } from '@/lib/geo';
-import { computeDurationMinutes } from '@/lib/journeys/duration';
+import { buildTrainJourneyPatch } from '@/lib/journeys/buildJourneyPatch';
 import {
   type TrainClass,
   type TrainFormValues,
@@ -178,31 +178,7 @@ export function TrainForm({ editing }: TrainFormProps = {}) {
             ) / 10
           : null;
 
-      const durationMinutes = computeDurationMinutes(
-        values.startTimeLocal,
-        values.endTimeLocal,
-        values.date,
-      );
-
-      const journeyPatch = {
-        mode: 'train' as const,
-        fromLocationId: values.fromLocationId,
-        toLocationId: values.toLocationId,
-        date: values.date,
-        startTimeLocal: values.startTimeLocal ?? null,
-        endTimeLocal: values.endTimeLocal ?? null,
-        operatorId: values.operatorId ?? null,
-        vehicleId: values.vehicleId ?? null,
-        serviceNumber: values.serviceNumber ?? null,
-        seatNumber: values.seatNumber ?? null,
-        cabinClass: values.trainClass ?? null,
-        distanceKm,
-        durationMinutes: durationMinutes ?? null,
-        routeType: 'bezier' as const,
-        notes: values.notes ?? null,
-        isManualEntry: true,
-        source: 'manual',
-      };
+      const journeyPatch = buildTrainJourneyPatch(values, distanceKm);
 
       let journeyId: string;
       if (editing) {
