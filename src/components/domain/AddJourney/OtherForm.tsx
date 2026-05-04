@@ -1,6 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { eq } from 'drizzle-orm';
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
@@ -11,12 +10,11 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { db } from '@/db/client';
 import {
-  createJourney,
-  updateJourney,
+  saveJourneyWithExtras,
   type JourneyExtras,
   type JourneyWithRefs,
 } from '@/db/repositories/journey.repository';
-import { journeyPhotos, journeyTags, locations } from '@/db/schema';
+import { locations } from '@/db/schema';
 import {
   type OtherFormValues,
   otherFormSchema,
@@ -162,31 +160,24 @@ export function OtherForm({ editing }: OtherFormProps = {}) {
         toLocationId: toId,
         distanceKm: parseDistanceInput(values.distanceKm),
       });
+      const photoUris = values.photoUri ? [values.photoUri] : [];
 
-      let journeyId: string;
-      if (editing) {
-        await updateJourney(db, editing.journey.id, journeyPatch);
-        journeyId = editing.journey.id;
-        await db.delete(journeyTags).where(eq(journeyTags.journeyId, journeyId));
-        await db.delete(journeyPhotos).where(eq(journeyPhotos.journeyId, journeyId));
-      } else {
-        const journey = await createJourney(db, journeyPatch);
-        journeyId = journey.id;
-      }
-
-      if (values.tags.length > 0) {
-        await db.insert(journeyTags).values(values.tags.map((tag) => ({ journeyId, tag })));
-      }
-      if (values.photoUri) {
-        await db.insert(journeyPhotos).values({ journeyId, photoUri: values.photoUri });
-      }
+      await saveJourneyWithExtras(
+        db,
+        journeyPatch,
+        { tags: values.tags, companions: [], photoUris },
+        editing ? { editing: true, journeyId: editing.journey.id } : {},
+      );
 
       showSnackbar(editing ? 'Reise aktualisiert' : 'Reise gespeichert', { variant: 'success' });
       router.back();
     } catch (err) {
-      showSnackbar(err instanceof Error ? err.message : 'Fehler beim Speichern', {
-        variant: 'error',
-      });
+      showSnackbar(
+        err instanceof Error
+          ? `Reise konnte nicht gespeichert werden: ${err.message}`
+          : 'Reise konnte nicht gespeichert werden — deine Änderungen sind unverändert.',
+        { variant: 'error' },
+      );
     } finally {
       setSubmitting(false);
     }

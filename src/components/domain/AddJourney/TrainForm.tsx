@@ -1,6 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Ionicons } from '@expo/vector-icons';
-import { eq } from 'drizzle-orm';
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
@@ -11,15 +10,13 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { db } from '@/db/client';
 import {
-  createJourney,
-  updateJourney,
+  saveJourneyWithExtras,
   type JourneyExtras,
   type JourneyWithRefs,
 } from '@/db/repositories/journey.repository';
 import { getLocationById, searchLocations } from '@/db/repositories/location.repository';
 import { searchOperators } from '@/db/repositories/operator.repository';
 import { searchVehicles } from '@/db/repositories/vehicle.repository';
-import { journeyCompanions, journeyPhotos, journeyTags } from '@/db/schema';
 import type { Location, Operator, Vehicle } from '@/db/schema';
 import { haversineDistance } from '@/lib/geo';
 import { buildTrainJourneyPatch } from '@/lib/journeys/buildJourneyPatch';
@@ -172,37 +169,24 @@ export function TrainForm({ editing }: TrainFormProps = {}) {
           : null;
 
       const journeyPatch = buildTrainJourneyPatch(values, distanceKm);
+      const photoUris = values.photoUri ? [values.photoUri] : [];
 
-      let journeyId: string;
-      if (editing) {
-        await updateJourney(db, editing.journey.id, journeyPatch);
-        journeyId = editing.journey.id;
-        await db.delete(journeyCompanions).where(eq(journeyCompanions.journeyId, journeyId));
-        await db.delete(journeyTags).where(eq(journeyTags.journeyId, journeyId));
-        await db.delete(journeyPhotos).where(eq(journeyPhotos.journeyId, journeyId));
-      } else {
-        const journey = await createJourney(db, journeyPatch);
-        journeyId = journey.id;
-      }
-
-      if (values.companions.length > 0) {
-        await db
-          .insert(journeyCompanions)
-          .values(values.companions.map((name) => ({ journeyId, companionName: name })));
-      }
-      if (values.tags.length > 0) {
-        await db.insert(journeyTags).values(values.tags.map((tag) => ({ journeyId, tag })));
-      }
-      if (values.photoUri) {
-        await db.insert(journeyPhotos).values({ journeyId, photoUri: values.photoUri });
-      }
+      await saveJourneyWithExtras(
+        db,
+        journeyPatch,
+        { tags: values.tags, companions: values.companions, photoUris },
+        editing ? { editing: true, journeyId: editing.journey.id } : {},
+      );
 
       showSnackbar(editing ? 'Reise aktualisiert' : 'Reise gespeichert', { variant: 'success' });
       router.back();
     } catch (err) {
-      showSnackbar(err instanceof Error ? err.message : 'Fehler beim Speichern', {
-        variant: 'error',
-      });
+      showSnackbar(
+        err instanceof Error
+          ? `Reise konnte nicht gespeichert werden: ${err.message}`
+          : 'Reise konnte nicht gespeichert werden — deine Änderungen sind unverändert.',
+        { variant: 'error' },
+      );
     } finally {
       setSubmitting(false);
     }

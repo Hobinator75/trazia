@@ -1,4 +1,4 @@
-import { desc, eq } from 'drizzle-orm';
+import { desc, eq, sql } from 'drizzle-orm';
 
 import { recalculateAchievements } from '@/lib/achievements/sync';
 
@@ -148,6 +148,93 @@ export async function deleteJourney(
       ...(opts.notify !== undefined ? { notify: opts.notify } : {}),
     });
   }
+}
+
+export interface JourneyExtrasInput {
+  tags: readonly string[];
+  companions: readonly string[];
+  photoUris: readonly string[];
+}
+
+export interface SaveJourneyOptions extends JourneyMutationOptions {
+  editing?: boolean;
+  journeyId?: string;
+}
+
+// Atomic save path used by FlightForm/TrainForm/OtherForm. Wraps the
+// journey row mutation and the child-collection delete+insert in a
+// single SQLite transaction so either everything lands or nothing
+// does. Achievement recalc and ad-trigger run *after* commit on
+// purpose: the recalc is itself a multi-row mutation with its own
+// idempotent migration log, and we don't want to roll back a
+// successful journey insert just because the unlock evaluation
+// hiccuped (the unlock state stays internally consistent via its own
+// uniqueness constraints).
+export async function saveJourneyWithExtras(
+  db: DrizzleDb,
+  patch: NewJourney,
+  extras: JourneyExtrasInput,
+  opts: SaveJourneyOptions = { evaluateAchievements: true },
+): Promise<{ id: string }> {
+  const editing = opts.editing === true;
+  if (editing && !opts.journeyId) {
+    throw new Error('saveJourneyWithExtras: editing=true requires journeyId');
+  }
+
+  const targetId = editing ? opts.journeyId! : (patch.id ?? uuid());
+
+  await db.run(sql.raw('BEGIN TRANSACTION'));
+  try {
+    if (editing) {
+      await db.update(journeys).set(patch).where(eq(journeys.id, targetId));
+      await db.delete(journeyCompanions).where(eq(journeyCompanions.journeyId, targetId));
+      await db.delete(journeyTags).where(eq(journeyTags.journeyId, targetId));
+      await db.delete(journeyPhotos).where(eq(journeyPhotos.journeyId, targetId));
+    } else {
+      await db.insert(journeys).values({ ...patch, id: targetId });
+    }
+
+    if (extras.companions.length > 0) {
+      await db
+        .insert(journeyCompanions)
+        .values(extras.companions.map((name) => ({ journeyId: targetId, companionName: name })));
+    }
+    if (extras.tags.length > 0) {
+      await db.insert(journeyTags).values(extras.tags.map((tag) => ({ journeyId: targetId, tag })));
+    }
+    if (extras.photoUris.length > 0) {
+      await db
+        .insert(journeyPhotos)
+        .values(extras.photoUris.map((photoUri) => ({ journeyId: targetId, photoUri })));
+    }
+
+    await db.run(sql.raw('COMMIT'));
+  } catch (err) {
+    try {
+      await db.run(sql.raw('ROLLBACK'));
+    } catch {
+      // best-effort: the original error is what callers care about.
+    }
+    throw err;
+  }
+
+  // Post-commit side-effects. Failures here do NOT roll back the
+  // journey — they affect derived state (achievement unlocks, ad
+  // pacing, analytics) that recalculate idempotently on next access.
+  if (opts.evaluateAchievements !== false) {
+    await recalculateAchievements(db, {
+      triggeringJourneyId: targetId,
+      ...(opts.notify !== undefined ? { notify: opts.notify } : {}),
+    });
+  }
+  if (!editing && opts.triggerInterstitial !== false) {
+    void import('@/lib/ads/interstitialController').then((mod) => mod.onJourneyCreated());
+  }
+  if (!editing) {
+    void import('@/lib/observability/analytics').then((mod) => mod.trackJourneyAdded(patch.mode));
+  }
+
+  return { id: targetId };
 }
 
 export async function duplicateJourney(
