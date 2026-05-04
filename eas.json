@@ -53,8 +53,8 @@
     "preview": {
       "ios": {
         "appleId": "tim.hobrlant@gmail.com",
-        "ascAppId": "",
-        "appleTeamId": ""
+        "ascAppId": "REPLACE_WITH_ASC_APP_ID_BEFORE_FIRST_SUBMIT",
+        "appleTeamId": "REPLACE_WITH_APPLE_TEAM_ID_BEFORE_FIRST_SUBMIT"
       },
       "android": {
         "track": "internal",
@@ -64,8 +64,8 @@
     "production": {
       "ios": {
         "appleId": "tim.hobrlant@gmail.com",
-        "ascAppId": "",
-        "appleTeamId": ""
+        "ascAppId": "REPLACE_WITH_ASC_APP_ID_BEFORE_FIRST_SUBMIT",
+        "appleTeamId": "REPLACE_WITH_APPLE_TEAM_ID_BEFORE_FIRST_SUBMIT"
       },
       "android": {
         "track": "production",

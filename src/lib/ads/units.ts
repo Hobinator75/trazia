@@ -4,7 +4,8 @@ import { Platform } from 'react-native';
 // IDs from the production AdMob account, set via EAS Secrets. The
 // constants below are Google's published test units — they always
 // serve a "Test Ad" placeholder. Shipping a Production build with
-// these still active means zero ad revenue.
+// these still active means zero ad revenue, so we hard-fail at module
+// load when EXPO_PUBLIC_ENV=production has no real IDs configured.
 //
 // Required EAS Secrets:
 //   EXPO_PUBLIC_ADMOB_BANNER_{ANDROID,IOS}
@@ -21,30 +22,52 @@ const TEST_INTERSTITIAL_IOS = 'ca-app-pub-3940256099942544/4411468910';
 const TEST_REWARDED_ANDROID = 'ca-app-pub-3940256099942544/5224354917';
 const TEST_REWARDED_IOS = 'ca-app-pub-3940256099942544/1712485313';
 
+const isProductionBuild = (): boolean => process.env.EXPO_PUBLIC_ENV === 'production';
+
+const requireRealUnit = (slot: string, value: string | undefined): string => {
+  if (!value || value.length === 0) {
+    throw new Error(
+      `[ads] Production build requires real AdMob unit IDs but ${slot} is empty. ` +
+        'Set EXPO_PUBLIC_ADMOB_* via EAS Secrets, or build with ' +
+        'EXPO_PUBLIC_ENV != production for development/preview.',
+    );
+  }
+  return value;
+};
+
 const pickFromEnv = (
+  slot: 'banner' | 'interstitial' | 'rewarded',
   android: string | undefined,
   ios: string | undefined,
   fallbackAndroid: string,
   fallbackIos: string,
 ): string => {
+  if (isProductionBuild()) {
+    return Platform.OS === 'android'
+      ? requireRealUnit(`${slot} (android)`, android)
+      : requireRealUnit(`${slot} (ios)`, ios);
+  }
   if (Platform.OS === 'android') return android && android.length > 0 ? android : fallbackAndroid;
   return ios && ios.length > 0 ? ios : fallbackIos;
 };
 
 export const adUnits = {
   banner: pickFromEnv(
+    'banner',
     process.env.EXPO_PUBLIC_ADMOB_BANNER_ANDROID,
     process.env.EXPO_PUBLIC_ADMOB_BANNER_IOS,
     TEST_BANNER_ANDROID,
     TEST_BANNER_IOS,
   ),
   interstitial: pickFromEnv(
+    'interstitial',
     process.env.EXPO_PUBLIC_ADMOB_INTERSTITIAL_ANDROID,
     process.env.EXPO_PUBLIC_ADMOB_INTERSTITIAL_IOS,
     TEST_INTERSTITIAL_ANDROID,
     TEST_INTERSTITIAL_IOS,
   ),
   rewarded: pickFromEnv(
+    'rewarded',
     process.env.EXPO_PUBLIC_ADMOB_REWARDED_ANDROID,
     process.env.EXPO_PUBLIC_ADMOB_REWARDED_IOS,
     TEST_REWARDED_ANDROID,
