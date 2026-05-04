@@ -12,9 +12,10 @@ Stand: 2026-05-04 (laufend)
 | 3 | Achievement-Mode-Isolation via appliesTo | ✅ |
 | 4 | Backup-Restore transaction-safe | ✅ |
 | 5 | Phase-1 Train-Gating | ✅ |
-| 6 | Metro `.sql`-Bundling | offen |
-| 7 | Privacy-Policy-Disclosure | offen |
+| 6 | Metro `.sql`-Bundling | ✅ |
+| 7 | Privacy-Policy-Disclosure | ✅ |
 | 8 | Final Validation | ✅ |
+| 9 | Codex-Final-Review-Cleanup | ✅ |
 
 ## Final Validation Result (2026-05-04)
 
@@ -41,17 +42,43 @@ Stand: 2026-05-04 (laufend)
 - AdMob-IDs als TODO offen — Block 7 dokumentiert das in
   `RELEASE_CHECKLIST.md`.
 
-## Manuelle Tim-Reviews offen
+## Codex Final Review (2026-05-04)
 
-- [ ] App Privacy Details auf App Store Connect manuell eintragen
-      (siehe `docs/privacy-policy-de.md` — Sentry, PostHog, AdMob,
-      RevenueCat müssen alle deklariert sein).
+7 LAUNCH-Blocker geprüft, alle bestätigt: 5 OK, 2 TEILWEISE
+(Duration-Test indirekt, validateSnapshot unvollständig). Cleanup-
+Session am 2026-05-04 hat beide Punkte gefixt:
+
+- **Punkt 1** — Patch-Bau für Flight/Train/Other extrahiert nach
+  `src/lib/journeys/buildJourneyPatch.ts`. Forms importieren die
+  Helper, Tests importieren sie auch — Form und Test können nicht
+  mehr stillschweigend auseinanderdriften. (commit 8164941)
+- **Punkt 2** — `validateSnapshot` prüft jetzt Row-Pflichtfelder per
+  Tabelle, FK auf `parentJourneyId` (inkl. Self-Reference) und FK auf
+  `achievementUnlocks.triggeringJourneyId`. Pre-Validation fängt damit
+  alles ab, was die Transaction sonst mid-restore aufdeckt. (commit
+  ed8cad6)
+- **Punkt 3** — diese Tabellen-Bereinigung.
+
+## Vor Production-Submit manuell durch Tim
+
+Nichts code-seitiges mehr offen — die folgenden Punkte sind reine
+Account- / Hosting- / Submit-Aufgaben, die kein Code-Diff lösen kann:
+
+- [ ] AdMob Production-App-IDs + Unit-IDs in `app.json` und als
+      EAS-Secrets setzen (`src/lib/ads/units.ts` hat den
+      BLOCKING-Hinweis). Ohne reale IDs werden in der Release-Build
+      keine Ads ausgeliefert.
+- [ ] Apple Team ID + ASC App ID in `eas.json` finalisieren
+      (für `eas submit`).
+- [ ] Sentry Org / Project / DSN / Auth-Token finalisieren
+      (Sourcemap-Upload via EAS-Secret).
 - [ ] `trazia.com/privacy` mit beiden Sprachen (DE + EN) hosten —
       Quelle: `docs/privacy-policy-{de,en}.md`.
 - [ ] Datenschutzerklärungs-URL im App-Store / Play-Store Listing
       eintragen.
-- [ ] AdMob Production-IDs in `app.json` und EAS-Secrets setzen
-      (`src/lib/ads/units.ts` hat den BLOCKING-Hinweis).
-- [ ] Manuelle Test-Drehbuch S1-S7 + S10-S14 auf echtem Gerät spielen,
-      Findings in `docs/audit/manual-test-findings.md` sammeln.
-      S8/S9 (Train) skippen — Phase-1 versteckt.
+- [ ] App Privacy Details auf App Store Connect manuell ausfüllen
+      (Sentry, PostHog, AdMob, RevenueCat alle deklarieren — siehe
+      `docs/privacy-policy-de.md`).
+- [ ] Manuelles Test-Drehbuch S1-S7 + S10-S14 auf echtem Gerät
+      durchspielen, Findings in `docs/audit/manual-test-findings.md`
+      sammeln. S8/S9 (Train) skippen — Phase-1 versteckt.
