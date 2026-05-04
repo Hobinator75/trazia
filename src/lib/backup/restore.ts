@@ -35,9 +35,44 @@ export interface SnapshotValidation {
   errors: string[];
 }
 
+// Required (NOT NULL) columns per snapshot table. Mirrors the Drizzle
+// schema's `.notNull()` declarations — keep in sync if schema changes.
+// IDs and FKs are checked separately below; this catches things like
+// a journey row missing `date` that would otherwise blow up halfway
+// through the restore transaction.
+const REQUIRED_FIELDS: Record<string, readonly string[]> = {
+  locations: ['id', 'name', 'lat', 'lng', 'type'],
+  operators: ['id', 'name', 'modes'],
+  vehicles: ['id', 'mode'],
+  journeys: ['id', 'mode', 'fromLocationId', 'toLocationId', 'date'],
+  journeyCompanions: ['journeyId', 'companionName'],
+  journeyTags: ['journeyId', 'tag'],
+  journeyPhotos: ['id', 'journeyId', 'photoUri'],
+  trips: ['id', 'name'],
+  tripJourneys: ['tripId', 'journeyId'],
+  achievementUnlocks: ['id', 'achievementId', 'unlockedAt'],
+};
+
+function checkRequiredFields(
+  table: keyof typeof REQUIRED_FIELDS,
+  rows: readonly Record<string, unknown>[],
+  errors: string[],
+): void {
+  const required = REQUIRED_FIELDS[table] ?? [];
+  rows.forEach((row, idx) => {
+    for (const field of required) {
+      const v = row[field];
+      if (v === null || v === undefined) {
+        errors.push(`${table} row ${idx} missing required field '${field}'`);
+      }
+    }
+  });
+}
+
 // Sanity-check the snapshot before we touch the live DB. The checks
-// stay deliberately simple — version, shape, foreign-key reachability,
-// duplicate primary keys. A failed snapshot bails out before the
+// cover version, shape, duplicate primary keys, every foreign-key
+// reference (incl. self-refs and triggering-journey links), and
+// per-table NOT NULL columns. A failed snapshot bails out before the
 // destructive phase, so the user's data survives a malformed file.
 export function validateSnapshot(snapshot: unknown): SnapshotValidation {
   const errors: string[] = [];
@@ -69,6 +104,30 @@ export function validateSnapshot(snapshot: unknown): SnapshotValidation {
   if (errors.length > 0) return { ok: false, errors };
 
   const snap = s as DbSnapshot;
+
+  checkRequiredFields('locations', snap.locations as Record<string, unknown>[], errors);
+  checkRequiredFields('operators', snap.operators as Record<string, unknown>[], errors);
+  checkRequiredFields('vehicles', snap.vehicles as Record<string, unknown>[], errors);
+  checkRequiredFields('journeys', snap.journeys as Record<string, unknown>[], errors);
+  checkRequiredFields(
+    'journeyCompanions',
+    snap.journeyCompanions as Record<string, unknown>[],
+    errors,
+  );
+  checkRequiredFields('journeyTags', snap.journeyTags as Record<string, unknown>[], errors);
+  checkRequiredFields('journeyPhotos', snap.journeyPhotos as Record<string, unknown>[], errors);
+  checkRequiredFields('trips', snap.trips as Record<string, unknown>[], errors);
+  checkRequiredFields('tripJourneys', snap.tripJourneys as Record<string, unknown>[], errors);
+  checkRequiredFields(
+    'achievementUnlocks',
+    snap.achievementUnlocks as Record<string, unknown>[],
+    errors,
+  );
+
+  // Bail before FK checks if any required ID is missing — the FK loops
+  // below assume `j.id`, `t.id` etc. are usable strings.
+  if (errors.length > 0) return { ok: false, errors };
+
   const locationIds = new Set(snap.locations.map((l) => l.id));
   const operatorIds = new Set(snap.operators.map((o) => o.id));
   const vehicleIds = new Set(snap.vehicles.map((v) => v.id));
@@ -101,6 +160,13 @@ export function validateSnapshot(snapshot: unknown): SnapshotValidation {
     if (j.vehicleId && !vehicleIds.has(j.vehicleId)) {
       errors.push(`journey ${j.id} references missing vehicle ${j.vehicleId}`);
     }
+    if (j.parentJourneyId) {
+      if (j.parentJourneyId === j.id) {
+        errors.push(`journey ${j.id} parentJourneyId points at itself`);
+      } else if (!journeyIds.has(j.parentJourneyId)) {
+        errors.push(`journey ${j.id} references missing parentJourney ${j.parentJourneyId}`);
+      }
+    }
   }
 
   for (const tj of snap.tripJourneys) {
@@ -122,6 +188,15 @@ export function validateSnapshot(snapshot: unknown): SnapshotValidation {
   for (const jp of snap.journeyPhotos) {
     if (!journeyIds.has(jp.journeyId)) {
       errors.push(`journey_photo references missing journey ${jp.journeyId}`);
+    }
+  }
+  for (const au of snap.achievementUnlocks) {
+    // triggeringJourneyId is nullable — imported / seeded unlocks may
+    // legitimately have no source journey. Only validate when present.
+    if (au.triggeringJourneyId && !journeyIds.has(au.triggeringJourneyId)) {
+      errors.push(
+        `achievement_unlock ${au.id} references missing triggeringJourney ${au.triggeringJourneyId}`,
+      );
     }
   }
 

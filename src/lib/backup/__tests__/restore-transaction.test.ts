@@ -183,9 +183,10 @@ describe('restoreFromSnapshot', () => {
   });
 
   it('rolls back on a mid-restore SQLite error and preserves existing data', async () => {
-    // The journey row references its own primary key as `parentJourneyId`,
-    // which Drizzle would happily insert — but if we point it at a sibling
-    // that we DON'T also insert, the FK fires after the delete.
+    // A UNIQUE constraint violation that validateSnapshot doesn't see —
+    // two unlocks with the same achievementId. Validation accepts the
+    // snapshot; the second INSERT throws once the destructive phase
+    // is already underway. The transaction must roll back.
     const snapshot = minimalSnapshot({
       locations: [
         {
@@ -210,13 +211,32 @@ describe('restoreFromSnapshot', () => {
           id: 'j-1',
           fromLocationId: 'loc-x',
           toLocationId: 'loc-x',
-          parentJourneyId: 'j-missing',
         }),
       ],
+      achievementUnlocks: [
+        {
+          id: 'au-1',
+          achievementId: 'first_flight',
+          unlockedAt: new Date(),
+          triggeringJourneyId: null,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          id: 'au-2',
+          achievementId: 'first_flight',
+          unlockedAt: new Date(),
+          triggeringJourneyId: null,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      ],
     });
-    // validateSnapshot doesn't check parentJourneyId; the FK enforces.
     const result = await restoreFromSnapshot(handle.db, snapshot);
     expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.reason).toBe('transaction-failed');
+    }
 
     const rows = (await handle.db.all(
       sql.raw("SELECT COUNT(*) as n FROM journeys WHERE id = 'j-keep'"),
