@@ -64,6 +64,28 @@ Bei jedem neuen ID-Rename:
 - [ ] In RELEASE_CHECKLIST gezielt erwähnen, falls Sentry-Conflict-Reports
       erwartet werden (zwei-Unlock-Edge-Case)
 
+### Aktive Renames in dieser Release-Linie (CC-3.1)
+
+Sieben Achievement-ID-Renames laufen seit Branch `feat/cc-3.1-achievements-32`
+über die Code-Migration (kein neuer SQL-Migrations-File — der bestehende
+no-op aus 0002 + die Code-Migration decken alle Devices ab):
+
+| from                  | to                       |
+| --------------------- | ------------------------ |
+| `pacific_crosser`     | `transpacific`           |
+| `arctic_explorer`     | `arctic_crosser`         |
+| `star_alliance`       | `star_alliance_collector`|
+| `oneworld_alliance`   | `oneworld_collector`     |
+| `skyteam_alliance`    | `skyteam_collector`      |
+| `jumbo_jet`           | `jumbo_rider`            |
+| `flight_around_world` | `earth_circumference`    |
+
+Auf Devices, die genau eine der alten **und** die neue ID gleichzeitig
+unlocked haben (Edge-Case durch lokales Manual-Tinkering oder eine
+fehlgeschlagene Vorab-Migration), greift der Conflict-Skip-Pfad — die
+App startet, der Conflict wird in Sentry geloggt, manuelles Cleanup
+post-launch wenn relevant.
+
 ## 0 · Pre-Flight
 
 - [ ] Alle Tests grün lokal: `npm run typecheck && npm run lint && npm run format:check && npm run test`
