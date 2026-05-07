@@ -5,19 +5,8 @@ import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { db } from '@/db/client';
-import { createJourney } from '@/db/repositories/journey.repository';
-import { getLocationByIata } from '@/db/repositories/location.repository';
-import { getOperatorByCode } from '@/db/repositories/operator.repository';
-import { searchVehicles } from '@/db/repositories/vehicle.repository';
-import { haversineDistance } from '@/lib/geo';
+import { seedExampleJourney } from '@/lib/onboarding/seedExampleJourney';
 import { useSnackbarStore } from '@/stores/snackbarStore';
-
-const yesterdayIso = (): string => {
-  const d = new Date();
-  d.setDate(d.getDate() - 1);
-  const pad = (n: number) => (n < 10 ? `0${n}` : String(n));
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-};
 
 export default function OnboardingFirstJourneyScreen() {
   const router = useRouter();
@@ -25,61 +14,27 @@ export default function OnboardingFirstJourneyScreen() {
   const showSnackbar = useSnackbarStore((s) => s.show);
   const [working, setWorking] = useState(false);
 
-  const seedExampleJourney = async (): Promise<void> => {
+  const handleAccept = async (): Promise<void> => {
     setWorking(true);
     try {
-      const [fra, jfk, lh, vehicles] = await Promise.all([
-        getLocationByIata(db, 'FRA'),
-        getLocationByIata(db, 'JFK'),
-        getOperatorByCode(db, 'LH'),
-        searchVehicles(db, 'A359', 'flight'),
-      ]);
-      if (!fra || !jfk) {
+      const result = await seedExampleJourney(db);
+      if (result.status === 'missing-airports') {
         showSnackbar('Beispielreise konnte nicht angelegt werden.', { variant: 'error' });
-        return;
+      } else {
+        showSnackbar('Beispielreise erstellt.', { variant: 'success' });
       }
-      const distanceKm =
-        Math.round(
-          haversineDistance(
-            { latitude: fra.lat, longitude: fra.lng },
-            { latitude: jfk.lat, longitude: jfk.lng },
-          ) * 10,
-        ) / 10;
-      await createJourney(
-        db,
-        {
-          mode: 'flight',
-          fromLocationId: fra.id,
-          toLocationId: jfk.id,
-          date: yesterdayIso(),
-          serviceNumber: 'LH 400',
-          operatorId: lh?.id ?? null,
-          vehicleId: vehicles[0]?.id ?? null,
-          cabinClass: 'business',
-          distanceKm,
-          durationMinutes: 540,
-          routeType: 'great_circle',
-          notes: 'Beispielreise — kannst du jederzeit löschen.',
-          isManualEntry: true,
-          source: 'onboarding:example',
-        },
-        // Onboarding is the first run; suppress interstitial and toast so
-        // the user isn't ambushed by an ad before they've seen the app.
-        { evaluateAchievements: true, notify: false, triggerInterstitial: false },
-      );
-      showSnackbar('Beispielreise erstellt.', { variant: 'success' });
     } catch (err) {
       showSnackbar(err instanceof Error ? err.message : 'Fehler beim Anlegen', {
         variant: 'error',
       });
     } finally {
       setWorking(false);
+      router.push('/onboarding/permissions');
     }
   };
 
-  const handleAccept = async (): Promise<void> => {
-    await seedExampleJourney();
-    router.push('/onboarding/permissions');
+  const handleAddOwn = (): void => {
+    router.push('/journeys/add');
   };
 
   const handleSkip = (): void => {
@@ -124,8 +79,16 @@ export default function OnboardingFirstJourneyScreen() {
             {working ? 'Wird angelegt…' : 'Beispielreise anlegen'}
           </Text>
         </Pressable>
+        <Pressable
+          onPress={handleAddOwn}
+          disabled={working}
+          className="flex-row items-center justify-center gap-2 rounded-full border border-border-dark py-4 active:opacity-80"
+        >
+          <Ionicons name="create-outline" size={18} color="#F9FAFB" />
+          <Text className="text-base font-semibold text-text-light">Eigene Reise eintragen</Text>
+        </Pressable>
         <Pressable onPress={handleSkip} className="items-center py-3">
-          <Text className="text-sm text-text-muted">Erste Reise selbst eintragen</Text>
+          <Text className="text-sm text-text-muted">Später erfassen</Text>
         </Pressable>
       </View>
     </View>

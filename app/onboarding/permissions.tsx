@@ -29,12 +29,12 @@ export default function OnboardingPermissionsScreen() {
   const handleEnableNotifications = async (): Promise<void> => {
     await requestNotificationPermission();
     await finish();
-    router.replace('/');
+    router.replace('/(tabs)/journeys');
   };
 
   const handleSkip = async (): Promise<void> => {
     await finish();
-    router.replace('/');
+    router.replace('/(tabs)/journeys');
   };
 
   return (
