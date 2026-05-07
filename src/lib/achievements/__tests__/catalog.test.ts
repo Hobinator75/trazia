@@ -64,10 +64,20 @@ describe('achievements catalog (docs/achievements.json)', () => {
       'first_flight',
       'first_journey',
       'transatlantic',
+      'transpacific',
       'long_haul',
       'long_haul_8000',
-      'jumbo_jet',
+      'jumbo_rider',
       'widebody',
+      'earth_circumference',
+      'arctic_crosser',
+      'star_alliance_collector',
+      'oneworld_collector',
+      'skyteam_collector',
+      'ten_thousand_km',
+      'moon_distance',
+      'airline_loyalist',
+      'country_collector',
     ];
     for (const id of required) {
       expect(
@@ -77,8 +87,20 @@ describe('achievements catalog (docs/achievements.json)', () => {
     }
   });
 
-  it('does not still expose the renamed atlantic_crosser id', () => {
-    expect(ALL.find((a) => a.id === 'atlantic_crosser')).toBeUndefined();
+  it('does not still expose the renamed legacy ids (must be served via migration)', () => {
+    const legacyIds = [
+      'atlantic_crosser',
+      'pacific_crosser',
+      'arctic_explorer',
+      'star_alliance',
+      'oneworld_alliance',
+      'skyteam_alliance',
+      'jumbo_jet',
+      'flight_around_world',
+    ];
+    for (const id of legacyIds) {
+      expect(ALL.find((a) => a.id === id), `legacy ${id} still in catalog`).toBeUndefined();
+    }
   });
 
   it('hidden achievements are tagged with hidden=true', () => {

@@ -35,6 +35,41 @@ export const ACHIEVEMENT_ID_MIGRATIONS: AchievementIdMigration[] = [
     toId: 'transatlantic',
     reason: 'spec compliance — naming alignment with achievements catalogue',
   },
+  {
+    fromId: 'pacific_crosser',
+    toId: 'transpacific',
+    reason: 'spec compliance — naming alignment with achievements catalogue (pair with transatlantic)',
+  },
+  {
+    fromId: 'arctic_explorer',
+    toId: 'arctic_crosser',
+    reason: 'spec compliance — naming alignment with achievements catalogue',
+  },
+  {
+    fromId: 'star_alliance',
+    toId: 'star_alliance_collector',
+    reason: 'spec compliance — naming alignment with achievements catalogue (collector verb)',
+  },
+  {
+    fromId: 'oneworld_alliance',
+    toId: 'oneworld_collector',
+    reason: 'spec compliance — naming alignment with achievements catalogue (collector verb)',
+  },
+  {
+    fromId: 'skyteam_alliance',
+    toId: 'skyteam_collector',
+    reason: 'spec compliance — naming alignment with achievements catalogue (collector verb)',
+  },
+  {
+    fromId: 'jumbo_jet',
+    toId: 'jumbo_rider',
+    reason: 'spec compliance — naming alignment with achievements catalogue',
+  },
+  {
+    fromId: 'flight_around_world',
+    toId: 'earth_circumference',
+    reason: 'spec compliance — naming alignment with achievements catalogue',
+  },
 ];
 
 export interface ApplyAchievementIdMigrationsResult {

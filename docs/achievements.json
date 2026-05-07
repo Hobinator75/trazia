@@ -165,10 +165,10 @@
     "rule": { "type": "distance_total", "thresholdKm": 50000, "mode": "flight" }
   },
   {
-    "id": "flight_around_world",
-    "title": "Round the Earth (Air)",
+    "id": "earth_circumference",
+    "title": "Earth Circumference",
     "description": "Fly 40,075 km — Earth's circumference, by air alone.",
-    "tier": "gold",
+    "tier": "silver",
     "category": "distance",
     "appliesTo": "flight",
     "rule": { "type": "distance_total", "thresholdKm": 40075, "mode": "flight" }
@@ -219,17 +219,17 @@
     "rule": { "type": "geo_condition", "condition": "atlantic" }
   },
   {
-    "id": "pacific_crosser",
-    "title": "Pacific Crosser",
+    "id": "transpacific",
+    "title": "Transpacific",
     "description": "Cross the Pacific Ocean.",
-    "tier": "gold",
+    "tier": "silver",
     "category": "geography",
     "appliesTo": "flight",
     "rule": { "type": "geo_condition", "condition": "pacific" }
   },
   {
-    "id": "arctic_explorer",
-    "title": "Arctic Explorer",
+    "id": "arctic_crosser",
+    "title": "Arctic Crosser",
     "description": "Cross the Arctic Circle.",
     "tier": "gold",
     "category": "geography",
@@ -266,8 +266,8 @@
     "rule": { "type": "vehicle_category", "categories": ["widebody"] }
   },
   {
-    "id": "jumbo_jet",
-    "title": "Jumbo Jet",
+    "id": "jumbo_rider",
+    "title": "Jumbo Rider",
     "description": "Fly aboard a Boeing 747 or other jumbo aircraft.",
     "tier": "silver",
     "category": "aircraft",
@@ -339,8 +339,8 @@
     "rule": { "type": "cabin_class", "cabinClass": "premium_economy" }
   },
   {
-    "id": "star_alliance",
-    "title": "Star Alliance",
+    "id": "star_alliance_collector",
+    "title": "Star Alliance Collector",
     "description": "Fly with at least one Star Alliance airline.",
     "tier": "silver",
     "category": "airlines",
@@ -376,8 +376,8 @@
     }
   },
   {
-    "id": "oneworld_alliance",
-    "title": "Oneworld",
+    "id": "oneworld_collector",
+    "title": "Oneworld Collector",
     "description": "Fly with at least one Oneworld airline.",
     "tier": "silver",
     "category": "airlines",
@@ -402,8 +402,8 @@
     }
   },
   {
-    "id": "skyteam_alliance",
-    "title": "SkyTeam",
+    "id": "skyteam_collector",
+    "title": "SkyTeam Collector",
     "description": "Fly with at least one SkyTeam airline.",
     "tier": "silver",
     "category": "airlines",
@@ -468,6 +468,69 @@
     "category": "airlines",
     "appliesTo": "flight",
     "rule": { "type": "operator_loyalty", "count": 50, "operatorCode": "LH" }
+  },
+  {
+    "id": "ten_thousand_km",
+    "title": "Ten Thousand Kilometres",
+    "description": "Fly 10,000 km in total.",
+    "tier": "bronze",
+    "category": "distance",
+    "appliesTo": "flight",
+    "rule": { "type": "distance_total", "thresholdKm": 10000, "mode": "flight" }
+  },
+  {
+    "id": "moon_distance",
+    "title": "To the Moon",
+    "description": "Fly 384,400 km in total — the average distance to the Moon.",
+    "tier": "platinum",
+    "category": "distance",
+    "appliesTo": "flight",
+    "rule": { "type": "distance_total", "thresholdKm": 384400, "mode": "flight" }
+  },
+  {
+    "id": "christmas_flight",
+    "title": "Christmas Flight",
+    "description": "Take a flight on December 25th.",
+    "tier": "silver",
+    "category": "calendar",
+    "appliesTo": "flight",
+    "rule": { "type": "date_match", "pattern": "--12-25" }
+  },
+  {
+    "id": "airline_loyalist",
+    "title": "Airline Loyalist",
+    "description": "Take fifty flights with the same airline.",
+    "tier": "gold",
+    "category": "airlines",
+    "appliesTo": "flight",
+    "rule": { "type": "operator_loyalty", "count": 50 }
+  },
+  {
+    "id": "operator_explorer",
+    "title": "Operator Explorer",
+    "description": "Fly with ten different airlines.",
+    "tier": "silver",
+    "category": "airlines",
+    "appliesTo": "flight",
+    "rule": { "type": "different_count", "entity": "operators", "count": 10 }
+  },
+  {
+    "id": "fleet_explorer",
+    "title": "Fleet Explorer",
+    "description": "Fly aboard fifteen different aircraft types.",
+    "tier": "gold",
+    "category": "aircraft",
+    "appliesTo": "flight",
+    "rule": { "type": "different_count", "entity": "vehicles", "count": 15 }
+  },
+  {
+    "id": "country_collector",
+    "title": "Country Collector",
+    "description": "Fly to or from twenty-five different countries.",
+    "tier": "silver",
+    "category": "geography",
+    "appliesTo": "flight",
+    "rule": { "type": "different_count", "entity": "countries", "count": 25 }
   },
 
   {

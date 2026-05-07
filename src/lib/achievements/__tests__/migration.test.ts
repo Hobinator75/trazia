@@ -191,4 +191,45 @@ describe('applyAchievementIdMigrations', () => {
       .where(eq(achievementUnlocks.achievementId, 'transatlantic'));
     expect(rows).toHaveLength(1);
   });
+
+  // Each rename in ACHIEVEMENT_ID_MIGRATIONS gets one round-trip test:
+  // seed an unlock with the legacy id, apply, assert the row is renamed
+  // and the log table has exactly the expected entry. This protects
+  // future ID-rename PRs from accidentally landing without a migration
+  // entry — adding a catalog rename without a migration would leave
+  // existing user unlocks orphaned (legacy id still in the DB, but the
+  // catalog only knows the new id, so the achievement appears locked
+  // again).
+  describe.each(ACHIEVEMENT_ID_MIGRATIONS)(
+    'migration $fromId → $toId',
+    ({ fromId, toId }) => {
+      it('renames the legacy unlock and writes the log entry', async () => {
+        await handle.db.insert(achievementUnlocks).values({
+          id: `unlock-${fromId}`,
+          achievementId: fromId,
+        });
+
+        const result = await applyAchievementIdMigrations(handle.db);
+
+        expect(result.error).toBeUndefined();
+        const applied = result.applied.find((m) => m.fromId === fromId && m.toId === toId);
+        expect(applied, `${fromId}→${toId} should be applied`).toBeDefined();
+
+        const rows = await handle.db
+          .select()
+          .from(achievementUnlocks)
+          .where(eq(achievementUnlocks.achievementId, toId));
+        expect(rows).toHaveLength(1);
+        expect(rows[0]?.id).toBe(`unlock-${fromId}`);
+
+        const log = (await handle.db.all(
+          sql.raw(
+            `SELECT from_id, to_id FROM achievement_id_migrations_log
+              WHERE from_id = '${fromId}' AND to_id = '${toId}'`,
+          ),
+        )) as { from_id: string; to_id: string }[];
+        expect(log).toEqual([{ from_id: fromId, to_id: toId }]);
+      });
+    },
+  );
 });
