@@ -91,7 +91,13 @@
     "empty": "Log your first journey — it shows up here immediately.",
     "loading": "Loading map…",
     "mode_2d": "2D",
-    "mode_3d": "3D"
+    "mode_3d": "3D",
+    "view_all": "All",
+    "view_year": "Year",
+    "view_mode": "Mode",
+    "pin_country": "Country",
+    "pin_visits": "Visits",
+    "pin_last": "Last"
   },
   "journey": {
     "add_title": "New journey",
@@ -272,6 +278,24 @@
     "mode_label_car": "Car",
     "mode_label_ship": "Ship",
     "mode_label_other": "Other"
+  },
+  "upsell_sheet": {
+    "default_title": "Unlock Premium",
+    "default_cta": "View Premium",
+    "later": "Maybe later"
+  },
+  "search": {
+    "placeholder": "Search…",
+    "empty_hint": "Type a search query.",
+    "no_results": "No matches."
+  },
+  "profile_header": {
+    "default_name": "Traveller",
+    "tap_to_edit": "Tap to edit",
+    "tap_to_set": "Tap to set a name",
+    "edit_title": "Edit name",
+    "edit_placeholder": "What should we call you?",
+    "photo_perm_denied": "Photo access denied"
   },
   "premium": {
     "header_kicker": "Trazia Premium",

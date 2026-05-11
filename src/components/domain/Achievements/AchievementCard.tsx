@@ -1,11 +1,13 @@
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
 
+import { useResolvedScheme } from '@/hooks/useResolvedScheme';
 import { getLocalizedAchievement } from '@/lib/achievements/localize';
 import { tierStyle } from '@/lib/achievements/tier';
 import type { Achievement } from '@/lib/achievements/types';
-import { colors } from '@/theme/colors';
+import { colors, paletteFor } from '@/theme/colors';
 
 export interface AchievementCardProps {
   achievement: Achievement;
@@ -14,9 +16,9 @@ export interface AchievementCardProps {
   onPress: () => void;
 }
 
-const formatUnlockDate = (date: Date | null): string => {
+const formatUnlockDate = (date: Date | null, locale: string): string => {
   if (!date) return '';
-  return date.toLocaleDateString('de-DE', { day: '2-digit', month: 'short', year: '2-digit' });
+  return date.toLocaleDateString(locale, { day: '2-digit', month: 'short', year: '2-digit' });
 };
 
 export function AchievementCard({
@@ -25,6 +27,9 @@ export function AchievementCard({
   unlockedAt,
   onPress,
 }: AchievementCardProps) {
+  const { t, i18n } = useTranslation();
+  const scheme = useResolvedScheme();
+  const palette = paletteFor(scheme);
   const tier = tierStyle(achievement.tier);
   const isHidden = achievement.hidden && !unlocked;
   const isPremium = !!achievement.premium;
@@ -33,12 +38,18 @@ export function AchievementCard({
   if (isHidden) {
     return (
       <View
-        className="rounded-2xl border border-border-dark bg-surface-dark/60 p-3"
-        style={{ aspectRatio: 0.85 }}
+        className="rounded-2xl border border-border-light dark:border-border-dark"
+        style={{
+          aspectRatio: 0.85,
+          backgroundColor: scheme === 'dark' ? `${palette.surface}99` : `${palette.surface}CC`,
+          padding: 12,
+        }}
       >
         <View className="flex-1 items-center justify-center">
           <Ionicons name="help-circle-outline" size={28} color={colors.text.muted} />
-          <Text className="mt-2 text-base font-bold text-text-muted">???</Text>
+          <Text className="mt-2 text-base font-bold text-text-muted-light dark:text-text-muted">
+            ???
+          </Text>
         </View>
       </View>
     );
@@ -51,8 +62,8 @@ export function AchievementCard({
       className="overflow-hidden rounded-2xl border active:opacity-80"
       style={{
         aspectRatio: 0.85,
-        borderColor: unlocked ? tier.primary : colors.border.dark,
-        backgroundColor: unlocked ? `${tier.primary}1A` : colors.surface.dark,
+        borderColor: unlocked ? tier.primary : palette.border,
+        backgroundColor: unlocked ? `${tier.primary}1A` : palette.surface,
         opacity: unlocked ? 1 : isPremium ? 0.6 : 0.55,
       }}
     >
@@ -82,17 +93,19 @@ export function AchievementCard({
         <Text
           className="mt-2 text-center text-xs font-semibold"
           numberOfLines={2}
-          style={{ color: unlocked ? colors.text.light : colors.text.muted }}
+          style={{ color: unlocked ? palette.text : palette.textMuted }}
         >
           {localized.title}
         </Text>
         {unlocked ? (
           unlockedAt ? (
-            <Text className="mt-1 text-[10px] text-text-muted">{formatUnlockDate(unlockedAt)}</Text>
+            <Text className="mt-1 text-[10px] text-text-muted-light dark:text-text-muted">
+              {formatUnlockDate(unlockedAt, i18n.language)}
+            </Text>
           ) : null
         ) : (
           <Text
-            className="mt-1 px-1 text-center text-[10px] text-text-muted"
+            className="mt-1 px-1 text-center text-[10px] text-text-muted-light dark:text-text-muted"
             numberOfLines={2}
             style={{ opacity: 0.5 }}
           >
@@ -101,7 +114,7 @@ export function AchievementCard({
         )}
         {isPremium && !unlocked ? (
           <Text className="mt-1 text-[10px] font-semibold uppercase tracking-wider text-warning">
-            Premium
+            {t('achievement_categories.premium')}
           </Text>
         ) : null}
       </View>

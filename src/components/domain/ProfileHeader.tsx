@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Modal, Pressable, Text, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -10,6 +11,7 @@ import { useSnackbarStore } from '@/stores/snackbarStore';
 import { colors } from '@/theme/colors';
 
 export function ProfileHeader() {
+  const { t } = useTranslation();
   const profileName = useSettingsStore((s) => s.profileName);
   const setProfileName = useSettingsStore((s) => s.setProfileName);
   const avatarUri = useSettingsStore((s) => s.avatarUri);
@@ -23,7 +25,7 @@ export function ProfileHeader() {
   const pickAvatar = async (): Promise<void> => {
     const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!perm.granted) {
-      showSnackbar('Foto-Zugriff verweigert', { variant: 'error' });
+      showSnackbar(t('profile_header.photo_perm_denied'), { variant: 'error' });
       return;
     }
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -49,7 +51,7 @@ export function ProfileHeader() {
   };
 
   return (
-    <View className="mb-4 flex-row items-center gap-4 rounded-2xl border border-border-dark bg-surface-dark p-4">
+    <View className="mb-4 flex-row items-center gap-4 rounded-2xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark p-4">
       <Pressable onPress={pickAvatar} hitSlop={6}>
         {avatarUri ? (
           <Image
@@ -65,11 +67,11 @@ export function ProfileHeader() {
       </Pressable>
       <View className="flex-1">
         <Pressable onPress={openEditor} hitSlop={6}>
-          <Text className="text-xl font-bold text-text-light">
-            {profileName ?? 'Reise-Tracker:in'}
+          <Text className="text-xl font-bold text-text-dark dark:text-text-light">
+            {profileName ?? t('profile_header.default_name')}
           </Text>
-          <Text className="text-xs text-text-muted">
-            {profileName ? 'Tippen zum Bearbeiten' : 'Tippen, um Namen zu vergeben'}
+          <Text className="text-xs text-text-muted-light dark:text-text-muted">
+            {profileName ? t('profile_header.tap_to_edit') : t('profile_header.tap_to_set')}
           </Text>
         </Pressable>
       </View>
@@ -82,34 +84,38 @@ export function ProfileHeader() {
       >
         <Pressable className="flex-1 justify-end bg-black/50" onPress={() => setEditing(false)}>
           <Pressable
-            className="rounded-t-3xl bg-surface-dark px-5"
+            className="rounded-t-3xl bg-surface-light dark:bg-surface-dark px-5"
             style={{ paddingTop: 16, paddingBottom: insets.bottom + 16 }}
             onPress={() => {}}
           >
-            <Text className="text-lg font-semibold text-text-light">Name bearbeiten</Text>
+            <Text className="text-lg font-semibold text-text-dark dark:text-text-light">
+              {t('profile_header.edit_title')}
+            </Text>
             <TextInput
               value={draft}
               onChangeText={setDraft}
-              placeholder="Wie möchtest du angesprochen werden?"
+              placeholder={t('profile_header.edit_placeholder')}
               placeholderTextColor={colors.text.muted}
               maxLength={48}
               autoFocus
               returnKeyType="done"
               onSubmitEditing={saveName}
-              className="mt-3 rounded-xl border border-border-dark bg-background-dark px-3 py-3 text-base text-text-light"
+              className="mt-3 rounded-xl border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark px-3 py-3 text-base text-text-dark dark:text-text-light"
             />
             <View className="mt-3 flex-row gap-2">
               <Pressable
                 onPress={() => setEditing(false)}
-                className="flex-1 items-center rounded-full border border-border-dark bg-background-dark py-3"
+                className="flex-1 items-center rounded-full border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark py-3"
               >
-                <Text className="text-sm text-text-light">Abbrechen</Text>
+                <Text className="text-sm text-text-dark dark:text-text-light">
+                  {t('common.cancel')}
+                </Text>
               </Pressable>
               <Pressable
                 onPress={saveName}
                 className="flex-1 items-center rounded-full bg-primary py-3"
               >
-                <Text className="text-sm font-semibold text-white">Speichern</Text>
+                <Text className="text-sm font-semibold text-white">{t('common.save')}</Text>
               </Pressable>
             </View>
           </Pressable>

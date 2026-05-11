@@ -1,14 +1,16 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Modal, Pressable, ScrollView, Text, View } from 'react-native';
 import MapView, { Marker, Polyline, PROVIDER_DEFAULT } from 'react-native-maps';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import type { JourneyWithRefs } from '@/db/repositories/journey.repository';
 import type { Location } from '@/db/schema';
+import { useResolvedScheme } from '@/hooks/useResolvedScheme';
 import { greatCirclePath, type LatLng } from '@/lib/geo';
-import { colors, modeColors } from '@/theme/colors';
+import { colors, modeColors, paletteFor } from '@/theme/colors';
 
 export type MapViewMode = 'all' | 'by_year' | 'by_mode';
 
@@ -56,6 +58,9 @@ function pinScale(visits: number, max: number): number {
 export function MapView2D({ journeys }: MapView2DProps) {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
+  const scheme = useResolvedScheme();
+  const palette = paletteFor(scheme);
   const [viewMode, setViewMode] = useState<MapViewMode>('all');
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
   const [selectedPin, setSelectedPin] = useState<PinSelection | null>(null);
@@ -109,6 +114,7 @@ export function MapView2D({ journeys }: MapView2DProps) {
       <MapView
         provider={PROVIDER_DEFAULT}
         style={{ flex: 1 }}
+        userInterfaceStyle={scheme}
         initialRegion={{
           latitude: 30,
           longitude: 0,
@@ -174,11 +180,19 @@ export function MapView2D({ journeys }: MapView2DProps) {
             className={`flex-1 items-center rounded-full border px-3 py-2 ${
               viewMode === mode
                 ? 'border-primary bg-primary/30'
-                : 'border-border-dark bg-surface-dark/80'
+                : 'border-border-light dark:border-border-dark bg-surface-light/80 dark:bg-surface-dark/80'
             }`}
           >
-            <Text className={`text-xs ${viewMode === mode ? 'text-primary' : 'text-text-light'}`}>
-              {mode === 'all' ? 'Alle' : mode === 'by_year' ? 'Jahr' : 'Modus'}
+            <Text
+              className={`text-xs ${
+                viewMode === mode ? 'text-primary' : 'text-text-dark dark:text-text-light'
+              }`}
+            >
+              {mode === 'all'
+                ? t('map.view_all')
+                : mode === 'by_year'
+                  ? t('map.view_year')
+                  : t('map.view_mode')}
             </Text>
           </Pressable>
         ))}
@@ -198,11 +212,13 @@ export function MapView2D({ journeys }: MapView2DProps) {
                 className={`rounded-full border px-3 py-1.5 ${
                   selectedYear === y
                     ? 'border-primary bg-primary/30'
-                    : 'border-border-dark bg-surface-dark/80'
+                    : 'border-border-light dark:border-border-dark bg-surface-light/80 dark:bg-surface-dark/80'
                 }`}
               >
                 <Text
-                  className={`text-xs ${selectedYear === y ? 'text-primary' : 'text-text-light'}`}
+                  className={`text-xs ${
+                    selectedYear === y ? 'text-primary' : 'text-text-dark dark:text-text-light'
+                  }`}
                 >
                   {y}
                 </Text>
@@ -220,7 +236,7 @@ export function MapView2D({ journeys }: MapView2DProps) {
       >
         <Pressable className="flex-1 justify-end bg-black/40" onPress={() => setSelectedPin(null)}>
           <Pressable
-            className="rounded-t-3xl bg-surface-dark p-5"
+            className="rounded-t-3xl bg-surface-light dark:bg-surface-dark p-5"
             style={{ paddingBottom: insets.bottom + 16 }}
             onPress={() => {}}
           >
@@ -228,39 +244,41 @@ export function MapView2D({ journeys }: MapView2DProps) {
               <>
                 <View className="flex-row items-start justify-between">
                   <View className="flex-1">
-                    <Text className="text-xl font-bold text-text-light">
+                    <Text className="text-xl font-bold text-text-dark dark:text-text-light">
                       {selectedPin.location.name}
                     </Text>
                     {selectedPin.location.city ? (
-                      <Text className="text-sm text-text-muted">{selectedPin.location.city}</Text>
+                      <Text className="text-sm text-text-muted-light dark:text-text-muted">
+                        {selectedPin.location.city}
+                      </Text>
                     ) : null}
                   </View>
                   <Pressable onPress={() => setSelectedPin(null)} hitSlop={8}>
-                    <Ionicons name="close" size={22} color={colors.text.light} />
+                    <Ionicons name="close" size={22} color={palette.text} />
                   </Pressable>
                 </View>
                 <View className="mt-3 flex-row gap-3">
-                  <View className="flex-1 rounded-xl border border-border-dark bg-background-dark p-3">
-                    <Text className="text-[10px] uppercase tracking-wider text-text-muted">
-                      Land
+                  <View className="flex-1 rounded-xl border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark p-3">
+                    <Text className="text-[10px] uppercase tracking-wider text-text-muted-light dark:text-text-muted">
+                      {t('map.pin_country')}
                     </Text>
-                    <Text className="text-base font-semibold text-text-light">
+                    <Text className="text-base font-semibold text-text-dark dark:text-text-light">
                       {selectedPin.countryCode ?? '—'}
                     </Text>
                   </View>
-                  <View className="flex-1 rounded-xl border border-border-dark bg-background-dark p-3">
-                    <Text className="text-[10px] uppercase tracking-wider text-text-muted">
-                      Besuche
+                  <View className="flex-1 rounded-xl border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark p-3">
+                    <Text className="text-[10px] uppercase tracking-wider text-text-muted-light dark:text-text-muted">
+                      {t('map.pin_visits')}
                     </Text>
-                    <Text className="text-base font-semibold text-text-light">
+                    <Text className="text-base font-semibold text-text-dark dark:text-text-light">
                       {selectedPin.visits}
                     </Text>
                   </View>
-                  <View className="flex-1 rounded-xl border border-border-dark bg-background-dark p-3">
-                    <Text className="text-[10px] uppercase tracking-wider text-text-muted">
-                      Zuletzt
+                  <View className="flex-1 rounded-xl border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark p-3">
+                    <Text className="text-[10px] uppercase tracking-wider text-text-muted-light dark:text-text-muted">
+                      {t('map.pin_last')}
                     </Text>
-                    <Text className="text-base font-semibold text-text-light">
+                    <Text className="text-base font-semibold text-text-dark dark:text-text-light">
                       {selectedPin.lastDate}
                     </Text>
                   </View>

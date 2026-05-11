@@ -8,9 +8,10 @@ import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import * as THREE from 'three';
 
 import type { JourneyWithRefs } from '@/db/repositories/journey.repository';
+import { useResolvedScheme } from '@/hooks/useResolvedScheme';
 import { greatCirclePath, type LatLng } from '@/lib/geo';
 import { latLngToVec3 } from '@/lib/geo/sphere';
-import { colors, modeColors } from '@/theme/colors';
+import { colors, modeColors, type ResolvedScheme } from '@/theme/colors';
 
 const EARTH_TEXTURE_MODULE = require('../../../assets/textures/earth-day.jpg');
 
@@ -90,35 +91,39 @@ function Earth({ textureUri }: { textureUri: string }) {
 
 // Inverted-sphere fresnel rim glow. The fragment intensity peaks at the
 // sphere's silhouette and fades toward the side facing the camera, which
-// reads as a soft blue atmosphere.
-function Atmosphere() {
-  const material = useMemo(
-    () =>
-      new THREE.ShaderMaterial({
-        transparent: true,
-        side: THREE.BackSide,
-        depthWrite: false,
-        uniforms: {
-          glowColor: { value: new THREE.Color(colors.primary) },
-        },
-        vertexShader: /* glsl */ `
+// reads as a soft blue atmosphere. In light mode the rim shifts to a
+// darker slate-blue with a lower intensity scalar — full primary blue
+// looks ghostly against the light background.
+function Atmosphere({ scheme }: { scheme: ResolvedScheme }) {
+  const material = useMemo(() => {
+    const tint = scheme === 'dark' ? new THREE.Color(colors.primary) : new THREE.Color('#1E3A8A');
+    const intensityScale = scheme === 'dark' ? 1.0 : 0.55;
+    return new THREE.ShaderMaterial({
+      transparent: true,
+      side: THREE.BackSide,
+      depthWrite: false,
+      uniforms: {
+        glowColor: { value: tint },
+        intensityScale: { value: intensityScale },
+      },
+      vertexShader: /* glsl */ `
           varying vec3 vNormal;
           void main() {
             vNormal = normalize(normalMatrix * normal);
             gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
           }
         `,
-        fragmentShader: /* glsl */ `
+      fragmentShader: /* glsl */ `
           varying vec3 vNormal;
           uniform vec3 glowColor;
+          uniform float intensityScale;
           void main() {
             float intensity = pow(0.65 - dot(vNormal, vec3(0.0, 0.0, 1.0)), 2.5);
-            gl_FragColor = vec4(glowColor, 1.0) * intensity;
+            gl_FragColor = vec4(glowColor, 1.0) * intensity * intensityScale;
           }
         `,
-      }),
-    [],
-  );
+    });
+  }, [scheme]);
 
   useEffect(() => () => material.dispose(), [material]);
 
@@ -132,10 +137,11 @@ function Atmosphere() {
 
 interface JourneyTubeProps {
   route: RoutePayload;
+  opacity: number;
   onTap: (journeyId: string) => void;
 }
 
-function JourneyTube({ route, onTap }: JourneyTubeProps) {
+function JourneyTube({ route, opacity, onTap }: JourneyTubeProps) {
   const handleClick = (e: ThreeEvent<MouseEvent>) => {
     e.stopPropagation();
     onTap(route.id);
@@ -144,7 +150,7 @@ function JourneyTube({ route, onTap }: JourneyTubeProps) {
   return (
     <mesh onClick={handleClick}>
       <tubeGeometry args={[route.curve, 64, TUBE_RADIUS, 8, false]} />
-      <meshBasicMaterial color={route.color} transparent opacity={0.85} />
+      <meshBasicMaterial color={route.color} transparent opacity={opacity} />
     </mesh>
   );
 }
@@ -152,11 +158,13 @@ function JourneyTube({ route, onTap }: JourneyTubeProps) {
 interface SceneProps {
   routes: RoutePayload[];
   textureUri: string;
+  scheme: ResolvedScheme;
   interaction: React.MutableRefObject<InteractionState>;
   onTap: (journeyId: string) => void;
 }
 
-function Scene({ routes, textureUri, interaction, onTap }: SceneProps) {
+function Scene({ routes, textureUri, scheme, interaction, onTap }: SceneProps) {
+  const tubeOpacity = scheme === 'dark' ? 0.85 : 0.7;
   const groupRef = useRef<THREE.Group>(null);
 
   useFrame(() => {
@@ -181,9 +189,9 @@ function Scene({ routes, textureUri, interaction, onTap }: SceneProps) {
   return (
     <group ref={groupRef}>
       <Earth textureUri={textureUri} />
-      <Atmosphere />
+      <Atmosphere scheme={scheme} />
       {routes.map((r) => (
-        <JourneyTube key={r.id} route={r} onTap={onTap} />
+        <JourneyTube key={r.id} route={r} opacity={tubeOpacity} onTap={onTap} />
       ))}
     </group>
   );
@@ -191,6 +199,7 @@ function Scene({ routes, textureUri, interaction, onTap }: SceneProps) {
 
 export function Globe3D({ journeys }: Globe3DProps) {
   const router = useRouter();
+  const scheme = useResolvedScheme();
   const [textureUri, setTextureUri] = useState<string | null>(null);
   const [textureError, setTextureError] = useState<string | null>(null);
 
@@ -271,14 +280,14 @@ export function Globe3D({ journeys }: Globe3DProps) {
 
   if (textureError) {
     return (
-      <View className="flex-1 items-center justify-center bg-background-dark p-6">
+      <View className="flex-1 items-center justify-center bg-background-light dark:bg-background-dark p-6">
         <Text className="text-center text-sm text-danger">{textureError}</Text>
       </View>
     );
   }
 
   return (
-    <View className="flex-1 bg-background-dark">
+    <View className="flex-1 bg-background-light dark:bg-background-dark">
       <GestureDetector gesture={pan}>
         <View style={{ flex: 1 }}>
           <Canvas
@@ -292,6 +301,7 @@ export function Globe3D({ journeys }: Globe3DProps) {
                 <Scene
                   routes={routes}
                   textureUri={textureUri}
+                  scheme={scheme}
                   interaction={interaction}
                   onTap={handleTap}
                 />

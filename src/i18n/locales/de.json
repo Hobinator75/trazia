@@ -91,7 +91,13 @@
     "empty": "Erfasse deine erste Reise — sie erscheint hier sofort.",
     "loading": "Karte wird geladen…",
     "mode_2d": "2D",
-    "mode_3d": "3D"
+    "mode_3d": "3D",
+    "view_all": "Alle",
+    "view_year": "Jahr",
+    "view_mode": "Modus",
+    "pin_country": "Land",
+    "pin_visits": "Besuche",
+    "pin_last": "Zuletzt"
   },
   "journey": {
     "add_title": "Neue Reise",
@@ -272,6 +278,24 @@
     "mode_label_car": "Auto",
     "mode_label_ship": "Schiff",
     "mode_label_other": "Sonstiges"
+  },
+  "upsell_sheet": {
+    "default_title": "Premium freischalten",
+    "default_cta": "Jetzt Premium ansehen",
+    "later": "Vielleicht später"
+  },
+  "search": {
+    "placeholder": "Suchen…",
+    "empty_hint": "Tippe einen Suchbegriff ein.",
+    "no_results": "Keine Treffer."
+  },
+  "profile_header": {
+    "default_name": "Reise-Tracker:in",
+    "tap_to_edit": "Tippen zum Bearbeiten",
+    "tap_to_set": "Tippen, um Namen zu vergeben",
+    "edit_title": "Name bearbeiten",
+    "edit_placeholder": "Wie möchtest du angesprochen werden?",
+    "photo_perm_denied": "Foto-Zugriff verweigert"
   },
   "premium": {
     "header_kicker": "Trazia Premium",

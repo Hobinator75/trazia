@@ -6,7 +6,7 @@ import { Text, View } from 'react-native';
 import type { JourneyWithRefs } from '@/db/repositories/journey.repository';
 import { useResolvedScheme } from '@/hooks/useResolvedScheme';
 import { formatDateLong, journeyTitle } from '@/lib/journeys/format';
-import { colors, paletteFor } from '@/theme/colors';
+import { paletteFor } from '@/theme/colors';
 
 export interface RouteHeroProps {
   journey: JourneyWithRefs;
