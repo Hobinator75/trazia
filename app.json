@@ -2,7 +2,7 @@
   "expo": {
     "name": "Trazia",
     "slug": "trazia",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "trazia",
@@ -11,7 +11,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.trazia.app",
-      "buildNumber": "1",
+      "buildNumber": "2",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
         "NSUserTrackingUsageDescription": "Trazia fragt nur, wenn du personalisierte Werbung erlauben möchtest. Ohne Einwilligung siehst du ausschließlich nicht-personalisierte Anzeigen."
@@ -20,20 +20,30 @@
         "NSPrivacyAccessedAPITypes": [
           {
             "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryUserDefaults",
-            "NSPrivacyAccessedAPITypeReasons": ["CA92.1"]
+            "NSPrivacyAccessedAPITypeReasons": [
+              "CA92.1"
+            ]
           },
           {
             "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryFileTimestamp",
-            "NSPrivacyAccessedAPITypeReasons": ["C617.1"]
+            "NSPrivacyAccessedAPITypeReasons": [
+              "C617.1"
+            ]
           }
         ]
       }
     },
     "android": {
       "package": "com.trazia.app",
-      "versionCode": 1,
-      "permissions": ["INTERNET", "com.android.vending.BILLING"],
-      "blockedPermissions": ["ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION"],
+      "versionCode": 2,
+      "permissions": [
+        "INTERNET",
+        "com.android.vending.BILLING"
+      ],
+      "blockedPermissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION"
+      ],
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
