@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Stack, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -13,14 +14,14 @@ import { trackPaywallPurchased, trackPaywallShown } from '@/lib/observability/an
 import { useSnackbarStore } from '@/stores/snackbarStore';
 import { colors } from '@/theme/colors';
 
-const FEATURES = [
-  'Unbegrenzt Fotos pro Reise',
-  'Werbefrei',
-  'Cloud-Sync (in Phase 6)',
-  'Year-in-Review als komplette Story',
-  'Realistic Routes (Phase 3)',
-  'Custom-Themes',
-  'Premium-Achievements',
+const FEATURE_KEYS = [
+  'premium.feature_photos',
+  'premium.feature_adfree',
+  'premium.feature_sync',
+  'premium.feature_wrapped',
+  'premium.feature_routes',
+  'premium.feature_themes',
+  'premium.feature_achievements',
 ];
 
 interface PlanCardProps {
@@ -31,12 +32,13 @@ interface PlanCardProps {
 }
 
 function PlanCard({ plan, selected, highlighted, onSelect }: PlanCardProps) {
+  const { t } = useTranslation();
   return (
     <Pressable
       onPress={onSelect}
       className={`overflow-hidden rounded-2xl border-2 ${
-        selected ? 'border-primary' : 'border-border-dark'
-      } bg-surface-dark active:opacity-80`}
+        selected ? 'border-primary' : 'border-border-light dark:border-border-dark'
+      } bg-surface-light dark:bg-surface-dark active:opacity-80`}
     >
       {highlighted ? (
         <LinearGradient
@@ -50,20 +52,26 @@ function PlanCard({ plan, selected, highlighted, onSelect }: PlanCardProps) {
         {plan.introTrialDays ? (
           <View className="mb-2 self-start rounded-full bg-primary/30 px-2 py-1">
             <Text className="text-[10px] font-semibold uppercase tracking-wider text-primary">
-              {plan.introTrialDays} Tage gratis testen
+              {t('premium.trial_days', { days: plan.introTrialDays })}
             </Text>
           </View>
         ) : null}
-        <Text className="text-base font-semibold text-text-light">{plan.title}</Text>
-        <Text className="mt-1 text-2xl font-bold text-text-light">{plan.priceLabel}</Text>
+        <Text className="text-base font-semibold text-text-dark dark:text-text-light">
+          {plan.title}
+        </Text>
+        <Text className="mt-1 text-2xl font-bold text-text-dark dark:text-text-light">
+          {plan.priceLabel}
+        </Text>
         {plan.pricePerMonthLabel ? (
-          <Text className="text-xs text-text-muted">{plan.pricePerMonthLabel}</Text>
+          <Text className="text-xs text-text-muted-light dark:text-text-muted">
+            {plan.pricePerMonthLabel}
+          </Text>
         ) : null}
         <View className="mt-2 gap-1">
           {plan.bullets.map((bullet) => (
             <View key={bullet} className="flex-row items-center gap-2">
               <Ionicons name="checkmark-circle" size={14} color={colors.success} />
-              <Text className="text-xs text-text-muted">{bullet}</Text>
+              <Text className="text-xs text-text-muted-light dark:text-text-muted">{bullet}</Text>
             </View>
           ))}
         </View>
@@ -75,6 +83,7 @@ function PlanCard({ plan, selected, highlighted, onSelect }: PlanCardProps) {
 export default function PaywallScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
   const { isPremium, hydrating } = useIsPremium();
   const { offerings, loading } = useOfferings();
   const showSnackbar = useSnackbarStore((s) => s.show);
@@ -91,7 +100,7 @@ export default function PaywallScreen() {
     setBusy(false);
     if (result.success) {
       void trackPaywallPurchased(selected);
-      showSnackbar('Premium aktiviert. Danke!', { variant: 'success' });
+      showSnackbar(t('premium.purchased'), { variant: 'success' });
       router.back();
     } else if (result.cancelled) {
       // Silent.
@@ -104,15 +113,14 @@ export default function PaywallScreen() {
     setBusy(true);
     const result = await restorePurchases();
     setBusy(false);
-    showSnackbar(
-      result.success ? 'Käufe wiederhergestellt' : 'Keine aktiven Premium-Käufe gefunden',
-      { variant: result.success ? 'success' : 'info' },
-    );
+    showSnackbar(result.success ? t('premium.restored_ok') : t('premium.restored_none'), {
+      variant: result.success ? 'success' : 'info',
+    });
   };
 
   return (
-    <View className="flex-1 bg-background-dark">
-      <Stack.Screen options={{ title: 'Premium' }} />
+    <View className="flex-1 bg-background-light dark:bg-background-dark">
+      <Stack.Screen options={{ title: t('premium.header_kicker') }} />
       <ScrollView
         contentContainerStyle={{
           paddingHorizontal: 16,
@@ -129,19 +137,19 @@ export default function PaywallScreen() {
           />
           <View className="px-5 py-6">
             <Text className="text-xs font-semibold uppercase tracking-widest text-white/80">
-              Trazia Premium
+              {t('premium.header_kicker')}
             </Text>
-            <Text className="mt-1 text-3xl font-bold text-white">Mehr aus deinen Reisen</Text>
-            <Text className="mt-1 text-sm text-white/85">
-              Werbefrei, Premium-Features, Wrapped-Story.
-            </Text>
+            <Text className="mt-1 text-3xl font-bold text-white">{t('premium.header_title')}</Text>
+            <Text className="mt-1 text-sm text-white/85">{t('premium.header_subtitle')}</Text>
           </View>
         </View>
 
         {isPremium ? (
           <View className="mt-4 rounded-2xl border border-success/40 bg-success/10 p-4">
-            <Text className="text-base font-semibold text-success">Du hast bereits Premium.</Text>
-            <Text className="mt-1 text-xs text-text-muted">Alle Features sind freigeschaltet.</Text>
+            <Text className="text-base font-semibold text-success">{t('premium.already')}</Text>
+            <Text className="mt-1 text-xs text-text-muted-light dark:text-text-muted">
+              {t('premium.already_desc')}
+            </Text>
           </View>
         ) : null}
 
@@ -171,14 +179,14 @@ export default function PaywallScreen() {
           )}
         </View>
 
-        <View className="mt-6 rounded-2xl border border-border-dark bg-surface-dark p-4">
-          <Text className="text-xs font-semibold uppercase tracking-wider text-text-muted">
-            Premium enthält
+        <View className="mt-6 rounded-2xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark p-4">
+          <Text className="text-xs font-semibold uppercase tracking-wider text-text-muted-light dark:text-text-muted">
+            {t('premium.features_title')}
           </Text>
-          {FEATURES.map((feature) => (
-            <View key={feature} className="mt-2 flex-row items-center gap-2">
+          {FEATURE_KEYS.map((key) => (
+            <View key={key} className="mt-2 flex-row items-center gap-2">
               <Ionicons name="checkmark-circle" size={16} color={colors.primary} />
-              <Text className="flex-1 text-sm text-text-light">{feature}</Text>
+              <Text className="flex-1 text-sm text-text-dark dark:text-text-light">{t(key)}</Text>
             </View>
           ))}
         </View>
@@ -192,53 +200,54 @@ export default function PaywallScreen() {
         >
           <Text className="text-base font-semibold text-white">
             {busy
-              ? 'Bitte warten…'
+              ? t('premium.cta_busy')
               : isPremium
-                ? 'Bereits aktiv'
+                ? t('premium.cta_active')
                 : selected === 'trazia_premium_yearly'
-                  ? 'Jährlich aktivieren'
-                  : 'Monatlich aktivieren'}
+                  ? t('premium.cta_yearly')
+                  : t('premium.cta_monthly')}
           </Text>
         </Pressable>
 
         <Pressable onPress={handleRestore} disabled={busy} className="mt-3 items-center py-3">
-          <Text className="text-sm text-primary">Käufe wiederherstellen</Text>
+          <Text className="text-sm text-primary">{t('premium.restore')}</Text>
         </Pressable>
 
         {isMockIap() ? (
           <View className="mt-6 rounded-2xl border border-warning/40 bg-warning/10 p-4">
             <Text className="text-xs font-semibold uppercase tracking-wider text-warning">
-              Mock-Modus
+              {t('premium.mock_title')}
             </Text>
-            <Text className="mt-1 text-xs text-text-muted">
-              Kein RevenueCat-API-Key gesetzt. Käufe oben sind no-ops; benutze den Schalter für
-              UI-Tests.
+            <Text className="mt-1 text-xs text-text-muted-light dark:text-text-muted">
+              {t('premium.mock_desc')}
             </Text>
             <View className="mt-3 flex-row gap-2">
               <Pressable
                 onPress={() => {
                   setMockPremium(true);
-                  showSnackbar('Mock-Premium aktiv', { variant: 'success' });
+                  showSnackbar(t('premium.mock_on_toast'), { variant: 'success' });
                 }}
                 className="flex-1 items-center rounded-full border border-success bg-success/20 px-3 py-2"
               >
-                <Text className="text-sm font-semibold text-success">Premium AN</Text>
+                <Text className="text-sm font-semibold text-success">{t('premium.mock_on')}</Text>
               </Pressable>
               <Pressable
                 onPress={() => {
                   setMockPremium(false);
-                  showSnackbar('Mock-Premium inaktiv', { variant: 'info' });
+                  showSnackbar(t('premium.mock_off_toast'), { variant: 'info' });
                 }}
-                className="flex-1 items-center rounded-full border border-border-dark bg-background-dark px-3 py-2"
+                className="flex-1 items-center rounded-full border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark px-3 py-2"
               >
-                <Text className="text-sm font-semibold text-text-light">Premium AUS</Text>
+                <Text className="text-sm font-semibold text-text-dark dark:text-text-light">
+                  {t('premium.mock_off')}
+                </Text>
               </Pressable>
             </View>
           </View>
         ) : null}
 
-        <Text className="mt-6 px-2 text-center text-xs text-text-muted">
-          Verlängert sich automatisch · jederzeit kündbar in den App-Store-Einstellungen.
+        <Text className="mt-6 px-2 text-center text-xs text-text-muted-light dark:text-text-muted">
+          {t('premium.fineprint')}
         </Text>
       </ScrollView>
     </View>

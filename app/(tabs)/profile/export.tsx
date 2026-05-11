@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -14,8 +15,8 @@ type ExportFormat = 'json' | 'csv' | 'pdf';
 
 interface RowSpec {
   format: ExportFormat;
-  label: string;
-  description: string;
+  labelKey: string;
+  descKey: string;
   icon: React.ComponentProps<typeof Ionicons>['name'];
   premiumOnly: boolean;
 }
@@ -23,22 +24,22 @@ interface RowSpec {
 const ROWS: RowSpec[] = [
   {
     format: 'json',
-    label: 'JSON-Export',
-    description: 'Kompletter, maschinen-lesbarer Snapshot deiner Daten. Auch im Free-Plan.',
+    labelKey: 'export.json_label',
+    descKey: 'export.json_desc',
     icon: 'code-outline',
     premiumOnly: false,
   },
   {
     format: 'csv',
-    label: 'CSV-Export',
-    description: 'Reisen als Tabelle für Excel / Numbers.',
+    labelKey: 'export.csv_label',
+    descKey: 'export.csv_desc',
     icon: 'list-outline',
     premiumOnly: true,
   },
   {
     format: 'pdf',
-    label: 'PDF mit Karte',
-    description: 'Visueller Reise-Bericht inkl. Routenkarte, Top-Routen und Achievements.',
+    labelKey: 'export.pdf_label',
+    descKey: 'export.pdf_desc',
     icon: 'document-text-outline',
     premiumOnly: true,
   },
@@ -47,6 +48,7 @@ const ROWS: RowSpec[] = [
 export default function ExportScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const { t } = useTranslation();
   const { isPremium } = useIsPremium();
   const profileName = useSettingsStore((s) => s.profileName);
   const showSnackbar = useSnackbarStore((s) => s.show);
@@ -57,18 +59,18 @@ export default function ExportScreen() {
     try {
       if (format === 'json') {
         const result = await exportJson();
-        showSnackbar(`JSON-Export bereit (${Math.round(result.bytes / 1024)} KB).`, {
+        showSnackbar(t('export.json_ready', { kb: Math.round(result.bytes / 1024) }), {
           variant: 'success',
         });
       } else if (format === 'csv') {
         const result = await exportCsv();
-        showSnackbar(`${result.rows} Reisen als CSV exportiert.`, { variant: 'success' });
+        showSnackbar(t('export.csv_ready', { count: result.rows }), { variant: 'success' });
       } else {
         await exportPdf({ ...(profileName ? { username: profileName } : {}) });
-        showSnackbar('PDF-Bericht bereit.', { variant: 'success' });
+        showSnackbar(t('export.pdf_ready'), { variant: 'success' });
       }
     } catch (e) {
-      showSnackbar(e instanceof Error ? e.message : 'Export fehlgeschlagen', {
+      showSnackbar(e instanceof Error ? e.message : t('export.failed'), {
         variant: 'error',
       });
     } finally {
@@ -86,18 +88,18 @@ export default function ExportScreen() {
 
   return (
     <ScrollView
-      className="flex-1 bg-background-dark"
+      className="flex-1 bg-background-light dark:bg-background-dark"
       contentContainerStyle={{
         paddingHorizontal: 16,
         paddingTop: 16,
         paddingBottom: insets.bottom + 32,
       }}
     >
-      <Text className="mb-4 text-sm text-text-muted">
-        Alle Exporte landen über das System-Share-Sheet bei dir — Trazia versendet nichts an Dritte.
+      <Text className="mb-4 text-sm text-text-muted-light dark:text-text-muted">
+        {t('export.preamble')}
       </Text>
 
-      <View className="rounded-2xl border border-border-dark bg-surface-dark">
+      <View className="rounded-2xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark">
         {ROWS.map((row, idx) => {
           const locked = row.premiumOnly && !isPremium;
           const loading = busy === row.format;
@@ -107,22 +109,28 @@ export default function ExportScreen() {
               onPress={() => onPressRow(row)}
               disabled={busy !== null}
               className={`flex-row items-center gap-3 px-4 py-4 ${
-                idx > 0 ? 'border-t border-border-dark' : ''
-              } ${busy !== null ? 'opacity-60' : 'active:bg-background-dark'}`}
+                idx > 0 ? 'border-t border-border-light dark:border-border-dark' : ''
+              } ${busy !== null ? 'opacity-60' : 'active:bg-background-light dark:active:bg-background-dark'}`}
             >
               <View className="h-10 w-10 items-center justify-center rounded-full bg-primary/15">
                 <Ionicons name={row.icon} size={20} color={colors.primary} />
               </View>
               <View className="flex-1">
                 <View className="flex-row items-center gap-2">
-                  <Text className="text-base font-semibold text-text-light">{row.label}</Text>
+                  <Text className="text-base font-semibold text-text-dark dark:text-text-light">
+                    {t(row.labelKey)}
+                  </Text>
                   {locked ? (
                     <View className="rounded-full bg-warning/20 px-2 py-0.5">
-                      <Text className="text-[10px] font-bold uppercase text-warning">Premium</Text>
+                      <Text className="text-[10px] font-bold uppercase text-warning">
+                        {t('export.premium_badge')}
+                      </Text>
                     </View>
                   ) : null}
                 </View>
-                <Text className="text-xs text-text-muted">{row.description}</Text>
+                <Text className="text-xs text-text-muted-light dark:text-text-muted">
+                  {t(row.descKey)}
+                </Text>
               </View>
               {loading ? (
                 <ActivityIndicator color={colors.primary} />
