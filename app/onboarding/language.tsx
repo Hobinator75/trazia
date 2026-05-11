@@ -31,12 +31,12 @@ export default function OnboardingLanguageScreen() {
 
   return (
     <View
-      className="flex-1 bg-background-dark"
+      className="flex-1 bg-background-light dark:bg-background-dark"
       style={{ paddingTop: insets.top + 24, paddingBottom: insets.bottom + 16 }}
     >
       <View className="px-6">
-        <Text className="text-3xl font-bold text-text-light">{t('language.title')}</Text>
-        <Text className="mt-2 text-base text-text-muted">{t('language.subtitle')}</Text>
+        <Text className="text-3xl font-bold text-text-dark dark:text-text-light">{t('language.title')}</Text>
+        <Text className="mt-2 text-base text-text-muted-light dark:text-text-muted">{t('language.subtitle')}</Text>
       </View>
 
       <FlatList
@@ -52,7 +52,7 @@ export default function OnboardingLanguageScreen() {
                 setSelected(item.code);
                 void i18n.changeLanguage(item.code);
               }}
-              className="mb-2 flex-row items-center justify-between rounded-2xl border bg-surface-dark px-4 py-4 active:opacity-80"
+              className="mb-2 flex-row items-center justify-between rounded-2xl border bg-surface-light dark:bg-surface-dark px-4 py-4 active:opacity-80"
               style={{
                 borderColor: isSelected ? colors.primary : colors.border.dark,
                 backgroundColor: isSelected ? `${colors.primary}1A` : colors.surface.dark,

@@ -35,13 +35,13 @@ export default function OnboardingWelcomeScreen() {
   }));
 
   return (
-    <View className="flex-1 bg-background-dark" style={{ paddingTop: insets.top + 24 }}>
+    <View className="flex-1 bg-background-light dark:bg-background-dark" style={{ paddingTop: insets.top + 24 }}>
       <View className="flex-1 items-center justify-center px-8">
         <Animated.View style={logoStyle} className="mb-6 items-center">
           <RotatingMiniGlobe size={140} />
         </Animated.View>
-        <Text className="text-5xl font-bold tracking-tight text-text-light">Trazia</Text>
-        <Text className="mt-2 text-lg text-text-muted">Trace your travels.</Text>
+        <Text className="text-5xl font-bold tracking-tight text-text-dark dark:text-text-light">Trazia</Text>
+        <Text className="mt-2 text-lg text-text-muted-light dark:text-text-muted">Trace your travels.</Text>
         <View className="mt-6 h-1 w-32 overflow-hidden rounded-full">
           <LinearGradient
             colors={['#3B82F6', '#A78BFA', '#22D3EE']}

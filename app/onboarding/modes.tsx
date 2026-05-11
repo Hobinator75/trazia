@@ -48,12 +48,12 @@ export default function OnboardingModesScreen() {
   };
 
   return (
-    <View className="flex-1 bg-background-dark" style={{ paddingTop: insets.top + 16 }}>
+    <View className="flex-1 bg-background-light dark:bg-background-dark" style={{ paddingTop: insets.top + 16 }}>
       <View className="flex-1 px-6">
-        <Text className="mt-4 text-3xl font-bold text-text-light">
+        <Text className="mt-4 text-3xl font-bold text-text-dark dark:text-text-light">
           {t('onboarding.modes.title')}
         </Text>
-        <Text className="mt-2 text-base text-text-muted">{t('onboarding.modes.subtitle')}</Text>
+        <Text className="mt-2 text-base text-text-muted-light dark:text-text-muted">{t('onboarding.modes.subtitle')}</Text>
 
         <View className="mt-6 gap-3">
           {OPTIONS.map((option) => {
@@ -65,7 +65,7 @@ export default function OnboardingModesScreen() {
                 className={`flex-row items-center gap-3 rounded-2xl border-2 px-4 py-4 ${
                   isOn
                     ? 'border-primary bg-primary/15'
-                    : 'border-border-dark bg-surface-dark active:opacity-80'
+                    : 'border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark active:opacity-80'
                 }`}
               >
                 <Ionicons
@@ -75,7 +75,7 @@ export default function OnboardingModesScreen() {
                 />
                 <Text
                   className={`flex-1 text-base font-semibold ${
-                    isOn ? 'text-primary' : 'text-text-light'
+                    isOn ? 'text-primary' : 'text-text-dark dark:text-text-light'
                   }`}
                 >
                   {t(option.labelKey)}
@@ -88,7 +88,7 @@ export default function OnboardingModesScreen() {
           })}
         </View>
 
-        <Text className="mt-6 text-xs text-text-muted">
+        <Text className="mt-6 text-xs text-text-muted-light dark:text-text-muted">
           {t('onboarding.modes.later_unlocks')}
         </Text>
       </View>

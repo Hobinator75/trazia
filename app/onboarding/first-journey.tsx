@@ -89,21 +89,21 @@ export default function OnboardingFirstJourneyScreen() {
   };
 
   return (
-    <View className="flex-1 bg-background-dark" style={{ paddingTop: insets.top + 16 }}>
+    <View className="flex-1 bg-background-light dark:bg-background-dark" style={{ paddingTop: insets.top + 16 }}>
       <View className="flex-1 px-6">
-        <Text className="mt-4 text-3xl font-bold text-text-light">
+        <Text className="mt-4 text-3xl font-bold text-text-dark dark:text-text-light">
           {t('onboarding.first_journey.title')}
         </Text>
-        <Text className="mt-2 text-base text-text-muted">
+        <Text className="mt-2 text-base text-text-muted-light dark:text-text-muted">
           {t('onboarding.first_journey.subtitle')}
         </Text>
 
-        <View className="mt-6 rounded-3xl border border-border-dark bg-surface-dark p-5">
-          <Text className="text-xs font-semibold uppercase tracking-wider text-text-muted">
+        <View className="mt-6 rounded-3xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark p-5">
+          <Text className="text-xs font-semibold uppercase tracking-wider text-text-muted-light dark:text-text-muted">
             {t('onboarding.first_journey.label')}
           </Text>
-          <Text className="mt-2 text-2xl font-bold text-text-light">FRA → JFK</Text>
-          <Text className="text-sm text-text-muted">
+          <Text className="mt-2 text-2xl font-bold text-text-dark dark:text-text-light">FRA → JFK</Text>
+          <Text className="text-sm text-text-muted-light dark:text-text-muted">
             {t('onboarding.first_journey.subtitle_short')}
           </Text>
         </View>
@@ -129,7 +129,7 @@ export default function OnboardingFirstJourneyScreen() {
           </Text>
         </Pressable>
         <Pressable onPress={handleSkip} className="items-center py-3">
-          <Text className="text-sm text-text-muted">{t('onboarding.first_journey.skip')}</Text>
+          <Text className="text-sm text-text-muted-light dark:text-text-muted">{t('onboarding.first_journey.skip')}</Text>
         </Pressable>
       </View>
     </View>

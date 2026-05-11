@@ -40,36 +40,36 @@ export default function OnboardingPermissionsScreen() {
   };
 
   return (
-    <View className="flex-1 bg-background-dark" style={{ paddingTop: insets.top + 16 }}>
+    <View className="flex-1 bg-background-light dark:bg-background-dark" style={{ paddingTop: insets.top + 16 }}>
       <View className="flex-1 px-6">
-        <Text className="mt-4 text-3xl font-bold text-text-light">
+        <Text className="mt-4 text-3xl font-bold text-text-dark dark:text-text-light">
           {t('onboarding.permissions.title')}
         </Text>
 
-        <View className="mt-6 rounded-3xl border border-border-dark bg-surface-dark p-5">
+        <View className="mt-6 rounded-3xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark p-5">
           <View className="flex-row items-center gap-3">
             <View className="h-10 w-10 items-center justify-center rounded-full bg-primary/20">
               <Ionicons name="notifications-outline" size={20} color={colors.primary} />
             </View>
-            <Text className="flex-1 text-base font-semibold text-text-light">
+            <Text className="flex-1 text-base font-semibold text-text-dark dark:text-text-light">
               {t('onboarding.permissions.notifications_title')}
             </Text>
           </View>
-          <Text className="mt-3 text-sm text-text-muted">
+          <Text className="mt-3 text-sm text-text-muted-light dark:text-text-muted">
             {t('onboarding.permissions.notifications_body')}
           </Text>
         </View>
 
-        <View className="mt-3 rounded-3xl border border-border-dark bg-surface-dark p-5">
+        <View className="mt-3 rounded-3xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark p-5">
           <View className="flex-row items-center gap-3">
             <View className="h-10 w-10 items-center justify-center rounded-full bg-secondary/20">
               <Ionicons name="lock-closed-outline" size={20} color={colors.secondary} />
             </View>
-            <Text className="flex-1 text-base font-semibold text-text-light">
+            <Text className="flex-1 text-base font-semibold text-text-dark dark:text-text-light">
               {t('onboarding.permissions.privacy_title')}
             </Text>
           </View>
-          <Text className="mt-3 text-sm text-text-muted">
+          <Text className="mt-3 text-sm text-text-muted-light dark:text-text-muted">
             {t('onboarding.permissions.privacy_body')}
           </Text>
         </View>
@@ -90,7 +90,7 @@ export default function OnboardingPermissionsScreen() {
           </Text>
         </Pressable>
         <Pressable onPress={handleSkip} className="items-center py-3">
-          <Text className="text-sm text-text-muted">
+          <Text className="text-sm text-text-muted-light dark:text-text-muted">
             {t('onboarding.permissions.maybe_later')}
           </Text>
         </Pressable>

@@ -1,4 +1,4 @@
-import i18n from 'i18next';
+import i18n, { changeLanguage as i18nChangeLanguage, use as i18nUse } from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
 import de from './locales/de.json';
@@ -25,7 +25,7 @@ export type SupportedLocale =
   | 'ko'
   | 'ar';
 
-export const SUPPORTED_LOCALES: ReadonlyArray<{ code: SupportedLocale; nativeName: string }> = [
+export const SUPPORTED_LOCALES: readonly { code: SupportedLocale; nativeName: string }[] = [
   { code: 'de', nativeName: 'Deutsch' },
   { code: 'en', nativeName: 'English' },
   { code: 'es', nativeName: 'Español' },
@@ -52,12 +52,12 @@ let initialized = false;
 export function ensureI18nInitialized(initialLocale: SupportedLocale = 'en'): typeof i18n {
   if (initialized) {
     if (i18n.language !== initialLocale) {
-      void i18n.changeLanguage(initialLocale);
+      void i18nChangeLanguage(initialLocale);
     }
     return i18n;
   }
   initialized = true;
-  void i18n.use(initReactI18next).init({
+  void i18nUse(initReactI18next).init({
     resources,
     lng: initialLocale,
     fallbackLng: 'en',

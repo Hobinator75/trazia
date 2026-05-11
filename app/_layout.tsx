@@ -1,4 +1,4 @@
-import { DarkTheme, ThemeProvider } from '@react-navigation/native';
+import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
@@ -14,6 +14,7 @@ import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { Snackbar } from '@/components/ui/Snackbar';
 import { useDbReady } from '@/hooks/useDbReady';
+import { useResolvedScheme } from '@/hooks/useResolvedScheme';
 import { useThemeBinding } from '@/hooks/useThemeBinding';
 import { useI18nBinding } from '@/i18n/useI18nBinding';
 import { configureAds, ensureConsent } from '@/lib/ads';
@@ -21,11 +22,13 @@ import { configureIap } from '@/lib/iap';
 import { trackAppOpened } from '@/lib/observability/analytics';
 import { configureSentry } from '@/lib/observability/sentry';
 import { useOnboardingStore } from '@/stores/onboardingStore';
-import { colors } from '@/theme/colors';
+import { colors, paletteFor } from '@/theme/colors';
 
 export default function RootLayout() {
   useThemeBinding();
   useI18nBinding();
+  const scheme = useResolvedScheme();
+  const palette = paletteFor(scheme);
 
   const hydrateOnboarding = useOnboardingStore((s) => s.hydrate);
   const onboardingHydrated = useOnboardingStore((s) => s.hydrated);
@@ -44,14 +47,14 @@ export default function RootLayout() {
   }, [hydrateOnboarding]);
 
   const navTheme = {
-    ...DarkTheme,
+    ...(scheme === 'dark' ? DarkTheme : DefaultTheme),
     colors: {
-      ...DarkTheme.colors,
-      background: colors.background.dark,
-      card: colors.surface.dark,
-      text: colors.text.light,
+      ...(scheme === 'dark' ? DarkTheme.colors : DefaultTheme.colors),
+      background: palette.background,
+      card: palette.surface,
+      text: palette.text,
       primary: colors.primary,
-      border: colors.border.dark,
+      border: palette.border,
     },
   };
 
@@ -79,7 +82,7 @@ export default function RootLayout() {
             <ConfettiLayer />
             <Snackbar />
           </ErrorBoundary>
-          <StatusBar style="light" />
+          <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
         </ThemeProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>

@@ -11,7 +11,7 @@ export default function ImprintScreen() {
   const source = resolveImprint(i18n.language);
   return (
     <ScrollView
-      className="flex-1 bg-background-dark"
+      className="flex-1 bg-background-light dark:bg-background-dark"
       contentContainerStyle={{
         paddingHorizontal: 16,
         paddingTop: 16,

@@ -52,11 +52,11 @@ function SegmentedRow<T extends string>({
   onChange,
 }: SegmentedRowProps<T>) {
   return (
-    <View className="rounded-2xl border border-border-dark bg-surface-dark p-4">
-      <Text className="mb-1 text-xs font-semibold uppercase tracking-wider text-text-muted">
+    <View className="rounded-2xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark p-4">
+      <Text className="mb-1 text-xs font-semibold uppercase tracking-wider text-text-muted-light dark:text-text-muted">
         {label}
       </Text>
-      {description ? <Text className="mb-2 text-xs text-text-muted">{description}</Text> : null}
+      {description ? <Text className="mb-2 text-xs text-text-muted-light dark:text-text-muted">{description}</Text> : null}
       <View className="flex-row gap-2">
         {options.map((opt) => (
           <Pressable
@@ -65,12 +65,12 @@ function SegmentedRow<T extends string>({
             className={`flex-1 items-center rounded-full border px-3 py-2 ${
               value === opt.value
                 ? 'border-primary bg-primary/20'
-                : 'border-border-dark bg-background-dark'
+                : 'border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark'
             }`}
           >
             <Text
               className={`text-sm font-medium ${
-                value === opt.value ? 'text-primary' : 'text-text-light'
+                value === opt.value ? 'text-primary' : 'text-text-dark dark:text-text-light'
               }`}
             >
               {opt.label}
@@ -91,10 +91,10 @@ interface ToggleRowProps {
 
 function ToggleRow({ label, description, value, onValueChange }: ToggleRowProps) {
   return (
-    <View className="flex-row items-center justify-between rounded-2xl border border-border-dark bg-surface-dark p-4">
+    <View className="flex-row items-center justify-between rounded-2xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark p-4">
       <View className="flex-1 pr-3">
-        <Text className="text-base text-text-light">{label}</Text>
-        {description ? <Text className="text-xs text-text-muted">{description}</Text> : null}
+        <Text className="text-base text-text-dark dark:text-text-light">{label}</Text>
+        {description ? <Text className="text-xs text-text-muted-light dark:text-text-muted">{description}</Text> : null}
       </View>
       <Switch
         value={value}
@@ -115,21 +115,21 @@ interface NavRowSpec {
 
 function NavRowGroup({ rows }: { rows: NavRowSpec[] }) {
   return (
-    <View className="overflow-hidden rounded-2xl border border-border-dark bg-surface-dark">
+    <View className="overflow-hidden rounded-2xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark">
       {rows.map((row, idx) => (
         <Link key={row.href} href={row.href as never} asChild>
           <Pressable
-            className={`flex-row items-center justify-between px-4 py-4 active:bg-background-dark ${
-              idx > 0 ? 'border-t border-border-dark' : ''
+            className={`flex-row items-center justify-between px-4 py-4 active:bg-background-light dark:active:bg-background-dark ${
+              idx > 0 ? 'border-t border-border-light dark:border-border-dark' : ''
             }`}
           >
             <View className="flex-row items-center gap-3">
               <Ionicons name={row.icon} size={20} color={colors.text.muted} />
-              <Text className="text-base text-text-light">{row.label}</Text>
+              <Text className="text-base text-text-dark dark:text-text-light">{row.label}</Text>
             </View>
             <View className="flex-row items-center gap-2">
               {row.trailing ? (
-                <Text className="text-sm text-text-muted">{row.trailing}</Text>
+                <Text className="text-sm text-text-muted-light dark:text-text-muted">{row.trailing}</Text>
               ) : null}
               <Ionicons name="chevron-forward" size={18} color={colors.text.muted} />
             </View>
@@ -270,8 +270,8 @@ export default function ProfileScreen() {
   };
 
   return (
-    <ScrollView className="flex-1 bg-background-dark" contentContainerStyle={{ padding: 16 }}>
-      <Text className="mb-4 text-3xl font-bold text-text-light">{t('profile.title')}</Text>
+    <ScrollView className="flex-1 bg-background-light dark:bg-background-dark" contentContainerStyle={{ padding: 16 }}>
+      <Text className="mb-4 text-3xl font-bold text-text-dark dark:text-text-light">{t('profile.title')}</Text>
 
       <ProfileHeader />
 
@@ -284,10 +284,10 @@ export default function ProfileScreen() {
             <Ionicons name="sparkles" size={20} color={colors.primary} />
           </View>
           <View className="flex-1">
-            <Text className="text-base font-bold text-text-light">
+            <Text className="text-base font-bold text-text-dark dark:text-text-light">
               {isPremium ? t('profile.premium_active') : t('profile.premium')}
             </Text>
-            <Text className="text-xs text-text-muted">
+            <Text className="text-xs text-text-muted-light dark:text-text-muted">
               {isPremium ? t('profile.premium_active_subtitle') : t('profile.premium_subtitle')}
             </Text>
           </View>
@@ -339,11 +339,11 @@ export default function ProfileScreen() {
         <View className="mt-6 rounded-2xl border border-warning/40 bg-warning/10 p-4">
           <View className="flex-row items-center gap-2">
             <Ionicons name="play-circle-outline" size={20} color={colors.warning} />
-            <Text className="text-base font-semibold text-text-light">
+            <Text className="text-base font-semibold text-text-dark dark:text-text-light">
               {t('profile.trial_title', { days: adFrequency.rewardedTrialDays })}
             </Text>
           </View>
-          <Text className="mt-1 text-xs text-text-muted">
+          <Text className="mt-1 text-xs text-text-muted-light dark:text-text-muted">
             {t('profile.trial_desc', { days: adFrequency.rewardedTrialDays })}
           </Text>
           {trialActive ? (
@@ -369,28 +369,28 @@ export default function ProfileScreen() {
         </View>
       ) : null}
 
-      <Text className="mb-2 mt-6 text-xs font-semibold uppercase tracking-wider text-text-muted">
+      <Text className="mb-2 mt-6 text-xs font-semibold uppercase tracking-wider text-text-muted-light dark:text-text-muted">
         {t('profile.data_section')}
       </Text>
       <NavRowGroup rows={dataRows} />
 
-      <Text className="mb-2 mt-6 text-xs font-semibold uppercase tracking-wider text-text-muted">
+      <Text className="mb-2 mt-6 text-xs font-semibold uppercase tracking-wider text-text-muted-light dark:text-text-muted">
         {t('profile.about_section')}
       </Text>
       <NavRowGroup rows={aboutRows} />
 
-      <Text className="mb-2 mt-6 text-xs font-semibold uppercase tracking-wider text-text-muted">
+      <Text className="mb-2 mt-6 text-xs font-semibold uppercase tracking-wider text-text-muted-light dark:text-text-muted">
         {t('profile.legal_section')}
       </Text>
       <NavRowGroup rows={legalRows} />
 
       <Pressable
         onPress={handleFeedback}
-        className="mt-6 flex-row items-center justify-between rounded-2xl border border-border-dark bg-surface-dark px-4 py-4 active:bg-background-dark"
+        className="mt-6 flex-row items-center justify-between rounded-2xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark px-4 py-4 active:bg-background-light dark:active:bg-background-dark"
       >
         <View className="flex-row items-center gap-3">
           <Ionicons name="mail-outline" size={20} color={colors.text.muted} />
-          <Text className="text-base text-text-light">{t('profile.feedback')}</Text>
+          <Text className="text-base text-text-dark dark:text-text-light">{t('profile.feedback')}</Text>
         </View>
         <Ionicons name="open-outline" size={18} color={colors.text.muted} />
       </Pressable>

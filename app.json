@@ -6,7 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "trazia",
-    "userInterfaceStyle": "dark",
+    "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
@@ -65,8 +65,9 @@
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 240,
           "resizeMode": "contain",
-          "backgroundColor": "#0A0E1A",
+          "backgroundColor": "#F9FAFB",
           "dark": {
+            "image": "./assets/images/splash-icon.png",
             "backgroundColor": "#0A0E1A"
           }
         }
