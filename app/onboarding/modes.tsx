@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -10,7 +11,7 @@ import type { TransportMode } from '@/types/domain-types';
 
 interface ModeOption {
   id: TransportMode;
-  label: string;
+  labelKey: string;
   icon: React.ComponentProps<typeof Ionicons>['name'];
 }
 
@@ -19,13 +20,14 @@ interface ModeOption {
 // because showing them would mislead first-run users about what they
 // can actually log today.
 const OPTIONS: ModeOption[] = [
-  { id: 'flight', label: 'Flüge', icon: 'airplane' },
-  { id: 'other', label: 'Sonstiges', icon: 'ellipsis-horizontal' },
+  { id: 'flight', labelKey: 'onboarding.modes.flight', icon: 'airplane' },
+  { id: 'other', labelKey: 'onboarding.modes.other', icon: 'ellipsis-horizontal' },
 ];
 
 export default function OnboardingModesScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
   const setSelectedModes = useOnboardingStore((s) => s.setSelectedModes);
   const initial = useOnboardingStore.getState().selectedModes;
   const [selected, setSelected] = useState<Set<TransportMode>>(new Set(initial));
@@ -48,10 +50,10 @@ export default function OnboardingModesScreen() {
   return (
     <View className="flex-1 bg-background-dark" style={{ paddingTop: insets.top + 16 }}>
       <View className="flex-1 px-6">
-        <Text className="mt-4 text-3xl font-bold text-text-light">Was möchtest du tracken?</Text>
-        <Text className="mt-2 text-base text-text-muted">
-          Aktiviere die Modi, die du nutzen willst. Mehr ist später jederzeit möglich.
+        <Text className="mt-4 text-3xl font-bold text-text-light">
+          {t('onboarding.modes.title')}
         </Text>
+        <Text className="mt-2 text-base text-text-muted">{t('onboarding.modes.subtitle')}</Text>
 
         <View className="mt-6 gap-3">
           {OPTIONS.map((option) => {
@@ -76,7 +78,7 @@ export default function OnboardingModesScreen() {
                     isOn ? 'text-primary' : 'text-text-light'
                   }`}
                 >
-                  {option.label}
+                  {t(option.labelKey)}
                 </Text>
                 {isOn ? (
                   <Ionicons name="checkmark-circle" size={22} color={colors.primary} />
@@ -87,7 +89,7 @@ export default function OnboardingModesScreen() {
         </View>
 
         <Text className="mt-6 text-xs text-text-muted">
-          Spätere Modi werden automatisch freigeschaltet, sobald sie verfügbar sind.
+          {t('onboarding.modes.later_unlocks')}
         </Text>
       </View>
 
@@ -96,7 +98,7 @@ export default function OnboardingModesScreen() {
           onPress={handleContinue}
           className="items-center rounded-full bg-primary py-4 active:opacity-80"
         >
-          <Text className="text-base font-semibold text-white">Weiter</Text>
+          <Text className="text-base font-semibold text-white">{t('onboarding.modes.cta')}</Text>
         </Pressable>
       </View>
     </View>

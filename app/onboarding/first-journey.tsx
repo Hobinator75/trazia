@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -22,6 +23,7 @@ const yesterdayIso = (): string => {
 export default function OnboardingFirstJourneyScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
   const showSnackbar = useSnackbarStore((s) => s.show);
   const [working, setWorking] = useState(false);
 
@@ -35,7 +37,7 @@ export default function OnboardingFirstJourneyScreen() {
         searchVehicles(db, 'A359', 'flight'),
       ]);
       if (!fra || !jfk) {
-        showSnackbar('Beispielreise konnte nicht angelegt werden.', { variant: 'error' });
+        showSnackbar(t('onboarding.first_journey.create_failed'), { variant: 'error' });
         return;
       }
       const distanceKm =
@@ -59,7 +61,7 @@ export default function OnboardingFirstJourneyScreen() {
           distanceKm,
           durationMinutes: 540,
           routeType: 'great_circle',
-          notes: 'Beispielreise — kannst du jederzeit löschen.',
+          notes: t('onboarding.first_journey.sample_note'),
           isManualEntry: true,
           source: 'onboarding:example',
         },
@@ -67,9 +69,9 @@ export default function OnboardingFirstJourneyScreen() {
         // the user isn't ambushed by an ad before they've seen the app.
         { evaluateAchievements: true, notify: false, triggerInterstitial: false },
       );
-      showSnackbar('Beispielreise erstellt.', { variant: 'success' });
+      showSnackbar(t('onboarding.first_journey.created'), { variant: 'success' });
     } catch (err) {
-      showSnackbar(err instanceof Error ? err.message : 'Fehler beim Anlegen', {
+      showSnackbar(err instanceof Error ? err.message : t('error.save_failed'), {
         variant: 'error',
       });
     } finally {
@@ -90,20 +92,20 @@ export default function OnboardingFirstJourneyScreen() {
     <View className="flex-1 bg-background-dark" style={{ paddingTop: insets.top + 16 }}>
       <View className="flex-1 px-6">
         <Text className="mt-4 text-3xl font-bold text-text-light">
-          Lust auf eine Beispielreise?
+          {t('onboarding.first_journey.title')}
         </Text>
         <Text className="mt-2 text-base text-text-muted">
-          Wir können dir gerne einen Beispielflug eintragen — Frankfurt nach New York mit Lufthansa,
-          gestern. So siehst du sofort, wie sich Karte, Statistik und Achievements füllen. Du kannst
-          die Reise jederzeit löschen.
+          {t('onboarding.first_journey.subtitle')}
         </Text>
 
         <View className="mt-6 rounded-3xl border border-border-dark bg-surface-dark p-5">
           <Text className="text-xs font-semibold uppercase tracking-wider text-text-muted">
-            Beispielreise
+            {t('onboarding.first_journey.label')}
           </Text>
           <Text className="mt-2 text-2xl font-bold text-text-light">FRA → JFK</Text>
-          <Text className="text-sm text-text-muted">Lufthansa · gestern · LH 400 · A350-900</Text>
+          <Text className="text-sm text-text-muted">
+            {t('onboarding.first_journey.subtitle_short')}
+          </Text>
         </View>
       </View>
 
@@ -121,11 +123,13 @@ export default function OnboardingFirstJourneyScreen() {
             <Ionicons name="add-circle-outline" size={18} color="white" />
           )}
           <Text className="text-base font-semibold text-white">
-            {working ? 'Wird angelegt…' : 'Beispielreise anlegen'}
+            {working
+              ? t('onboarding.first_journey.creating')
+              : t('onboarding.first_journey.sample')}
           </Text>
         </Pressable>
         <Pressable onPress={handleSkip} className="items-center py-3">
-          <Text className="text-sm text-text-muted">Erste Reise selbst eintragen</Text>
+          <Text className="text-sm text-text-muted">{t('onboarding.first_journey.skip')}</Text>
         </Pressable>
       </View>
     </View>

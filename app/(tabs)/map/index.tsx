@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -13,11 +14,12 @@ type Mode = '2d' | '3d';
 
 export default function MapScreen() {
   const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
   const { journeys, loading } = useJourneys();
   const [mode, setMode] = useState<Mode>('2d');
 
   if (loading && journeys.length === 0) {
-    return <LoadingScreen subtitle="Karte wird geladen…" />;
+    return <LoadingScreen subtitle={t('map.loading')} />;
   }
 
   const isEmpty = journeys.length === 0;
@@ -34,9 +36,7 @@ export default function MapScreen() {
         >
           <View className="flex-row items-center gap-2 rounded-full border border-border-dark bg-surface-dark/85 px-4 py-2">
             <Ionicons name="globe-outline" size={14} color={colors.text.light} />
-            <Text className="text-xs text-text-light">
-              Erfasse deine erste Reise — sie erscheint hier sofort.
-            </Text>
+            <Text className="text-xs text-text-light">{t('map.empty')}</Text>
           </View>
         </View>
       ) : null}
@@ -57,7 +57,7 @@ export default function MapScreen() {
             color={mode === '3d' ? colors.primary : colors.text.light}
           />
           <Text className={`text-xs ${mode === '3d' ? 'text-primary' : 'text-text-light'}`}>
-            3D
+            {t('map.mode_3d')}
           </Text>
         </Pressable>
         <Pressable
@@ -72,7 +72,7 @@ export default function MapScreen() {
             color={mode === '2d' ? colors.primary : colors.text.light}
           />
           <Text className={`text-xs ${mode === '2d' ? 'text-primary' : 'text-text-light'}`}>
-            2D
+            {t('map.mode_2d')}
           </Text>
         </Pressable>
       </View>

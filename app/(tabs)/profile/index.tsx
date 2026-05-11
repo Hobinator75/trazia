@@ -1,10 +1,12 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Link, useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Linking, Pressable, ScrollView, Switch, Text, View } from 'react-native';
 
 import { ProfileHeader } from '@/components/domain/ProfileHeader';
 import { useIsPremium } from '@/hooks/useIsPremium';
+import { SUPPORTED_LOCALES, type SupportedLocale } from '@/i18n/config';
 import { showRewardedAd } from '@/lib/ads/rewarded';
 import { adFrequency } from '@/lib/ads/units';
 import {
@@ -12,7 +14,11 @@ import {
   grantTemporaryProEntitlement,
 } from '@/lib/iap/temporaryEntitlement';
 import { usePremiumStore } from '@/stores/premiumStore';
-import { type DistanceUnit, useSettingsStore } from '@/stores/settings.store';
+import {
+  type DistanceUnit,
+  type ThemePreference,
+  useSettingsStore,
+} from '@/stores/settings.store';
 import { useSnackbarStore } from '@/stores/snackbarStore';
 import { colors } from '@/theme/colors';
 
@@ -104,6 +110,7 @@ interface NavRowSpec {
   href: string;
   label: string;
   icon: React.ComponentProps<typeof Ionicons>['name'];
+  trailing?: string;
 }
 
 function NavRowGroup({ rows }: { rows: NavRowSpec[] }) {
@@ -120,7 +127,12 @@ function NavRowGroup({ rows }: { rows: NavRowSpec[] }) {
               <Ionicons name={row.icon} size={20} color={colors.text.muted} />
               <Text className="text-base text-text-light">{row.label}</Text>
             </View>
-            <Ionicons name="chevron-forward" size={18} color={colors.text.muted} />
+            <View className="flex-row items-center gap-2">
+              {row.trailing ? (
+                <Text className="text-sm text-text-muted">{row.trailing}</Text>
+              ) : null}
+              <Ionicons name="chevron-forward" size={18} color={colors.text.muted} />
+            </View>
           </Pressable>
         </Link>
       ))}
@@ -128,32 +140,16 @@ function NavRowGroup({ rows }: { rows: NavRowSpec[] }) {
   );
 }
 
-const UNIT_OPTIONS = [
-  { value: 'km' as const, label: 'km' },
-  { value: 'mi' as const, label: 'Meilen' },
-];
-
-const DATA_ROWS: NavRowSpec[] = [
-  { href: '/profile/export', label: 'Daten exportieren', icon: 'download-outline' },
-  { href: '/profile/backup', label: 'Backup & Restore', icon: 'cloud-upload-outline' },
-];
-
-const ABOUT_ROWS: NavRowSpec[] = [
-  { href: '/profile/about', label: 'Über Trazia', icon: 'information-circle-outline' },
-];
-
-const LEGAL_ROWS: NavRowSpec[] = [
-  { href: '/profile/privacy', label: 'Datenschutzerklärung', icon: 'lock-closed-outline' },
-  { href: '/profile/imprint', label: 'Impressum', icon: 'document-outline' },
-  { href: '/profile/terms', label: 'AGB', icon: 'reader-outline' },
-];
-
 const FEEDBACK_EMAIL = 'info@trazia.app';
 
 export default function ProfileScreen() {
   const router = useRouter();
+  const { t, i18n } = useTranslation();
   const showSnackbar = useSnackbarStore((s) => s.show);
 
+  const theme = useSettingsStore((s) => s.theme);
+  const setTheme = useSettingsStore((s) => s.setTheme);
+  const locale = useSettingsStore((s) => s.locale);
   const distanceUnit = useSettingsStore((s) => s.distanceUnit);
   const setDistanceUnit = useSettingsStore((s) => s.setDistanceUnit);
   const soundEnabled = useSettingsStore((s) => s.soundEnabled);
@@ -173,6 +169,51 @@ export default function ProfileScreen() {
 
   const trialActive = proTrialUntil !== null && proTrialUntil > Date.now();
 
+  const themeOptions = useMemo<readonly SegmentSpec<ThemePreference>[]>(
+    () => [
+      { value: 'system', label: t('profile.appearance_auto') },
+      { value: 'light', label: t('profile.appearance_light') },
+      { value: 'dark', label: t('profile.appearance_dark') },
+    ],
+    [t],
+  );
+
+  const unitOptions = useMemo<readonly SegmentSpec<DistanceUnit>[]>(
+    () => [
+      { value: 'km', label: t('profile.distance_km') },
+      { value: 'mi', label: t('profile.distance_mi') },
+    ],
+    [t],
+  );
+
+  const activeLocale = (locale ?? (i18n.language as SupportedLocale)) ?? 'en';
+  const activeLocaleNative =
+    SUPPORTED_LOCALES.find((entry) => entry.code === activeLocale)?.nativeName ?? 'English';
+
+  const settingsRows: NavRowSpec[] = [
+    {
+      href: '/onboarding/language',
+      label: t('profile.language'),
+      icon: 'language-outline',
+      trailing: activeLocaleNative,
+    },
+  ];
+
+  const dataRows: NavRowSpec[] = [
+    { href: '/profile/export', label: t('profile.data_export'), icon: 'download-outline' },
+    { href: '/profile/backup', label: t('profile.data_backup'), icon: 'cloud-upload-outline' },
+  ];
+
+  const aboutRows: NavRowSpec[] = [
+    { href: '/profile/about', label: t('profile.about_app'), icon: 'information-circle-outline' },
+  ];
+
+  const legalRows: NavRowSpec[] = [
+    { href: '/profile/privacy', label: t('profile.legal_privacy'), icon: 'lock-closed-outline' },
+    { href: '/profile/imprint', label: t('profile.legal_imprint'), icon: 'document-outline' },
+    { href: '/profile/terms', label: t('profile.legal_terms'), icon: 'reader-outline' },
+  ];
+
   const handleRewardedAd = async () => {
     setBusyRewarded(true);
     try {
@@ -184,9 +225,7 @@ export default function ProfileScreen() {
         const days = status.nextEligibleAt
           ? Math.max(1, Math.ceil((status.nextEligibleAt - Date.now()) / (24 * 60 * 60 * 1000)))
           : 30;
-        showSnackbar(`Du hast den Pro-Trial bereits genutzt. Nochmal möglich in ~${days} Tagen.`, {
-          variant: 'info',
-        });
+        showSnackbar(t('profile.trial_used', { days }), { variant: 'info' });
         return;
       }
       const result = await showRewardedAd();
@@ -197,14 +236,16 @@ export default function ProfileScreen() {
         );
         if (grant.granted && grant.entitlement) {
           setProTrialUntil(grant.entitlement.expiresAt);
-          showSnackbar('7 Tage Trazia Pro freigeschaltet.', { variant: 'success' });
+          showSnackbar(t('profile.trial_granted', { days: adFrequency.rewardedTrialDays }), {
+            variant: 'success',
+          });
         } else {
-          showSnackbar('Pro-Trial konnte nicht aktiviert werden.', { variant: 'error' });
+          showSnackbar(t('profile.trial_grant_failed'), { variant: 'error' });
         }
       } else if (result.kind === 'cancelled') {
-        showSnackbar('Werbe-Video wurde abgebrochen.', { variant: 'info' });
+        showSnackbar(t('profile.ad_cancelled'), { variant: 'info' });
       } else {
-        showSnackbar('Werbe-Video gerade nicht verfügbar.', { variant: 'error' });
+        showSnackbar(t('profile.ad_unavailable'), { variant: 'error' });
       }
     } finally {
       setBusyRewarded(false);
@@ -217,12 +258,12 @@ export default function ProfileScreen() {
     try {
       const supported = await Linking.canOpenURL(url);
       if (!supported) {
-        showSnackbar('Kein E-Mail-Client gefunden.', { variant: 'error' });
+        showSnackbar(t('profile.mail_client_missing'), { variant: 'error' });
         return;
       }
       await Linking.openURL(url);
     } catch (e) {
-      showSnackbar(e instanceof Error ? e.message : 'Mailclient nicht verfügbar', {
+      showSnackbar(e instanceof Error ? e.message : t('profile.mail_client_unavailable'), {
         variant: 'error',
       });
     }
@@ -230,7 +271,7 @@ export default function ProfileScreen() {
 
   return (
     <ScrollView className="flex-1 bg-background-dark" contentContainerStyle={{ padding: 16 }}>
-      <Text className="mb-4 text-3xl font-bold text-text-light">Profil</Text>
+      <Text className="mb-4 text-3xl font-bold text-text-light">{t('profile.title')}</Text>
 
       <ProfileHeader />
 
@@ -244,12 +285,10 @@ export default function ProfileScreen() {
           </View>
           <View className="flex-1">
             <Text className="text-base font-bold text-text-light">
-              {isPremium ? 'Trazia Premium aktiv' : 'Trazia Premium'}
+              {isPremium ? t('profile.premium_active') : t('profile.premium')}
             </Text>
             <Text className="text-xs text-text-muted">
-              {isPremium
-                ? 'Alle Features freigeschaltet. Danke!'
-                : 'Werbefrei, Wrapped-Story, unbegrenzt Fotos.'}
+              {isPremium ? t('profile.premium_active_subtitle') : t('profile.premium_subtitle')}
             </Text>
           </View>
           <Ionicons name="chevron-forward" size={18} color={colors.primary} />
@@ -257,42 +296,40 @@ export default function ProfileScreen() {
       </Pressable>
 
       <View className="gap-3">
-        <View className="rounded-2xl border border-border-dark bg-surface-dark p-4">
-          <Text className="mb-1 text-xs font-semibold uppercase tracking-wider text-text-muted">
-            Erscheinungsbild
-          </Text>
-          <Text className="text-sm text-text-light">Dunkel</Text>
-          <Text className="mt-1 text-xs text-text-muted">
-            Light Mode kommt in einem späteren Update.
-          </Text>
-        </View>
+        <SegmentedRow<ThemePreference>
+          label={t('profile.appearance')}
+          options={themeOptions}
+          value={theme}
+          onChange={setTheme}
+        />
+        <NavRowGroup rows={settingsRows} />
         <SegmentedRow<DistanceUnit>
-          label="Einheiten"
-          options={UNIT_OPTIONS}
+          label={t('profile.units_title')}
+          options={unitOptions}
           value={distanceUnit}
           onChange={setDistanceUnit}
         />
         <ToggleRow
-          label="Sounds"
-          description="Achievement-Chime beim Freischalten abspielen."
+          label={t('profile.sound_title')}
+          description={t('profile.sound_desc')}
           value={soundEnabled}
           onValueChange={setSoundEnabled}
         />
         <ToggleRow
-          label="Benachrichtigungen"
-          description="Push beim Freischalten neuer Achievements (System-Berechtigung erforderlich)."
+          label={t('profile.notifications_title')}
+          description={t('profile.notifications_desc')}
           value={notificationsEnabled}
           onValueChange={setNotificationsEnabled}
         />
         <ToggleRow
-          label="Crash-Reports erlauben"
-          description="Anonyme Stack-Traces — aktuell nicht aktiv. Wir kündigen die Integration mind. 14 Tage vor dem Update an."
+          label={t('profile.crash_reports_title')}
+          description={t('profile.crash_reports_desc')}
           value={crashReportsEnabled}
           onValueChange={setCrashReportsEnabled}
         />
         <ToggleRow
-          label="Analyse erlauben"
-          description="Anonyme Nutzungs-Events (PostHog). Hilft Prioritäten zu setzen — opt-in."
+          label={t('profile.analytics_title')}
+          description={t('profile.analytics_desc')}
           value={analyticsEnabled}
           onValueChange={setAnalyticsEnabled}
         />
@@ -303,16 +340,15 @@ export default function ProfileScreen() {
           <View className="flex-row items-center gap-2">
             <Ionicons name="play-circle-outline" size={20} color={colors.warning} />
             <Text className="text-base font-semibold text-text-light">
-              {adFrequency.rewardedTrialDays} Tage Trazia Pro
+              {t('profile.trial_title', { days: adFrequency.rewardedTrialDays })}
             </Text>
           </View>
           <Text className="mt-1 text-xs text-text-muted">
-            Schaue ein kurzes Werbe-Video und schalte Pro für {adFrequency.rewardedTrialDays} Tage
-            frei (werbefrei, alle Premium-Features). Pro 30 Tage einmal pro Gerät.
+            {t('profile.trial_desc', { days: adFrequency.rewardedTrialDays })}
           </Text>
           {trialActive ? (
             <Text className="mt-2 text-xs text-success">
-              Pro-Trial aktiv · noch {formatRemaining(proTrialUntil ?? 0)}
+              {t('profile.trial_active', { remaining: formatRemaining(proTrialUntil ?? 0) })}
             </Text>
           ) : null}
           <Pressable
@@ -323,26 +359,30 @@ export default function ProfileScreen() {
             }`}
           >
             <Text className="text-sm font-semibold text-background-dark">
-              {busyRewarded ? 'Lädt…' : trialActive ? 'Bereits aktiv' : 'Werbe-Video starten'}
+              {busyRewarded
+                ? t('profile.trial_loading')
+                : trialActive
+                  ? t('profile.trial_already_active')
+                  : t('profile.trial_start')}
             </Text>
           </Pressable>
         </View>
       ) : null}
 
       <Text className="mb-2 mt-6 text-xs font-semibold uppercase tracking-wider text-text-muted">
-        Daten
+        {t('profile.data_section')}
       </Text>
-      <NavRowGroup rows={DATA_ROWS} />
+      <NavRowGroup rows={dataRows} />
 
       <Text className="mb-2 mt-6 text-xs font-semibold uppercase tracking-wider text-text-muted">
-        Über
+        {t('profile.about_section')}
       </Text>
-      <NavRowGroup rows={ABOUT_ROWS} />
+      <NavRowGroup rows={aboutRows} />
 
       <Text className="mb-2 mt-6 text-xs font-semibold uppercase tracking-wider text-text-muted">
-        Rechtliches
+        {t('profile.legal_section')}
       </Text>
-      <NavRowGroup rows={LEGAL_ROWS} />
+      <NavRowGroup rows={legalRows} />
 
       <Pressable
         onPress={handleFeedback}
@@ -350,7 +390,7 @@ export default function ProfileScreen() {
       >
         <View className="flex-row items-center gap-3">
           <Ionicons name="mail-outline" size={20} color={colors.text.muted} />
-          <Text className="text-base text-text-light">Feedback senden</Text>
+          <Text className="text-base text-text-light">{t('profile.feedback')}</Text>
         </View>
         <Ionicons name="open-outline" size={18} color={colors.text.muted} />
       </Pressable>

@@ -6,6 +6,7 @@ import { FlatList, Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { SUPPORTED_LOCALES, type SupportedLocale } from '@/i18n/config';
+import { useOnboardingStore } from '@/stores/onboardingStore';
 import { useSettingsStore } from '@/stores/settings.store';
 import { colors } from '@/theme/colors';
 
@@ -16,11 +17,16 @@ export default function OnboardingLanguageScreen() {
   const currentLocale = (i18n.language ?? 'en') as SupportedLocale;
   const [selected, setSelected] = useState<SupportedLocale>(currentLocale);
   const setLocale = useSettingsStore((s) => s.setLocale);
+  const onboardingCompleted = useOnboardingStore((s) => s.completed);
 
   const handleContinue = () => {
     setLocale(selected);
     void i18n.changeLanguage(selected);
-    router.replace('/onboarding/welcome');
+    if (onboardingCompleted) {
+      router.back();
+    } else {
+      router.replace('/onboarding/welcome');
+    }
   };
 
   return (

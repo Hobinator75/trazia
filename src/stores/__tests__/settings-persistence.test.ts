@@ -86,7 +86,8 @@ describe('settings store persistence', () => {
     const { useSettingsStore } = await import('../settings.store');
     await useSettingsStore.persist.rehydrate();
     const s = useSettingsStore.getState();
-    expect(s.theme).toBe('dark');
+    expect(s.theme).toBe('system');
+    expect(s.locale).toBe(null);
     expect(s.distanceUnit).toBe('km');
     expect(s.soundEnabled).toBe(true);
     expect(s.notificationsEnabled).toBe(false);

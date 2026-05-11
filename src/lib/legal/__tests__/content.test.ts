@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { IMPRINT_DE, PRIVACY_POLICY_DE, TERMS_DE } from '../content';
+import { IMPRINT_DE, IMPRINT_EN, PRIVACY_POLICY_DE, TERMS_DE, resolveImprint } from '../content';
 
 describe('legal content (DE)', () => {
   it('privacy policy mentions every embedded SDK by name', () => {
@@ -51,9 +51,28 @@ describe('legal content (DE)', () => {
   });
 
   it('legal documents route contact through info@trazia.app, not the private gmail', () => {
-    for (const doc of [IMPRINT_DE, PRIVACY_POLICY_DE]) {
+    for (const doc of [IMPRINT_DE, IMPRINT_EN, PRIVACY_POLICY_DE]) {
       expect(doc).toContain('info@trazia.app');
       expect(doc).not.toContain('tim.hobrlant@gmail.com');
     }
+  });
+
+  it('English imprint carries the translated HVS block', () => {
+    expect(IMPRINT_EN).toContain('HVS - Hobrlant Vertrieb & Service');
+    expect(IMPRINT_EN).toContain('represented by Tim Hobrlant');
+    expect(IMPRINT_EN).toContain('Döllstädtstraße 5');
+    expect(IMPRINT_EN).toContain('99423 Weimar');
+    expect(IMPRINT_EN).toContain('Germany');
+  });
+
+  it('resolveImprint returns DE for de* locales and EN otherwise', () => {
+    expect(resolveImprint('de')).toBe(IMPRINT_DE);
+    expect(resolveImprint('de-DE')).toBe(IMPRINT_DE);
+    expect(resolveImprint('de-AT')).toBe(IMPRINT_DE);
+    expect(resolveImprint('en')).toBe(IMPRINT_EN);
+    expect(resolveImprint('en-US')).toBe(IMPRINT_EN);
+    expect(resolveImprint('fr-FR')).toBe(IMPRINT_EN);
+    expect(resolveImprint(null)).toBe(IMPRINT_EN);
+    expect(resolveImprint(undefined)).toBe(IMPRINT_EN);
   });
 });

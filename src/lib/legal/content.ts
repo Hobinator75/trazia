@@ -117,6 +117,44 @@ wir keinen Einfluss haben. Deshalb können wir für diese fremden Inhalte
 keine Gewähr übernehmen.
 `;
 
+export const IMPRINT_EN = `## Imprint
+
+Information pursuant to § 5 TMG:
+
+**HVS - Hobrlant Vertrieb & Service**
+
+represented by Tim Hobrlant
+
+Döllstädtstraße 5
+99423 Weimar
+Germany
+
+## Contact
+
+Email: [info@trazia.app](mailto:info@trazia.app)
+
+## Responsible for the content
+
+Tim Hobrlant, address as above.
+
+## Liability for content
+
+The contents of our app were created with the greatest possible care.
+However, we cannot guarantee the accuracy, completeness, or timeliness
+of the content.
+
+## Liability for links
+
+Our offering contains links to external third-party websites whose
+contents we have no influence over. Therefore, we cannot assume any
+liability for these external contents.
+`;
+
+export function resolveImprint(locale: string | null | undefined): string {
+  if (typeof locale === 'string' && /^de\b/i.test(locale)) return IMPRINT_DE;
+  return IMPRINT_EN;
+}
+
 export const TERMS_DE = `## Allgemeine Geschäftsbedingungen
 
 Stand: Mai 2026

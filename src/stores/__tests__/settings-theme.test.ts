@@ -2,13 +2,13 @@ import { describe, expect, it } from 'vitest';
 
 import { useSettingsStore } from '../settings.store';
 
-describe('Phase-1 theme contract', () => {
-  it('store default is dark', () => {
-    // Phase-1 ships dark-only. The setting and setter still exist for
-    // forward-compat (Phase 2+ will surface light-mode tokens), but the
-    // default must be dark so first-run users land on the styled
-    // surfaces — every screen still hard-codes dark utility classes.
+describe('theme contract', () => {
+  it('store default is system', () => {
+    // Phase-1 shipped dark-only; the i18n+light-mode bucket flips the
+    // default to 'system' so the OS appearance setting drives the look.
+    // Existing installs keep their 'dark' value via the v2 migration in
+    // settings.store.ts.
     const fresh = useSettingsStore.getState();
-    expect(fresh.theme).toBe('dark');
+    expect(fresh.theme).toBe('system');
   });
 });
