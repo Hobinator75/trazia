@@ -9,13 +9,20 @@
     "next": "Next",
     "done": "Done",
     "loading": "Loading…",
+    "loading_data": "Loading data…",
     "error": "Error",
     "retry": "Try again",
     "confirm": "Confirm",
     "close": "Close",
     "search": "Search",
     "yes": "Yes",
-    "no": "No"
+    "no": "No",
+    "add": "Add"
+  },
+  "form": {
+    "date_placeholder": "Pick a date",
+    "time_placeholder": "Pick a time",
+    "tag_placeholder": "Add…"
   },
   "language": {
     "title": "Choose your language",
@@ -193,6 +200,7 @@
     "save_failed": "Save failed.",
     "not_found": "Not found.",
     "db_loading": "Preparing the database…",
-    "db_error": "Database error"
+    "db_error": "Database error",
+    "boundary_title": "Something went wrong"
   }
 }

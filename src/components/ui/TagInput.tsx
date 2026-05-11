@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Pressable, Text, TextInput, View } from 'react-native';
 
 import { colors } from '@/theme/colors';
@@ -15,11 +16,13 @@ export interface TagInputProps {
 export function TagInput({
   value,
   onChange,
-  placeholder = 'Hinzufügen…',
+  placeholder,
   suggestions = [],
   maxLength = 32,
 }: TagInputProps) {
   const [draft, setDraft] = useState('');
+  const { t } = useTranslation();
+  const effectivePlaceholder = placeholder ?? t('form.tag_placeholder');
 
   const commit = (raw: string) => {
     const tag = raw.trim();
@@ -38,7 +41,7 @@ export function TagInput({
 
   return (
     <View>
-      <View className="rounded-xl border border-border-dark bg-surface-dark px-2 py-2">
+      <View className="rounded-xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark px-2 py-2">
         <View className="flex-row flex-wrap items-center gap-2">
           {value.map((tag) => (
             <Pressable
@@ -54,11 +57,11 @@ export function TagInput({
             value={draft}
             onChangeText={setDraft}
             onSubmitEditing={() => commit(draft)}
-            placeholder={placeholder}
+            placeholder={effectivePlaceholder}
             placeholderTextColor={colors.text.muted}
             maxLength={maxLength}
             returnKeyType="done"
-            className="min-w-[100] flex-1 px-1 py-1 text-base text-text-light"
+            className="min-w-[100] flex-1 px-1 py-1 text-base text-text-dark dark:text-text-light"
             blurOnSubmit={false}
           />
         </View>
@@ -69,9 +72,9 @@ export function TagInput({
             <Pressable
               key={s}
               onPress={() => commit(s)}
-              className="rounded-full border border-border-dark px-3 py-1"
+              className="rounded-full border border-border-light dark:border-border-dark px-3 py-1"
             >
-              <Text className="text-xs text-text-muted">+ {s}</Text>
+              <Text className="text-xs text-text-muted-light dark:text-text-muted">+ {s}</Text>
             </Pressable>
           ))}
         </View>

@@ -13,13 +13,15 @@ export interface FormFieldProps {
 export function FormField({ label, required, error, hint, children }: FormFieldProps) {
   return (
     <View className="mb-4">
-      <Text className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-text-muted">
+      <Text className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-text-muted-light dark:text-text-muted">
         {label}
         {required ? <Text className="text-danger"> *</Text> : null}
       </Text>
       {children}
       {error ? <Text className="mt-1 text-xs text-danger">{error}</Text> : null}
-      {!error && hint ? <Text className="mt-1 text-xs text-text-muted">{hint}</Text> : null}
+      {!error && hint ? (
+        <Text className="mt-1 text-xs text-text-muted-light dark:text-text-muted">{hint}</Text>
+      ) : null}
     </View>
   );
 }
@@ -32,8 +34,8 @@ export function TextField({ invalid, ...props }: TextFieldProps) {
   return (
     <TextInput
       placeholderTextColor={colors.text.muted}
-      className={`rounded-xl border bg-surface-dark px-3 py-3 text-base text-text-light ${
-        invalid ? 'border-danger' : 'border-border-dark'
+      className={`rounded-xl border bg-surface-light dark:bg-surface-dark px-3 py-3 text-base text-text-dark dark:text-text-light ${
+        invalid ? 'border-danger' : 'border-border-light dark:border-border-dark'
       }`}
       {...props}
     />
@@ -51,12 +53,16 @@ export function SelectButton({ value, placeholder, onPress, invalid }: SelectBut
   return (
     <Pressable
       onPress={onPress}
-      className={`rounded-xl border bg-surface-dark px-3 py-3 active:opacity-80 ${
-        invalid ? 'border-danger' : 'border-border-dark'
+      className={`rounded-xl border bg-surface-light dark:bg-surface-dark px-3 py-3 active:opacity-80 ${
+        invalid ? 'border-danger' : 'border-border-light dark:border-border-dark'
       }`}
     >
       <Text
-        className={`text-base ${value ? 'text-text-light' : 'text-text-muted'}`}
+        className={`text-base ${
+          value
+            ? 'text-text-dark dark:text-text-light'
+            : 'text-text-muted-light dark:text-text-muted'
+        }`}
         numberOfLines={1}
       >
         {value ?? placeholder}
@@ -81,10 +87,16 @@ export function Segmented<T extends string>({ value, onChange, options }: Segmen
             key={opt.value}
             onPress={() => onChange(opt.value)}
             className={`flex-1 items-center rounded-full border px-3 py-2 ${
-              active ? 'border-primary bg-primary/20' : 'border-border-dark bg-surface-dark'
+              active
+                ? 'border-primary bg-primary/20'
+                : 'border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark'
             }`}
           >
-            <Text className={`text-sm ${active ? 'text-primary' : 'text-text-light'}`}>
+            <Text
+              className={`text-sm ${
+                active ? 'text-primary' : 'text-text-dark dark:text-text-light'
+              }`}
+            >
               {opt.label}
             </Text>
           </Pressable>

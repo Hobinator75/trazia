@@ -93,8 +93,8 @@ export function Markdown({ source }: MarkdownProps) {
       <View key={`bul-${key++}`} className="my-2 gap-1">
         {bulletBuffer.map((item, idx) => (
           <View key={idx} className="flex-row gap-2">
-            <Text className="text-text-muted">•</Text>
-            <Text className="flex-1 text-base text-text-light">
+            <Text className="text-text-muted-light dark:text-text-muted">•</Text>
+            <Text className="flex-1 text-base text-text-dark dark:text-text-light">
               {renderInline(parseInline(item))}
             </Text>
           </View>
@@ -113,21 +113,21 @@ export function Markdown({ source }: MarkdownProps) {
     if (line.startsWith('### ')) {
       flushBullets();
       out.push(
-        <Text key={`h3-${key++}`} className="mt-4 text-base font-semibold text-text-light">
+        <Text key={`h3-${key++}`} className="mt-4 text-base font-semibold text-text-dark dark:text-text-light">
           {renderInline(parseInline(line.slice(4)))}
         </Text>,
       );
     } else if (line.startsWith('## ')) {
       flushBullets();
       out.push(
-        <Text key={`h2-${key++}`} className="mt-5 text-xl font-bold text-text-light">
+        <Text key={`h2-${key++}`} className="mt-5 text-xl font-bold text-text-dark dark:text-text-light">
           {renderInline(parseInline(line.slice(3)))}
         </Text>,
       );
     } else if (line.startsWith('# ')) {
       flushBullets();
       out.push(
-        <Text key={`h1-${key++}`} className="mt-2 text-3xl font-bold text-text-light">
+        <Text key={`h1-${key++}`} className="mt-2 text-3xl font-bold text-text-dark dark:text-text-light">
           {renderInline(parseInline(line.slice(2)))}
         </Text>,
       );
@@ -136,7 +136,7 @@ export function Markdown({ source }: MarkdownProps) {
     } else {
       flushBullets();
       out.push(
-        <Text key={`p-${key++}`} className="mt-2 text-base leading-6 text-text-light">
+        <Text key={`p-${key++}`} className="mt-2 text-base leading-6 text-text-dark dark:text-text-light">
           {renderInline(parseInline(line))}
         </Text>,
       );

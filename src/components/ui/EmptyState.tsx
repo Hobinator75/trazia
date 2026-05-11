@@ -13,8 +13,14 @@ export function EmptyState({ icon = 'compass-outline', title, subtitle }: EmptyS
   return (
     <View className="flex-1 items-center justify-center px-8 py-16">
       <Ionicons name={icon} size={48} color={colors.text.muted} />
-      <Text className="mt-4 text-center text-lg font-semibold text-text-light">{title}</Text>
-      {subtitle ? <Text className="mt-1 text-center text-text-muted">{subtitle}</Text> : null}
+      <Text className="mt-4 text-center text-lg font-semibold text-text-dark dark:text-text-light">
+        {title}
+      </Text>
+      {subtitle ? (
+        <Text className="mt-1 text-center text-text-muted-light dark:text-text-muted">
+          {subtitle}
+        </Text>
+      ) : null}
     </View>
   );
 }

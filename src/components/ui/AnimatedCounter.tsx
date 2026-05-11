@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Text, type TextStyle } from 'react-native';
 import {
   Easing,
@@ -16,15 +17,17 @@ export interface AnimatedCounterProps {
   style?: TextStyle;
 }
 
-const defaultFormat = (n: number): string => Math.round(n).toLocaleString('de-DE');
-
 export function AnimatedCounter({
   value,
   durationMs = 1500,
-  format = defaultFormat,
+  format,
   className,
   style,
 }: AnimatedCounterProps) {
+  const { i18n } = useTranslation();
+  // Group separators flip between 1.234 (de) and 1,234 (en) — use the
+  // active i18n locale so the counter reads naturally for the user.
+  const effectiveFormat = format ?? ((n: number) => Math.round(n).toLocaleString(i18n.language));
   const progress = useSharedValue(0);
   const [display, setDisplay] = useState<number>(0);
 
@@ -45,7 +48,7 @@ export function AnimatedCounter({
 
   return (
     <Text className={className} style={style}>
-      {format(display)}
+      {effectiveFormat(display)}
     </Text>
   );
 }

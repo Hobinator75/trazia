@@ -11,9 +11,17 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSnackbarStore } from '@/stores/snackbarStore';
 
 const VARIANT_CLASS: Record<string, string> = {
-  info: 'bg-surface-dark border-border-dark',
+  info: 'bg-surface-light dark:bg-surface-dark border-border-light dark:border-border-dark',
   success: 'bg-success border-success',
   error: 'bg-danger border-danger',
+};
+
+// For info-variant the text needs to flip with the surface; success/error
+// stay light because the underlying colour is saturated in both modes.
+const VARIANT_TEXT: Record<string, string> = {
+  info: 'text-text-dark dark:text-text-light',
+  success: 'text-white',
+  error: 'text-white',
 };
 
 export function Snackbar() {
@@ -54,7 +62,9 @@ export function Snackbar() {
       <View
         className={`rounded-2xl border px-4 py-3 ${VARIANT_CLASS[current.variant] ?? VARIANT_CLASS.info}`}
       >
-        <Text className="text-base text-text-light">{current.message}</Text>
+        <Text className={`text-base ${VARIANT_TEXT[current.variant] ?? VARIANT_TEXT.info}`}>
+          {current.message}
+        </Text>
       </View>
     </Animated.View>
   );

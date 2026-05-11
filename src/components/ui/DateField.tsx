@@ -1,6 +1,9 @@
 import DateTimePicker, { type DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Modal, Platform, Pressable, Text, View } from 'react-native';
+
+import { useResolvedScheme } from '@/hooks/useResolvedScheme';
 
 import { SelectButton } from './FormField';
 
@@ -38,13 +41,11 @@ export interface DateFieldProps {
   placeholder?: string;
 }
 
-export function DateField({
-  value,
-  onChange,
-  invalid,
-  placeholder = 'Datum wählen',
-}: DateFieldProps) {
+export function DateField({ value, onChange, invalid, placeholder }: DateFieldProps) {
   const [open, setOpen] = useState(false);
+  const { t } = useTranslation();
+  const scheme = useResolvedScheme();
+  const effectivePlaceholder = placeholder ?? t('form.date_placeholder');
 
   const handleChange = (_event: DateTimePickerEvent, date?: Date) => {
     if (Platform.OS === 'android') setOpen(false);
@@ -55,7 +56,7 @@ export function DateField({
     <>
       <SelectButton
         value={value}
-        placeholder={placeholder}
+        placeholder={effectivePlaceholder}
         onPress={() => setOpen(true)}
         invalid={invalid}
       />
@@ -63,19 +64,19 @@ export function DateField({
         Platform.OS === 'ios' ? (
           <Modal transparent animationType="slide" onRequestClose={() => setOpen(false)}>
             <View className="flex-1 justify-end bg-black/40">
-              <View className="bg-surface-dark p-4 pb-8">
+              <View className="bg-surface-light dark:bg-surface-dark p-4 pb-8">
                 <DateTimePicker
                   mode="date"
                   display="spinner"
                   value={parseIsoDate(value)}
                   onChange={handleChange}
-                  themeVariant="dark"
+                  themeVariant={scheme}
                 />
                 <Pressable
                   onPress={() => setOpen(false)}
                   className="mt-2 items-center rounded-full bg-primary py-3"
                 >
-                  <Text className="font-semibold text-white">Fertig</Text>
+                  <Text className="font-semibold text-white">{t('common.done')}</Text>
                 </Pressable>
               </View>
             </View>
@@ -94,8 +95,11 @@ export interface TimeFieldProps {
   placeholder?: string;
 }
 
-export function TimeField({ value, onChange, placeholder = 'Zeit wählen' }: TimeFieldProps) {
+export function TimeField({ value, onChange, placeholder }: TimeFieldProps) {
   const [open, setOpen] = useState(false);
+  const { t } = useTranslation();
+  const scheme = useResolvedScheme();
+  const effectivePlaceholder = placeholder ?? t('form.time_placeholder');
 
   const handleChange = (_event: DateTimePickerEvent, date?: Date) => {
     if (Platform.OS === 'android') setOpen(false);
@@ -104,24 +108,28 @@ export function TimeField({ value, onChange, placeholder = 'Zeit wählen' }: Tim
 
   return (
     <>
-      <SelectButton value={value} placeholder={placeholder} onPress={() => setOpen(true)} />
+      <SelectButton
+        value={value}
+        placeholder={effectivePlaceholder}
+        onPress={() => setOpen(true)}
+      />
       {open ? (
         Platform.OS === 'ios' ? (
           <Modal transparent animationType="slide" onRequestClose={() => setOpen(false)}>
             <View className="flex-1 justify-end bg-black/40">
-              <View className="bg-surface-dark p-4 pb-8">
+              <View className="bg-surface-light dark:bg-surface-dark p-4 pb-8">
                 <DateTimePicker
                   mode="time"
                   display="spinner"
                   value={parseTime(value)}
                   onChange={handleChange}
-                  themeVariant="dark"
+                  themeVariant={scheme}
                 />
                 <Pressable
                   onPress={() => setOpen(false)}
                   className="mt-2 items-center rounded-full bg-primary py-3"
                 >
-                  <Text className="font-semibold text-white">Fertig</Text>
+                  <Text className="font-semibold text-white">{t('common.done')}</Text>
                 </Pressable>
               </View>
             </View>

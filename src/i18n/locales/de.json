@@ -9,13 +9,20 @@
     "next": "Weiter",
     "done": "Fertig",
     "loading": "Lädt…",
+    "loading_data": "Daten werden geladen…",
     "error": "Fehler",
     "retry": "Erneut versuchen",
     "confirm": "Bestätigen",
     "close": "Schließen",
     "search": "Suchen",
     "yes": "Ja",
-    "no": "Nein"
+    "no": "Nein",
+    "add": "Hinzufügen"
+  },
+  "form": {
+    "date_placeholder": "Datum wählen",
+    "time_placeholder": "Zeit wählen",
+    "tag_placeholder": "Hinzufügen…"
   },
   "language": {
     "title": "Sprache wählen",
@@ -193,6 +200,7 @@
     "save_failed": "Speichern fehlgeschlagen.",
     "not_found": "Nicht gefunden.",
     "db_loading": "Datenbank wird vorbereitet…",
-    "db_error": "Datenbank-Fehler"
+    "db_error": "Datenbank-Fehler",
+    "boundary_title": "Etwas ist schiefgelaufen"
   }
 }
