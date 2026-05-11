@@ -1,18 +1,12 @@
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Dimensions, Text, View } from 'react-native';
 import { BarChart, LineChart, PieChart } from 'react-native-gifted-charts';
 
 import type { JourneyWithRefs } from '@/db/repositories/journey.repository';
+import { useResolvedScheme } from '@/hooks/useResolvedScheme';
 import { computeModePieData, type ModePieKey } from '@/lib/stats';
-import { colors, modeColors } from '@/theme/colors';
-
-const MODE_PIE_LABEL: Record<ModePieKey, string> = {
-  flight: 'Flug',
-  train: 'Zug',
-  car: 'Auto',
-  ship: 'Schiff',
-  other: 'Sonstiges',
-};
+import { colors, modeColors, paletteFor } from '@/theme/colors';
 
 const yearOf = (iso: string): number => Number.parseInt(iso.slice(0, 4), 10);
 const monthOf = (iso: string): number => Number.parseInt(iso.slice(5, 7), 10);
@@ -23,8 +17,8 @@ export interface ChartsSectionProps {
 
 function CardShell({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <View className="mx-4 my-3 rounded-3xl border border-border-dark bg-surface-dark p-5">
-      <Text className="mb-3 text-xs font-semibold uppercase tracking-wider text-text-muted">
+    <View className="mx-4 my-3 rounded-3xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark p-5">
+      <Text className="mb-3 text-xs font-semibold uppercase tracking-wider text-text-muted-light dark:text-text-muted">
         {title}
       </Text>
       {children}
@@ -33,7 +27,18 @@ function CardShell({ title, children }: { title: string; children: React.ReactNo
 }
 
 export function ChartsSection({ journeys }: ChartsSectionProps) {
+  const { t } = useTranslation();
+  const scheme = useResolvedScheme();
+  const palette = paletteFor(scheme);
   const screenWidth = Dimensions.get('window').width - 16 * 2 - 20 * 2;
+
+  const modeLabels: Record<ModePieKey, string> = {
+    flight: t('achievements_section.mode_label_flight'),
+    train: t('achievements_section.mode_label_train'),
+    car: t('achievements_section.mode_label_car'),
+    ship: t('achievements_section.mode_label_ship'),
+    other: t('achievements_section.mode_label_other'),
+  };
 
   const yearBarData = useMemo(() => {
     const counts = new Map<number, number>();
@@ -47,10 +52,10 @@ export function ChartsSection({ journeys }: ChartsSectionProps) {
       label: String(year).slice(2),
       frontColor: colors.primary,
       topLabelComponent: () => (
-        <Text style={{ color: colors.text.light, fontSize: 10 }}>{counts.get(year) ?? 0}</Text>
+        <Text style={{ color: palette.text, fontSize: 10 }}>{counts.get(year) ?? 0}</Text>
       ),
     }));
-  }, [journeys]);
+  }, [journeys, palette.text]);
 
   const modePieData = useMemo(() => {
     const slices = computeModePieData(journeys);
@@ -58,9 +63,12 @@ export function ChartsSection({ journeys }: ChartsSectionProps) {
     return slices.map((s) => ({
       value: s.value,
       color: modeColors[s.key],
-      text: MODE_PIE_LABEL[s.key],
+      text: modeLabels[s.key],
     }));
-  }, [journeys]);
+    // modeLabels is recomputed each render but the result is stable per
+    // locale; the dep below is correct.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [journeys, modeLabels.flight, modeLabels.train, modeLabels.car, modeLabels.ship, modeLabels.other]);
 
   const monthlyDistanceData = useMemo(() => {
     const currentYear = new Date().getFullYear();
@@ -82,35 +90,42 @@ export function ChartsSection({ journeys }: ChartsSectionProps) {
 
   const yearTotal = yearBarData.reduce((sum, b) => sum + b.value, 0);
   const monthlyTotal = monthlyDistanceData.reduce((sum, d) => sum + d.value, 0);
+  const flightLabel = modeLabels.flight;
 
   return (
     <View>
-      <CardShell title="Reisen pro Jahr">
+      <CardShell title={t('achievements_section.card_year_title')}>
         {yearTotal === 0 ? (
-          <Text className="text-sm text-text-muted">Noch keine Daten.</Text>
+          <Text className="text-sm text-text-muted-light dark:text-text-muted">
+            {t('stats.charts_no_data')}
+          </Text>
         ) : (
           <BarChart
             data={yearBarData}
             barWidth={28}
             barBorderRadius={6}
             height={160}
-            xAxisLabelTextStyle={{ color: colors.text.muted }}
-            yAxisTextStyle={{ color: colors.text.muted }}
-            xAxisColor={colors.border.dark}
-            yAxisColor={colors.border.dark}
+            xAxisLabelTextStyle={{ color: palette.textMuted }}
+            yAxisTextStyle={{ color: palette.textMuted }}
+            xAxisColor={palette.border}
+            yAxisColor={palette.border}
             noOfSections={4}
             isAnimated
           />
         )}
       </CardShell>
 
-      <CardShell title="Modi-Verteilung">
+      <CardShell title={t('achievements_section.card_modes_title')}>
         {modePieData === null ? (
-          <Text className="text-sm text-text-muted">Noch keine Reisen.</Text>
-        ) : modePieData.length === 1 && modePieData[0]?.text === 'Flug' ? (
+          <Text className="text-sm text-text-muted-light dark:text-text-muted">
+            {t('achievements_section.no_journeys')}
+          </Text>
+        ) : modePieData.length === 1 && modePieData[0]?.text === flightLabel ? (
           // Phase-1: most users will only have flights — a single-slice
           // donut looks broken. Show a plain statement instead.
-          <Text className="text-sm text-text-light">100% Flugreisen</Text>
+          <Text className="text-sm text-text-dark dark:text-text-light">
+            {t('achievements_section.modes_flight_only')}
+          </Text>
         ) : (
           <View className="flex-row items-center gap-4">
             <PieChart data={modePieData} radius={80} donut innerRadius={48} />
@@ -120,19 +135,25 @@ export function ChartsSection({ journeys }: ChartsSectionProps) {
                   <View
                     style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: d.color }}
                   />
-                  <Text className="text-sm text-text-light">{d.text}</Text>
-                  <Text className="ml-auto text-xs text-text-muted">{d.value}</Text>
+                  <Text className="text-sm text-text-dark dark:text-text-light">{d.text}</Text>
+                  <Text className="ml-auto text-xs text-text-muted-light dark:text-text-muted">
+                    {d.value}
+                  </Text>
                 </View>
               ))}
             </View>
           </View>
         )}
-        <Text className="mt-3 text-xs text-text-muted">Mehr Modi kommen bald!</Text>
+        <Text className="mt-3 text-xs text-text-muted-light dark:text-text-muted">
+          {t('achievements_section.modes_more')}
+        </Text>
       </CardShell>
 
-      <CardShell title="Distanz pro Monat (laufendes Jahr)">
+      <CardShell title={t('achievements_section.card_monthly_title')}>
         {monthlyTotal === 0 ? (
-          <Text className="text-sm text-text-muted">Noch keine Reisen in diesem Jahr.</Text>
+          <Text className="text-sm text-text-muted-light dark:text-text-muted">
+            {t('achievements_section.no_year')}
+          </Text>
         ) : (
           <LineChart
             data={monthlyDistanceData}
@@ -140,10 +161,10 @@ export function ChartsSection({ journeys }: ChartsSectionProps) {
             thickness={2}
             color={colors.secondary}
             curved
-            xAxisLabelTextStyle={{ color: colors.text.muted }}
-            yAxisTextStyle={{ color: colors.text.muted }}
-            xAxisColor={colors.border.dark}
-            yAxisColor={colors.border.dark}
+            xAxisLabelTextStyle={{ color: palette.textMuted }}
+            yAxisTextStyle={{ color: palette.textMuted }}
+            xAxisColor={palette.border}
+            yAxisColor={palette.border}
             hideRules
             isAnimated
             initialSpacing={12}

@@ -1,38 +1,41 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { useIsPremium } from '@/hooks/useIsPremium';
 import { useStatsData } from '@/hooks/useStatsData';
+import { formatFloat, formatInt } from '@/lib/i18n/formatNumber';
 import { statsByMonth, statsByYear, topOperators, topRoutes } from '@/lib/stats';
-import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { colors } from '@/theme/colors';
 
-const MONTH_NAMES = [
-  'Januar',
-  'Februar',
-  'März',
-  'April',
-  'Mai',
-  'Juni',
-  'Juli',
-  'August',
-  'September',
-  'Oktober',
-  'November',
-  'Dezember',
+const MONTH_KEYS = [
+  'months.january',
+  'months.february',
+  'months.march',
+  'months.april',
+  'months.may',
+  'months.june',
+  'months.july',
+  'months.august',
+  'months.september',
+  'months.october',
+  'months.november',
+  'months.december',
 ];
 
 export default function YearInReviewScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const { t, i18n } = useTranslation();
   const { journeys, refs, loading } = useStatsData();
   const { isPremium } = useIsPremium();
   const year = new Date().getFullYear();
 
   if (loading && journeys.length === 0) {
-    return <LoadingScreen subtitle="Jahresrückblick wird gebaut…" />;
+    return <LoadingScreen subtitle={t('stats.year_loading')} />;
   }
 
   const stats = statsByYear(journeys, year, refs);
@@ -57,7 +60,9 @@ export default function YearInReviewScreen() {
         bestIdx = m;
       }
     }
-    return bestIdx > 0 ? { month: MONTH_NAMES[bestIdx - 1] ?? '', km: bestKm } : null;
+    return bestIdx > 0
+      ? { monthLabel: t(MONTH_KEYS[bestIdx - 1] ?? 'months.january'), km: bestKm }
+      : null;
   })();
 
   const totalJourneys =
@@ -65,7 +70,7 @@ export default function YearInReviewScreen() {
 
   return (
     <ScrollView
-      className="flex-1 bg-background-dark"
+      className="flex-1 bg-background-light dark:bg-background-dark"
       contentContainerStyle={{
         paddingTop: insets.top + 24,
         paddingBottom: insets.bottom + 32,
@@ -73,47 +78,64 @@ export default function YearInReviewScreen() {
       }}
     >
       <Text className="text-xs font-semibold uppercase tracking-widest text-primary">
-        Jahresrückblick
+        {t('stats.year_in_review')}
       </Text>
-      <Text className="text-4xl font-bold text-text-light">Dein Jahr {year}</Text>
+      <Text className="text-4xl font-bold text-text-dark dark:text-text-light">
+        {t('stats.year_review_my_year', { year })}
+      </Text>
 
-      <View className="mt-6 rounded-3xl border border-border-dark bg-surface-dark p-5">
-        <Text className="text-xs uppercase tracking-wider text-text-muted">Reisen</Text>
-        <Text className="text-4xl font-bold text-text-light">{totalJourneys}</Text>
-        <Text className="text-xs text-text-muted">quer durch {stats.countriesVisited} Länder</Text>
+      <View className="mt-6 rounded-3xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark p-5">
+        <Text className="text-xs uppercase tracking-wider text-text-muted-light dark:text-text-muted">
+          {t('stats.year_journeys_label')}
+        </Text>
+        <Text className="text-4xl font-bold text-text-dark dark:text-text-light">
+          {totalJourneys}
+        </Text>
+        <Text className="text-xs text-text-muted-light dark:text-text-muted">
+          {t('stats.year_through_countries', { count: stats.countriesVisited })}
+        </Text>
       </View>
 
-      <View className="mt-3 rounded-3xl border border-border-dark bg-surface-dark p-5">
-        <Text className="text-xs uppercase tracking-wider text-text-muted">Distanz</Text>
-        <Text className="text-4xl font-bold text-text-light">
-          {Math.round(stats.totalKm).toLocaleString('de-DE')} km
+      <View className="mt-3 rounded-3xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark p-5">
+        <Text className="text-xs uppercase tracking-wider text-text-muted-light dark:text-text-muted">
+          {t('stats.year_distance_label')}
         </Text>
-        <Text className="text-xs text-text-muted">
-          ≈ {stats.earthRotations.toFixed(2)} × Erdumrundung
+        <Text className="text-4xl font-bold text-text-dark dark:text-text-light">
+          {formatInt(stats.totalKm, i18n.language)} km
+        </Text>
+        <Text className="text-xs text-text-muted-light dark:text-text-muted">
+          {t('stats.year_earth_laps', {
+            count: formatFloat(stats.earthRotations, i18n.language, 2),
+          })}
         </Text>
       </View>
 
       {isPremium ? (
         <>
           {busiestMonth ? (
-            <View className="mt-3 rounded-3xl border border-border-dark bg-surface-dark p-5">
-              <Text className="text-xs uppercase tracking-wider text-text-muted">
-                Aktivster Monat
+            <View className="mt-3 rounded-3xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark p-5">
+              <Text className="text-xs uppercase tracking-wider text-text-muted-light dark:text-text-muted">
+                {t('stats.year_busiest')}
               </Text>
-              <Text className="text-4xl font-bold text-text-light">{busiestMonth.month}</Text>
-              <Text className="text-xs text-text-muted">
-                {Math.round(busiestMonth.km).toLocaleString('de-DE')} km zurückgelegt
+              <Text className="text-4xl font-bold text-text-dark dark:text-text-light">
+                {busiestMonth.monthLabel}
+              </Text>
+              <Text className="text-xs text-text-muted-light dark:text-text-muted">
+                {t('stats.year_busiest_km', { km: formatInt(busiestMonth.km, i18n.language) })}
               </Text>
             </View>
           ) : null}
 
           {routes.length > 0 ? (
-            <View className="mt-3 rounded-3xl border border-border-dark bg-surface-dark p-5">
-              <Text className="text-xs uppercase tracking-wider text-text-muted">
-                Lieblings-Routen
+            <View className="mt-3 rounded-3xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark p-5">
+              <Text className="text-xs uppercase tracking-wider text-text-muted-light dark:text-text-muted">
+                {t('stats.year_top_routes')}
               </Text>
               {routes.map((r) => (
-                <Text key={`${r.from}-${r.to}`} className="mt-2 text-base text-text-light">
+                <Text
+                  key={`${r.from}-${r.to}`}
+                  className="mt-2 text-base text-text-dark dark:text-text-light"
+                >
                   {r.from} → {r.to} · {r.count}×
                 </Text>
               ))}
@@ -121,21 +143,27 @@ export default function YearInReviewScreen() {
           ) : null}
 
           {operators.length > 0 ? (
-            <View className="mt-3 rounded-3xl border border-border-dark bg-surface-dark p-5">
-              <Text className="text-xs uppercase tracking-wider text-text-muted">
-                Top Operators
+            <View className="mt-3 rounded-3xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark p-5">
+              <Text className="text-xs uppercase tracking-wider text-text-muted-light dark:text-text-muted">
+                {t('stats.year_top_operators')}
               </Text>
               {operators.map((o) => (
-                <Text key={o.operator} className="mt-2 text-base text-text-light">
-                  {o.operator} · {o.count} Reisen · {Math.round(o.totalKm).toLocaleString('de-DE')}{' '}
-                  km
+                <Text
+                  key={o.operator}
+                  className="mt-2 text-base text-text-dark dark:text-text-light"
+                >
+                  {t('stats.year_operator_line', {
+                    operator: o.operator,
+                    count: o.count,
+                    km: formatInt(o.totalKm, i18n.language),
+                  })}
                 </Text>
               ))}
             </View>
           ) : null}
 
-          <Text className="mt-6 px-2 text-center text-xs text-text-muted">
-            Storyfied Premium-Wrapped mit Animationen kommt in CC-3.8.
+          <Text className="mt-6 px-2 text-center text-xs text-text-muted-light dark:text-text-muted">
+            {t('stats.year_wrapped_note')}
           </Text>
         </>
       ) : (
@@ -143,17 +171,19 @@ export default function YearInReviewScreen() {
           <View className="mb-2 flex-row items-center gap-2">
             <Ionicons name="lock-closed" size={16} color={colors.primary} />
             <Text className="text-xs font-semibold uppercase tracking-wider text-primary">
-              Premium-Vorschau
+              {t('stats.year_premium_kicker')}
             </Text>
           </View>
-          <Text className="text-base text-text-light">
-            Aktivster Monat, Lieblings-Routen und Top Operators sind Teil des Premium-Wrapped.
+          <Text className="text-base text-text-dark dark:text-text-light">
+            {t('stats.year_premium_body')}
           </Text>
           <Pressable
             onPress={() => router.push('/profile/premium')}
             className="mt-4 items-center rounded-full bg-primary py-3 active:opacity-80"
           >
-            <Text className="text-sm font-semibold text-white">Premium freischalten</Text>
+            <Text className="text-sm font-semibold text-white">
+              {t('stats.year_premium_cta')}
+            </Text>
           </Pressable>
         </View>
       )}

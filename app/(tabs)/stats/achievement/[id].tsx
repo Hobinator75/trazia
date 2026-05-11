@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Link, Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -38,6 +39,7 @@ async function loadUnlock(achievementId: string): Promise<UnlockRow | null> {
 export default function AchievementDetailScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
   const { id } = useLocalSearchParams<{ id: string }>();
 
   const [achievement, setAchievement] = useState<Achievement | null>(null);
@@ -70,15 +72,17 @@ export default function AchievementDetailScreen() {
 
   if (loading) {
     return (
-      <View className="flex-1 items-center justify-center bg-background-dark">
+      <View className="flex-1 items-center justify-center bg-background-light dark:bg-background-dark">
         <ActivityIndicator color={colors.primary} />
       </View>
     );
   }
   if (!achievement) {
     return (
-      <View className="flex-1 items-center justify-center bg-background-dark px-6">
-        <Text className="text-lg text-text-muted">Achievement nicht gefunden</Text>
+      <View className="flex-1 items-center justify-center bg-background-light dark:bg-background-dark px-6">
+        <Text className="text-lg text-text-muted-light dark:text-text-muted">
+          {t('achievement.not_found')}
+        </Text>
       </View>
     );
   }
@@ -89,7 +93,7 @@ export default function AchievementDetailScreen() {
   const localized = getLocalizedAchievement(achievement);
 
   return (
-    <View className="flex-1 bg-background-dark">
+    <View className="flex-1 bg-background-light dark:bg-background-dark">
       <Stack.Screen
         options={{
           headerTransparent: true,
@@ -145,41 +149,41 @@ export default function AchievementDetailScreen() {
               className="mt-1 px-8 text-center text-sm"
               style={{ color: tier.textOnPrimary, opacity: 0.85 }}
             >
-              {isHidden
-                ? 'Dieser Erfolg ist noch versteckt — erfasse mehr Reisen, um ihn zu entdecken.'
-                : localized.description}
+              {isHidden ? t('achievement.hidden_hint') : localized.description}
             </Text>
           </View>
         </View>
 
-        <View className="mx-4 my-4 rounded-2xl border border-border-dark bg-surface-dark p-4">
-          <Text className="text-xs font-semibold uppercase tracking-wider text-text-muted">
-            Status
+        <View className="mx-4 my-4 rounded-2xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark p-4">
+          <Text className="text-xs font-semibold uppercase tracking-wider text-text-muted-light dark:text-text-muted">
+            {t('achievement.status')}
           </Text>
           <Text
             className="mt-1 text-base font-semibold"
             style={{ color: unlocked ? colors.success : colors.text.muted }}
           >
-            {unlocked ? 'Freigeschaltet' : 'Noch nicht freigeschaltet'}
+            {unlocked ? t('achievement.status_unlocked') : t('achievement.status_locked')}
           </Text>
           {unlocked && unlock?.unlockedAt ? (
-            <Text className="mt-1 text-xs text-text-muted">
-              am {formatTimestamp(unlock.unlockedAt)}
+            <Text className="mt-1 text-xs text-text-muted-light dark:text-text-muted">
+              {t('achievement.unlocked_on', { date: formatTimestamp(unlock.unlockedAt) })}
             </Text>
           ) : null}
         </View>
 
         {triggeringJourney ? (
           <Link href={{ pathname: '/journeys/[id]', params: { id: triggeringJourney.id } }} asChild>
-            <Pressable className="mx-4 flex-row items-center justify-between rounded-2xl border border-border-dark bg-surface-dark p-4 active:opacity-80">
+            <Pressable className="mx-4 flex-row items-center justify-between rounded-2xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark p-4 active:opacity-80">
               <View className="flex-1">
-                <Text className="text-xs font-semibold uppercase tracking-wider text-text-muted">
-                  Ausgelöst durch
+                <Text className="text-xs font-semibold uppercase tracking-wider text-text-muted-light dark:text-text-muted">
+                  {t('achievement.triggered_by')}
                 </Text>
-                <Text className="mt-1 text-base font-semibold text-text-light">
+                <Text className="mt-1 text-base font-semibold text-text-dark dark:text-text-light">
                   {journeyTitle(triggeringJourney).from} → {journeyTitle(triggeringJourney).to}
                 </Text>
-                <Text className="text-xs text-text-muted">{triggeringJourney.date}</Text>
+                <Text className="text-xs text-text-muted-light dark:text-text-muted">
+                  {triggeringJourney.date}
+                </Text>
               </View>
               <Ionicons name="chevron-forward" size={18} color={colors.text.muted} />
             </Pressable>

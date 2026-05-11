@@ -1,5 +1,6 @@
 import { useRouter } from 'expo-router';
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
 import { loadAchievements } from '@/lib/achievements/engine';
@@ -7,14 +8,14 @@ import type { Achievement, AchievementCategory } from '@/lib/achievements/types'
 
 import { AchievementCard } from '../Achievements/AchievementCard';
 
-const CATEGORY_ORDER: { id: AchievementCategory; label: string }[] = [
-  { id: 'milestones', label: 'Meilensteine' },
-  { id: 'geography', label: 'Geografie' },
-  { id: 'distance', label: 'Distanz' },
-  { id: 'airlines', label: 'Airlines' },
-  { id: 'aircraft', label: 'Aircraft' },
-  { id: 'hidden', label: 'Versteckt' },
-  { id: 'premium', label: 'Premium' },
+const CATEGORY_ORDER: { id: AchievementCategory; labelKey: string }[] = [
+  { id: 'milestones', labelKey: 'achievement_categories.milestones' },
+  { id: 'geography', labelKey: 'achievement_categories.geography' },
+  { id: 'distance', labelKey: 'achievement_categories.distance' },
+  { id: 'airlines', labelKey: 'achievement_categories.airlines' },
+  { id: 'aircraft', labelKey: 'achievement_categories.aircraft' },
+  { id: 'hidden', labelKey: 'achievement_categories.hidden' },
+  { id: 'premium', labelKey: 'achievement_categories.premium' },
 ];
 
 export interface AchievementsSectionProps {
@@ -24,7 +25,7 @@ export interface AchievementsSectionProps {
 
 interface CategoryGroup {
   id: AchievementCategory;
-  label: string;
+  labelKey: string;
   achievements: Achievement[];
 }
 
@@ -43,13 +44,14 @@ function bucketByCategory(achievements: Achievement[], unlockedIds: Set<string>)
     if (!list || list.length === 0) continue;
     const visible = meta.id === 'hidden' ? list.filter((a) => unlockedIds.has(a.id)) : list;
     if (visible.length === 0) continue;
-    out.push({ id: meta.id, label: meta.label, achievements: visible });
+    out.push({ id: meta.id, labelKey: meta.labelKey, achievements: visible });
   }
   return out;
 }
 
 export function AchievementsSection({ unlockedIds, unlockedAtById }: AchievementsSectionProps) {
   const router = useRouter();
+  const { t } = useTranslation();
   const achievements = useMemo(() => loadAchievements(), []);
   const groups = useMemo(
     () => bucketByCategory(achievements, unlockedIds),
@@ -63,16 +65,21 @@ export function AchievementsSection({ unlockedIds, unlockedAtById }: Achievement
   return (
     <View className="mx-4 my-3">
       <View className="mb-3 flex-row items-baseline justify-between">
-        <Text className="text-lg font-bold text-text-light">Erfolge</Text>
-        <Text className="text-xs text-text-muted">
-          {unlockedIds.size} von {totalVisible} freigeschaltet
+        <Text className="text-lg font-bold text-text-dark dark:text-text-light">
+          {t('achievements_section.title')}
+        </Text>
+        <Text className="text-xs text-text-muted-light dark:text-text-muted">
+          {t('achievements_section.summary', {
+            unlocked: unlockedIds.size,
+            total: totalVisible,
+          })}
         </Text>
       </View>
 
       {groups.map((group) => (
         <View key={group.id} className="mb-5">
-          <Text className="mb-2 text-xs font-semibold uppercase tracking-wider text-text-muted">
-            {group.label}
+          <Text className="mb-2 text-xs font-semibold uppercase tracking-wider text-text-muted-light dark:text-text-muted">
+            {t(group.labelKey)}
           </Text>
           <View className="flex-row flex-wrap" style={{ gap: 12 }}>
             {group.achievements.map((a) => (

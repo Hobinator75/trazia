@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
 import type { JourneyWithRefs } from '@/db/repositories/journey.repository';
@@ -14,11 +15,14 @@ const codeOf = (
 ): string => location?.iata ?? location?.icao ?? location?.name ?? '?';
 
 export function TopRoutesCard({ journeys }: TopRoutesCardProps) {
+  const { t } = useTranslation();
   const routes = topRoutes(journeys, 5);
   if (routes.length === 0) {
     return (
-      <View className="mx-4 my-3 rounded-3xl border border-border-dark bg-surface-dark p-5">
-        <Text className="text-sm text-text-muted">Noch keine Routen erfasst.</Text>
+      <View className="mx-4 my-3 rounded-3xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark p-5">
+        <Text className="text-sm text-text-muted-light dark:text-text-muted">
+          {t('stats.top_routes_empty')}
+        </Text>
       </View>
     );
   }
@@ -30,28 +34,32 @@ export function TopRoutesCard({ journeys }: TopRoutesCardProps) {
   }
 
   return (
-    <View className="mx-4 my-3 rounded-3xl border border-border-dark bg-surface-dark">
-      <View className="border-b border-border-dark px-5 py-3">
-        <Text className="text-xs font-semibold uppercase tracking-wider text-text-muted">
-          Top Routen
+    <View className="mx-4 my-3 rounded-3xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark">
+      <View className="border-b border-border-light dark:border-border-dark px-5 py-3">
+        <Text className="text-xs font-semibold uppercase tracking-wider text-text-muted-light dark:text-text-muted">
+          {t('stats.top_routes_title')}
         </Text>
       </View>
       {routes.map((r, idx) => (
         <View
           key={`${r.from}-${r.to}`}
-          className={`flex-row items-center gap-3 px-5 py-3 ${idx > 0 ? 'border-t border-border-dark' : ''}`}
+          className={`flex-row items-center gap-3 px-5 py-3 ${
+            idx > 0 ? 'border-t border-border-light dark:border-border-dark' : ''
+          }`}
         >
-          <Text className="w-6 text-base font-bold text-text-muted">{idx + 1}</Text>
+          <Text className="w-6 text-base font-bold text-text-muted-light dark:text-text-muted">
+            {idx + 1}
+          </Text>
           <View className="flex-1 flex-row items-center gap-2">
-            <Text className="text-base font-bold tracking-wider text-text-light">
+            <Text className="text-base font-bold tracking-wider text-text-dark dark:text-text-light">
               {labels.get(r.from) ?? r.from}
             </Text>
             <Ionicons name="arrow-forward" size={14} color={colors.text.muted} />
-            <Text className="text-base font-bold tracking-wider text-text-light">
+            <Text className="text-base font-bold tracking-wider text-text-dark dark:text-text-light">
               {labels.get(r.to) ?? r.to}
             </Text>
           </View>
-          <Text className="text-sm text-text-muted">{r.count}×</Text>
+          <Text className="text-sm text-text-muted-light dark:text-text-muted">{r.count}×</Text>
         </View>
       ))}
     </View>
