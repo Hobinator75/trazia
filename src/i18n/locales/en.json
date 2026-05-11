@@ -1,0 +1,168 @@
+{
+  "common": {
+    "ok": "OK",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "next": "Next",
+    "done": "Done",
+    "loading": "Loading…",
+    "error": "Error",
+    "retry": "Try again",
+    "confirm": "Confirm",
+    "close": "Close",
+    "search": "Search",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "language": {
+    "title": "Choose your language",
+    "subtitle": "You can change the language anytime in Settings.",
+    "continue": "Continue"
+  },
+  "onboarding": {
+    "welcome": {
+      "tagline": "Trace your travels.",
+      "cta": "Get started"
+    },
+    "modes": {
+      "title": "What do you track?",
+      "subtitle": "Pick the transport modes you want to log. You can change this anytime.",
+      "cta": "Continue",
+      "flight": "Flights",
+      "train": "Trains",
+      "bus": "Buses",
+      "car": "Car rides",
+      "ferry": "Ferries",
+      "bike": "Bike rides",
+      "walk": "Walks"
+    },
+    "permissions": {
+      "title": "Permissions",
+      "subtitle": "Trazia works without a cloud, account, or tracking. These permissions are optional.",
+      "photos": "Add photos to journeys",
+      "notifications": "Reminders for new journeys",
+      "cta": "Continue",
+      "skip": "Skip"
+    },
+    "first_journey": {
+      "title": "First Journey",
+      "subtitle": "Add a sample journey or start your own right away.",
+      "sample": "Add sample journey",
+      "skip": "Later"
+    }
+  },
+  "tabs": {
+    "map": "Map",
+    "journeys": "Journeys",
+    "stats": "Stats",
+    "profile": "Profile"
+  },
+  "map": {
+    "empty": "Log your first journey — it shows up here immediately.",
+    "loading": "Loading map…",
+    "mode_2d": "2D",
+    "mode_3d": "3D"
+  },
+  "journey": {
+    "add_title": "New Journey",
+    "edit_title": "Edit Journey",
+    "from": "From",
+    "to": "To",
+    "date": "Date",
+    "duration": "Duration",
+    "distance": "Distance",
+    "mode": "Mode",
+    "operator": "Operator",
+    "vehicle": "Vehicle",
+    "cabin_class": "Class",
+    "tags": "Tags",
+    "notes": "Notes",
+    "photos": "Photos",
+    "save": "Save Journey",
+    "delete": "Delete Journey",
+    "delete_confirm": "Really delete this journey?",
+    "empty": "No journeys yet.",
+    "loading": "Loading journeys…"
+  },
+  "achievement": {
+    "unlocked_toast": "Achievement unlocked",
+    "status_unlocked": "Unlocked",
+    "status_locked": "Not unlocked yet",
+    "triggered_by": "Triggered by",
+    "not_found": "Achievement not found",
+    "hidden_hint": "This achievement is still hidden — log more journeys to discover it.",
+    "tier_bronze": "Bronze",
+    "tier_silver": "Silver",
+    "tier_gold": "Gold",
+    "tier_platinum": "Platinum",
+    "filter_all": "All",
+    "filter_unlocked": "Unlocked",
+    "filter_locked": "Locked"
+  },
+  "stats": {
+    "title": "Stats",
+    "distance_total": "Total distance",
+    "countries_visited": "Countries visited",
+    "airlines": "Airlines",
+    "operators": "Operators",
+    "year_in_review": "Year in review",
+    "no_data": "No data yet."
+  },
+  "profile": {
+    "title": "Profile",
+    "premium": "Premium",
+    "settings": "Settings",
+    "backup_export": "Export data",
+    "backup_delete": "Delete all data",
+    "delete_confirm": "Really delete all data permanently?",
+    "appearance": "Appearance",
+    "appearance_auto": "Automatic",
+    "appearance_light": "Light",
+    "appearance_dark": "Dark",
+    "language": "Language",
+    "distance_unit": "Distance unit",
+    "distance_km": "Kilometers",
+    "distance_mi": "Miles",
+    "sound": "Sound",
+    "notifications": "Notifications",
+    "crash_reports": "Send crash reports",
+    "analytics": "Anonymous usage analytics",
+    "feedback": "Send feedback",
+    "rate_app": "Rate the app",
+    "imprint": "Imprint",
+    "privacy": "Privacy policy",
+    "terms": "Terms",
+    "about": "About Trazia"
+  },
+  "legal": {
+    "imprint": {
+      "heading": "Imprint",
+      "tmg_note": "Information pursuant to § 5 TMG:",
+      "company": "HVS - Hobrlant Vertrieb & Service",
+      "represented_by": "represented by Tim Hobrlant",
+      "address_line1": "Döllstädtstraße 5",
+      "address_line2": "99423 Weimar",
+      "address_country": "Germany",
+      "contact_heading": "Contact",
+      "email_label": "Email",
+      "responsibility_heading": "Responsible for the content",
+      "responsibility_text": "Tim Hobrlant, address as above.",
+      "liability_content_heading": "Liability for content",
+      "liability_content_text": "The contents of our app were created with the greatest possible care. However, we cannot guarantee the accuracy, completeness, or timeliness of the content.",
+      "liability_links_heading": "Liability for links",
+      "liability_links_text": "Our offering contains links to external third-party websites whose contents we have no influence over. Therefore, we cannot assume any liability for these external contents."
+    }
+  },
+  "error": {
+    "generic": "Something went wrong.",
+    "network": "No internet connection.",
+    "storage": "Storage error — please try again.",
+    "save_failed": "Save failed.",
+    "not_found": "Not found.",
+    "db_loading": "Preparing the database…",
+    "db_error": "Database error"
+  }
+}

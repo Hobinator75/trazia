@@ -1,0 +1,168 @@
+{
+  "common": {
+    "ok": "OK",
+    "cancel": "Abbrechen",
+    "save": "Speichern",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "back": "Zurück",
+    "next": "Weiter",
+    "done": "Fertig",
+    "loading": "Lädt…",
+    "error": "Fehler",
+    "retry": "Erneut versuchen",
+    "confirm": "Bestätigen",
+    "close": "Schließen",
+    "search": "Suchen",
+    "yes": "Ja",
+    "no": "Nein"
+  },
+  "language": {
+    "title": "Sprache wählen",
+    "subtitle": "Du kannst die Sprache jederzeit in den Einstellungen ändern.",
+    "continue": "Weiter"
+  },
+  "onboarding": {
+    "welcome": {
+      "tagline": "Trace your travels.",
+      "cta": "Loslegen"
+    },
+    "modes": {
+      "title": "Was erfasst du?",
+      "subtitle": "Wähle die Verkehrsmittel, die du verfolgen möchtest. Du kannst das später jederzeit ändern.",
+      "cta": "Weiter",
+      "flight": "Flüge",
+      "train": "Züge",
+      "bus": "Busse",
+      "car": "Autofahrten",
+      "ferry": "Fähren",
+      "bike": "Radtouren",
+      "walk": "Wanderungen"
+    },
+    "permissions": {
+      "title": "Berechtigungen",
+      "subtitle": "Trazia funktioniert ohne Cloud, ohne Account und ohne Tracking. Diese Berechtigungen sind optional.",
+      "photos": "Fotos zu Reisen hinzufügen",
+      "notifications": "Erinnerungen an neue Reisen",
+      "cta": "Weiter",
+      "skip": "Überspringen"
+    },
+    "first_journey": {
+      "title": "Erste Reise",
+      "subtitle": "Du kannst eine Beispielreise anlegen oder direkt selbst starten.",
+      "sample": "Beispielreise anlegen",
+      "skip": "Später"
+    }
+  },
+  "tabs": {
+    "map": "Karte",
+    "journeys": "Reisen",
+    "stats": "Statistik",
+    "profile": "Profil"
+  },
+  "map": {
+    "empty": "Erfasse deine erste Reise — sie erscheint hier sofort.",
+    "loading": "Karte wird geladen…",
+    "mode_2d": "2D",
+    "mode_3d": "3D"
+  },
+  "journey": {
+    "add_title": "Neue Reise",
+    "edit_title": "Reise bearbeiten",
+    "from": "Von",
+    "to": "Nach",
+    "date": "Datum",
+    "duration": "Dauer",
+    "distance": "Distanz",
+    "mode": "Verkehrsmittel",
+    "operator": "Anbieter",
+    "vehicle": "Fahrzeug",
+    "cabin_class": "Klasse",
+    "tags": "Tags",
+    "notes": "Notizen",
+    "photos": "Fotos",
+    "save": "Reise speichern",
+    "delete": "Reise löschen",
+    "delete_confirm": "Diese Reise wirklich löschen?",
+    "empty": "Noch keine Reisen erfasst.",
+    "loading": "Reisen werden geladen…"
+  },
+  "achievement": {
+    "unlocked_toast": "Erfolg freigeschaltet",
+    "status_unlocked": "Freigeschaltet",
+    "status_locked": "Noch nicht freigeschaltet",
+    "triggered_by": "Ausgelöst durch",
+    "not_found": "Erfolg nicht gefunden",
+    "hidden_hint": "Dieser Erfolg ist noch versteckt — erfasse mehr Reisen, um ihn zu entdecken.",
+    "tier_bronze": "Bronze",
+    "tier_silver": "Silber",
+    "tier_gold": "Gold",
+    "tier_platinum": "Platin",
+    "filter_all": "Alle",
+    "filter_unlocked": "Freigeschaltet",
+    "filter_locked": "Verschlossen"
+  },
+  "stats": {
+    "title": "Statistik",
+    "distance_total": "Gesamtstrecke",
+    "countries_visited": "Länder besucht",
+    "airlines": "Airlines",
+    "operators": "Anbieter",
+    "year_in_review": "Jahresrückblick",
+    "no_data": "Noch keine Daten."
+  },
+  "profile": {
+    "title": "Profil",
+    "premium": "Premium",
+    "settings": "Einstellungen",
+    "backup_export": "Daten exportieren",
+    "backup_delete": "Alle Daten löschen",
+    "delete_confirm": "Wirklich alle Daten unwiderruflich löschen?",
+    "appearance": "Erscheinungsbild",
+    "appearance_auto": "Automatisch",
+    "appearance_light": "Hell",
+    "appearance_dark": "Dunkel",
+    "language": "Sprache",
+    "distance_unit": "Distanzeinheit",
+    "distance_km": "Kilometer",
+    "distance_mi": "Meilen",
+    "sound": "Sound",
+    "notifications": "Benachrichtigungen",
+    "crash_reports": "Crash-Reports senden",
+    "analytics": "Anonyme Nutzungsstatistiken",
+    "feedback": "Feedback senden",
+    "rate_app": "App bewerten",
+    "imprint": "Impressum",
+    "privacy": "Datenschutzerklärung",
+    "terms": "AGB",
+    "about": "Über Trazia"
+  },
+  "legal": {
+    "imprint": {
+      "heading": "Impressum",
+      "tmg_note": "Angaben gemäß § 5 TMG:",
+      "company": "HVS - Hobrlant Vertrieb & Service",
+      "represented_by": "vertreten durch Tim Hobrlant",
+      "address_line1": "Döllstädtstraße 5",
+      "address_line2": "99423 Weimar",
+      "address_country": "Deutschland",
+      "contact_heading": "Kontakt",
+      "email_label": "E-Mail",
+      "responsibility_heading": "Verantwortlich für den Inhalt",
+      "responsibility_text": "Tim Hobrlant, Anschrift wie oben.",
+      "liability_content_heading": "Haftung für Inhalte",
+      "liability_content_text": "Die Inhalte unserer App wurden mit größtmöglicher Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte können wir jedoch keine Gewähr übernehmen.",
+      "liability_links_heading": "Haftung für Links",
+      "liability_links_text": "Unser Angebot enthält Links zu externen Webseiten Dritter, auf deren Inhalte wir keinen Einfluss haben. Deshalb können wir für diese fremden Inhalte keine Gewähr übernehmen."
+    }
+  },
+  "error": {
+    "generic": "Etwas ist schiefgelaufen.",
+    "network": "Keine Internetverbindung.",
+    "storage": "Speicherfehler — bitte erneut versuchen.",
+    "save_failed": "Speichern fehlgeschlagen.",
+    "not_found": "Nicht gefunden.",
+    "db_loading": "Datenbank wird vorbereitet…",
+    "db_error": "Datenbank-Fehler"
+  }
+}

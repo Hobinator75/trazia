@@ -2,6 +2,7 @@ import { DarkTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
@@ -14,6 +15,7 @@ import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { Snackbar } from '@/components/ui/Snackbar';
 import { useDbReady } from '@/hooks/useDbReady';
 import { useThemeBinding } from '@/hooks/useThemeBinding';
+import { useI18nBinding } from '@/i18n/useI18nBinding';
 import { configureAds, ensureConsent } from '@/lib/ads';
 import { configureIap } from '@/lib/iap';
 import { trackAppOpened } from '@/lib/observability/analytics';
@@ -22,15 +24,13 @@ import { useOnboardingStore } from '@/stores/onboardingStore';
 import { colors } from '@/theme/colors';
 
 export default function RootLayout() {
-  // Phase-1 ships dark-only. The theme setting (and useThemeBinding) is
-  // kept in the store for forward-compat, but the navigation chrome and
-  // status bar are hard-coded so light/system surfaces never appear half-
-  // styled while individual screens still hard-code dark utility classes.
   useThemeBinding();
+  useI18nBinding();
 
   const hydrateOnboarding = useOnboardingStore((s) => s.hydrate);
   const onboardingHydrated = useOnboardingStore((s) => s.hydrated);
   const onboardingCompleted = useOnboardingStore((s) => s.completed);
+  const { t } = useTranslation();
 
   useEffect(() => {
     void hydrateOnboarding();
@@ -63,9 +63,9 @@ export default function RootLayout() {
         <ThemeProvider value={navTheme}>
           <ErrorBoundary>
             {error ? (
-              <LoadingScreen title="Datenbank-Fehler" subtitle={error.message} />
+              <LoadingScreen title={t('error.db_error')} subtitle={error.message} />
             ) : !ready || !onboardingHydrated ? (
-              <LoadingScreen subtitle="Datenbank wird vorbereitet…" />
+              <LoadingScreen subtitle={t('error.db_loading')} />
             ) : (
               <Stack screenOptions={{ headerShown: false }}>
                 {onboardingCompleted ? (

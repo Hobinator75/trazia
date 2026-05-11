@@ -39,4 +39,11 @@ describe('initial route resolution', () => {
     const target = path.join(APP_DIR, 'onboarding', 'welcome.tsx');
     expect(fs.existsSync(target)).toBe(true);
   });
+
+  it('redirect target for first-launch language picker resolves', () => {
+    // `/onboarding/language` → app/onboarding/language.tsx (rendered when
+    // useSettingsStore.locale === null).
+    const target = path.join(APP_DIR, 'onboarding', 'language.tsx');
+    expect(fs.existsSync(target)).toBe(true);
+  });
 });

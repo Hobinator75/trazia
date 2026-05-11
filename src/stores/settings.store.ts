@@ -2,15 +2,19 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
+import type { SupportedLocale } from '@/i18n/config';
+
 export type ThemePreference = 'dark' | 'light' | 'system';
 export type DistanceUnit = 'km' | 'mi';
 
-// Note: a `language` setting and the `src/i18n/` subsystem existed but were
-// never wired up — Trazia ships German-only for the v1 launch. English will
-// land post-Phase-9 with i18next + react-native-localize.
+// `locale === null` means "the user has not yet picked a language" — the
+// language onboarding step keys off that to decide whether to show the
+// picker. Once set, the value persists and the picker is skipped on
+// subsequent launches.
 
 interface SettingsState {
   theme: ThemePreference;
+  locale: SupportedLocale | null;
   distanceUnit: DistanceUnit;
   soundEnabled: boolean;
   notificationsEnabled: boolean;
@@ -22,6 +26,7 @@ interface SettingsState {
   profileName: string | null;
   avatarUri: string | null;
   setTheme: (theme: ThemePreference) => void;
+  setLocale: (locale: SupportedLocale) => void;
   setDistanceUnit: (unit: DistanceUnit) => void;
   setSoundEnabled: (enabled: boolean) => void;
   setNotificationsEnabled: (enabled: boolean) => void;
@@ -38,7 +43,8 @@ interface SettingsState {
 export const useSettingsStore = create<SettingsState>()(
   persist(
     (set) => ({
-      theme: 'dark',
+      theme: 'system',
+      locale: null,
       distanceUnit: 'km',
       soundEnabled: true,
       notificationsEnabled: false,
@@ -47,6 +53,7 @@ export const useSettingsStore = create<SettingsState>()(
       profileName: null,
       avatarUri: null,
       setTheme: (theme) => set({ theme }),
+      setLocale: (locale) => set({ locale }),
       setDistanceUnit: (distanceUnit) => set({ distanceUnit }),
       setSoundEnabled: (soundEnabled) => set({ soundEnabled }),
       setNotificationsEnabled: (notificationsEnabled) => set({ notificationsEnabled }),
@@ -58,10 +65,25 @@ export const useSettingsStore = create<SettingsState>()(
     {
       name: 'trazia-settings',
       storage: createJSONStorage(() => AsyncStorage),
-      version: 1,
-      migrate: (persistedState) => persistedState as SettingsState,
+      version: 2,
+      migrate: (persistedState, version) => {
+        const state = (persistedState ?? {}) as Partial<SettingsState>;
+        // v2 introduces `locale` (null = "ask the user") and flips the
+        // default theme from 'dark' to 'system'. Pre-v2 installs already
+        // running on dark stay on dark — only the default for fresh
+        // installs changes.
+        if (version < 2) {
+          return {
+            ...state,
+            locale: state.locale ?? null,
+            theme: state.theme ?? 'dark',
+          } as SettingsState;
+        }
+        return state as SettingsState;
+      },
       partialize: (state) => ({
         theme: state.theme,
+        locale: state.locale,
         distanceUnit: state.distanceUnit,
         soundEnabled: state.soundEnabled,
         notificationsEnabled: state.notificationsEnabled,
