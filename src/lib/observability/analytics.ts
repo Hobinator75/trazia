@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import { randomUUID } from '@/lib/uuid';
 import { useSettingsStore } from '@/stores/settings.store';
 
 import type { TransportMode } from '@/types/domain-types';
@@ -27,7 +28,7 @@ async function loadPostHog(): Promise<PostHogModule | null> {
 async function ensureAnonId(): Promise<string> {
   const existing = await AsyncStorage.getItem(ANON_ID_KEY);
   if (existing) return existing;
-  const id = `anon_${globalThis.crypto.randomUUID().replace(/-/g, '')}`;
+  const id = `anon_${randomUUID().replace(/-/g, '')}`;
   await AsyncStorage.setItem(ANON_ID_KEY, id);
   return id;
 }

@@ -1,6 +1,7 @@
 import { desc, eq, sql } from 'drizzle-orm';
 
 import { recalculateAchievements } from '@/lib/achievements/sync';
+import { randomUUID } from '@/lib/uuid';
 
 // `interstitialController` and `analytics` are loaded lazily inside the
 // mutation paths because their transitive deps include `react-native`. Top-
@@ -25,7 +26,7 @@ import {
 } from '../schema';
 import type { DrizzleDb } from '../types';
 
-const uuid = () => globalThis.crypto.randomUUID();
+const uuid = () => randomUUID();
 
 export interface JourneyMutationOptions {
   evaluateAchievements?: boolean;

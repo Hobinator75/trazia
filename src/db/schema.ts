@@ -10,9 +10,10 @@ import {
   uniqueIndex,
 } from 'drizzle-orm/sqlite-core';
 
+import { randomUUID } from '@/lib/uuid';
 import type { LocationKind, TransportMode } from '@/types/domain-types';
 
-const uuid = () => globalThis.crypto.randomUUID();
+const uuid = () => randomUUID();
 
 const timestamps = {
   createdAt: integer('created_at', { mode: 'timestamp' })
