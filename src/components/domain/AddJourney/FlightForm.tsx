@@ -5,6 +5,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -34,13 +35,9 @@ import { FormField, Segmented, SelectButton, TextField } from '@/components/ui/F
 import { TagInput } from '@/components/ui/TagInput';
 import { EntitySearchModal } from '../EntitySearchModal';
 
-const CABIN_OPTIONS: readonly { value: CabinClass; label: string }[] = [
-  { value: 'economy', label: 'Eco' },
-  { value: 'premium_economy', label: 'Prem. Eco' },
-  { value: 'business', label: 'Business' },
-  { value: 'first', label: 'First' },
-];
-
+// Tag suggestions stay German for now — they're personal-shorthand strings
+// that even an English-locale user may want to keep in German for their
+// own travel diary. Revisit once we have product feedback on this.
 const TAG_SUGGESTIONS = ['Geschäftsreise', 'Urlaub', 'Familie'];
 
 const todayIso = (): string => {
@@ -68,8 +65,16 @@ export interface FlightFormProps {
 export function FlightForm({ editing }: FlightFormProps = {}) {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
   const showSnackbar = useSnackbarStore((s) => s.show);
   const isEdit = editing !== undefined;
+
+  const cabinOptions: readonly { value: CabinClass; label: string }[] = [
+    { value: 'economy', label: t('add_journey.cabin_economy') },
+    { value: 'premium_economy', label: t('add_journey.cabin_premium_economy') },
+    { value: 'business', label: t('add_journey.cabin_business') },
+    { value: 'first', label: t('add_journey.cabin_first') },
+  ];
 
   const [submitting, setSubmitting] = useState(false);
   const [modal, setModal] = useState<ModalKind>({ kind: null });
@@ -144,7 +149,7 @@ export function FlightForm({ editing }: FlightFormProps = {}) {
   const pickPhoto = async () => {
     const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!perm.granted) {
-      showSnackbar('Foto-Zugriff verweigert', { variant: 'error' });
+      showSnackbar(t('add_journey.photo_perm_denied'), { variant: 'error' });
       return;
     }
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -192,13 +197,13 @@ export function FlightForm({ editing }: FlightFormProps = {}) {
         );
       }
 
-      showSnackbar(editing ? 'Reise aktualisiert' : 'Reise gespeichert', { variant: 'success' });
+      showSnackbar(editing ? t('add_journey.updated') : t('add_journey.saved'), { variant: 'success' });
       router.back();
     } catch (err) {
       showSnackbar(
         err instanceof Error
-          ? `Reise konnte nicht gespeichert werden: ${err.message}`
-          : 'Reise konnte nicht gespeichert werden — deine Änderungen sind unverändert.',
+          ? t('add_journey.save_failed_with_message', { message: err.message })
+          : t('add_journey.save_failed_generic'),
         { variant: 'error' },
       );
     } finally {
@@ -217,25 +222,25 @@ export function FlightForm({ editing }: FlightFormProps = {}) {
         contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 120 + insets.bottom }}
         keyboardShouldPersistTaps="handled"
       >
-        <FormField label="Von" required error={errors.fromLocationId?.message}>
+        <FormField label={t('add_journey.label_from')} required error={errors.fromLocationId?.message}>
           <SelectButton
             value={fromLabel}
-            placeholder="Flughafen wählen"
+            placeholder={t('add_journey.ph_airport')}
             onPress={() => setModal({ kind: 'from' })}
             invalid={!!errors.fromLocationId}
           />
         </FormField>
 
-        <FormField label="Nach" required error={errors.toLocationId?.message}>
+        <FormField label={t('add_journey.label_to')} required error={errors.toLocationId?.message}>
           <SelectButton
             value={toLabel}
-            placeholder="Flughafen wählen"
+            placeholder={t('add_journey.ph_airport')}
             onPress={() => setModal({ kind: 'to' })}
             invalid={!!errors.toLocationId}
           />
         </FormField>
 
-        <FormField label="Datum" required error={errors.date?.message}>
+        <FormField label={t('add_journey.label_date')} required error={errors.date?.message}>
           <Controller
             control={control}
             name="date"
@@ -247,7 +252,7 @@ export function FlightForm({ editing }: FlightFormProps = {}) {
 
         <View className="flex-row gap-3">
           <View className="flex-1">
-            <FormField label="Abflugzeit (lokal)">
+            <FormField label={t('add_journey.label_depart_local')}>
               <Controller
                 control={control}
                 name="startTimeLocal"
@@ -256,7 +261,7 @@ export function FlightForm({ editing }: FlightFormProps = {}) {
             </FormField>
           </View>
           <View className="flex-1">
-            <FormField label="Ankunftszeit (lokal)">
+            <FormField label={t('add_journey.label_arrive_local')}>
               <Controller
                 control={control}
                 name="endTimeLocal"
@@ -266,15 +271,15 @@ export function FlightForm({ editing }: FlightFormProps = {}) {
           </View>
         </View>
 
-        <FormField label="Airline" hint="Empfohlen — wird für Achievements ausgewertet.">
+        <FormField label={t('add_journey.label_airline')} hint={t('add_journey.label_airline_hint')}>
           <SelectButton
             value={operatorLabel}
-            placeholder="Airline wählen"
+            placeholder={t('add_journey.ph_airline')}
             onPress={() => setModal({ kind: 'operator' })}
           />
         </FormField>
 
-        <FormField label="Flugnummer">
+        <FormField label={t('add_journey.label_flight_number')}>
           <Controller
             control={control}
             name="serviceNumber"
@@ -282,22 +287,22 @@ export function FlightForm({ editing }: FlightFormProps = {}) {
               <TextField
                 value={field.value ?? ''}
                 onChangeText={field.onChange}
-                placeholder="z. B. LH441"
+                placeholder={t('add_journey.ph_flight_number')}
                 autoCapitalize="characters"
               />
             )}
           />
         </FormField>
 
-        <FormField label="Aircraft-Type">
+        <FormField label={t('add_journey.label_aircraft')}>
           <SelectButton
             value={vehicleLabel}
-            placeholder="Aircraft wählen"
+            placeholder={t('add_journey.ph_aircraft')}
             onPress={() => setModal({ kind: 'vehicle' })}
           />
         </FormField>
 
-        <FormField label="Sitzplatz">
+        <FormField label={t('add_journey.label_seat')}>
           <Controller
             control={control}
             name="seatNumber"
@@ -305,14 +310,14 @@ export function FlightForm({ editing }: FlightFormProps = {}) {
               <TextField
                 value={field.value ?? ''}
                 onChangeText={field.onChange}
-                placeholder="z. B. 23A"
+                placeholder={t('add_journey.ph_seat_flight')}
                 autoCapitalize="characters"
               />
             )}
           />
         </FormField>
 
-        <FormField label="Kabinenklasse">
+        <FormField label={t('add_journey.label_cabin')}>
           <Controller
             control={control}
             name="cabinClass"
@@ -320,13 +325,13 @@ export function FlightForm({ editing }: FlightFormProps = {}) {
               <Segmented
                 value={field.value}
                 onChange={(v) => field.onChange(cabinClassEnum.parse(v))}
-                options={CABIN_OPTIONS}
+                options={cabinOptions}
               />
             )}
           />
         </FormField>
 
-        <FormField label="Notizen" hint="Max. 500 Zeichen">
+        <FormField label={t('add_journey.label_notes')} hint={t('add_journey.label_notes_hint')}>
           <Controller
             control={control}
             name="notes"
@@ -334,7 +339,7 @@ export function FlightForm({ editing }: FlightFormProps = {}) {
               <TextField
                 value={field.value ?? ''}
                 onChangeText={field.onChange}
-                placeholder="Was war besonders…"
+                placeholder={t('add_journey.ph_notes')}
                 multiline
                 numberOfLines={4}
                 style={{ minHeight: 96, textAlignVertical: 'top' }}
@@ -344,10 +349,10 @@ export function FlightForm({ editing }: FlightFormProps = {}) {
           />
         </FormField>
 
-        <FormField label="Foto">
+        <FormField label={t('add_journey.label_photo')}>
           <Pressable
             onPress={pickPhoto}
-            className="rounded-xl border border-border-dark bg-surface-dark p-4 active:opacity-80"
+            className="rounded-xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark p-4 active:opacity-80"
           >
             {photoUri ? (
               <Image
@@ -364,7 +369,7 @@ export function FlightForm({ editing }: FlightFormProps = {}) {
           </Pressable>
         </FormField>
 
-        <FormField label="Begleitung">
+        <FormField label={t('add_journey.label_companions')}>
           <Controller
             control={control}
             name="companions"
@@ -372,13 +377,13 @@ export function FlightForm({ editing }: FlightFormProps = {}) {
               <TagInput
                 value={field.value}
                 onChange={field.onChange}
-                placeholder="Name hinzufügen…"
+                placeholder={t('add_journey.ph_companion')}
               />
             )}
           />
         </FormField>
 
-        <FormField label="Tags">
+        <FormField label={t('add_journey.label_tags')}>
           <Controller
             control={control}
             name="tags"
@@ -386,7 +391,7 @@ export function FlightForm({ editing }: FlightFormProps = {}) {
               <TagInput
                 value={field.value}
                 onChange={field.onChange}
-                placeholder="Tag hinzufügen…"
+                placeholder={t('add_journey.ph_tag')}
                 suggestions={TAG_SUGGESTIONS}
               />
             )}
@@ -395,7 +400,7 @@ export function FlightForm({ editing }: FlightFormProps = {}) {
       </ScrollView>
 
       <View
-        className="absolute bottom-0 left-0 right-0 border-t border-border-dark bg-background-dark px-4"
+        className="absolute bottom-0 left-0 right-0 border-t border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark px-4"
         style={{ paddingTop: 12, paddingBottom: 12 + insets.bottom }}
       >
         <Pressable
@@ -404,15 +409,15 @@ export function FlightForm({ editing }: FlightFormProps = {}) {
           className={`items-center rounded-full px-4 py-4 ${submitting ? 'bg-primary/50' : 'bg-primary active:opacity-80'}`}
         >
           <Text className="text-base font-semibold text-white">
-            {submitting ? 'Speichern…' : isEdit ? 'Änderungen speichern' : 'Reise speichern'}
+            {submitting ? t('add_journey.save_busy') : isEdit ? t('add_journey.save_update') : t('add_journey.save_create')}
           </Text>
         </Pressable>
       </View>
 
       <EntitySearchModal<Location>
         visible={modal.kind === 'from'}
-        title="Abflug wählen"
-        placeholder="Flughafen, Stadt oder IATA…"
+        title={t('add_journey.search_airport_from')}
+        placeholder={t('add_journey.search_airport_placeholder')}
         onClose={closeModal}
         onSelect={(loc) => {
           setValue('fromLocationId', loc.id, { shouldValidate: true });
@@ -428,8 +433,8 @@ export function FlightForm({ editing }: FlightFormProps = {}) {
       />
       <EntitySearchModal<Location>
         visible={modal.kind === 'to'}
-        title="Ziel wählen"
-        placeholder="Flughafen, Stadt oder IATA…"
+        title={t('add_journey.search_airport_to')}
+        placeholder={t('add_journey.search_airport_placeholder')}
         onClose={closeModal}
         onSelect={(loc) => {
           setValue('toLocationId', loc.id, { shouldValidate: true });
@@ -445,8 +450,8 @@ export function FlightForm({ editing }: FlightFormProps = {}) {
       />
       <EntitySearchModal<Operator>
         visible={modal.kind === 'operator'}
-        title="Airline wählen"
-        placeholder="Name oder IATA-Code…"
+        title={t('add_journey.search_airline')}
+        placeholder={t('add_journey.search_airline_placeholder')}
         onClose={closeModal}
         onSelect={(op) => {
           setValue('operatorId', op.id, { shouldValidate: true });
@@ -461,8 +466,8 @@ export function FlightForm({ editing }: FlightFormProps = {}) {
       />
       <EntitySearchModal<Vehicle>
         visible={modal.kind === 'vehicle'}
-        title="Aircraft wählen"
-        placeholder="ICAO-Code oder Modell…"
+        title={t('add_journey.search_aircraft')}
+        placeholder={t('add_journey.search_aircraft_placeholder')}
         onClose={closeModal}
         onSelect={(v) => {
           setValue('vehicleId', v.id, { shouldValidate: true });

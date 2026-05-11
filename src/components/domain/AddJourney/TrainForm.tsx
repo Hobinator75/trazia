@@ -5,6 +5,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -34,12 +35,7 @@ import { FormField, Segmented, SelectButton, TextField } from '@/components/ui/F
 import { TagInput } from '@/components/ui/TagInput';
 import { EntitySearchModal } from '../EntitySearchModal';
 
-const CLASS_OPTIONS: readonly { value: TrainClass; label: string }[] = [
-  { value: 'second', label: '2. Klasse' },
-  { value: 'first', label: '1. Klasse' },
-  { value: 'sleeper', label: 'Schlafwagen' },
-];
-
+// Tag suggestions stay German for now (see note in FlightForm.tsx).
 const TAG_SUGGESTIONS = ['Pendel', 'Urlaub', 'Familie'];
 
 const todayIso = (): string => {
@@ -64,8 +60,15 @@ export interface TrainFormProps {
 export function TrainForm({ editing }: TrainFormProps = {}) {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
   const showSnackbar = useSnackbarStore((s) => s.show);
   const isEdit = editing !== undefined;
+
+  const classOptions: readonly { value: TrainClass; label: string }[] = [
+    { value: 'second', label: t('add_journey.train_class_second') },
+    { value: 'first', label: t('add_journey.train_class_first') },
+    { value: 'sleeper', label: t('add_journey.train_class_sleeper') },
+  ];
 
   const [submitting, setSubmitting] = useState(false);
   const [modal, setModal] = useState<ModalKind>({ kind: null });
@@ -136,7 +139,7 @@ export function TrainForm({ editing }: TrainFormProps = {}) {
   const pickPhoto = async () => {
     const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!perm.granted) {
-      showSnackbar('Foto-Zugriff verweigert', { variant: 'error' });
+      showSnackbar(t('add_journey.photo_perm_denied'), { variant: 'error' });
       return;
     }
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -178,13 +181,13 @@ export function TrainForm({ editing }: TrainFormProps = {}) {
         editing ? { editing: true, journeyId: editing.journey.id } : {},
       );
 
-      showSnackbar(editing ? 'Reise aktualisiert' : 'Reise gespeichert', { variant: 'success' });
+      showSnackbar(editing ? t('add_journey.updated') : t('add_journey.saved'), { variant: 'success' });
       router.back();
     } catch (err) {
       showSnackbar(
         err instanceof Error
-          ? `Reise konnte nicht gespeichert werden: ${err.message}`
-          : 'Reise konnte nicht gespeichert werden — deine Änderungen sind unverändert.',
+          ? t('add_journey.save_failed_with_message', { message: err.message })
+          : t('add_journey.save_failed_generic'),
         { variant: 'error' },
       );
     } finally {
@@ -203,25 +206,25 @@ export function TrainForm({ editing }: TrainFormProps = {}) {
         contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 120 + insets.bottom }}
         keyboardShouldPersistTaps="handled"
       >
-        <FormField label="Von" required error={errors.fromLocationId?.message}>
+        <FormField label={t('add_journey.label_from')} required error={errors.fromLocationId?.message}>
           <SelectButton
             value={fromLabel}
-            placeholder="Bahnhof wählen"
+            placeholder={t('add_journey.ph_station')}
             onPress={() => setModal({ kind: 'from' })}
             invalid={!!errors.fromLocationId}
           />
         </FormField>
 
-        <FormField label="Nach" required error={errors.toLocationId?.message}>
+        <FormField label={t('add_journey.label_to')} required error={errors.toLocationId?.message}>
           <SelectButton
             value={toLabel}
-            placeholder="Bahnhof wählen"
+            placeholder={t('add_journey.ph_station')}
             onPress={() => setModal({ kind: 'to' })}
             invalid={!!errors.toLocationId}
           />
         </FormField>
 
-        <FormField label="Datum" required error={errors.date?.message}>
+        <FormField label={t('add_journey.label_date')} required error={errors.date?.message}>
           <Controller
             control={control}
             name="date"
@@ -233,7 +236,7 @@ export function TrainForm({ editing }: TrainFormProps = {}) {
 
         <View className="flex-row gap-3">
           <View className="flex-1">
-            <FormField label="Abfahrt (lokal)">
+            <FormField label={t('add_journey.label_train_depart_local')}>
               <Controller
                 control={control}
                 name="startTimeLocal"
@@ -242,7 +245,7 @@ export function TrainForm({ editing }: TrainFormProps = {}) {
             </FormField>
           </View>
           <View className="flex-1">
-            <FormField label="Ankunft (lokal)">
+            <FormField label={t('add_journey.label_train_arrive_local')}>
               <Controller
                 control={control}
                 name="endTimeLocal"
@@ -253,17 +256,17 @@ export function TrainForm({ editing }: TrainFormProps = {}) {
         </View>
 
         <FormField
-          label="Bahnbetreiber"
+          label={t('add_journey.label_train_operator')}
           hint="DB, ÖBB, SBB, SNCF — wird für Achievements ausgewertet."
         >
           <SelectButton
             value={operatorLabel}
-            placeholder="Betreiber wählen"
+            placeholder={t('add_journey.ph_train_operator')}
             onPress={() => setModal({ kind: 'operator' })}
           />
         </FormField>
 
-        <FormField label="Zugnummer / Service">
+        <FormField label={t('add_journey.label_train_number')}>
           <Controller
             control={control}
             name="serviceNumber"
@@ -271,22 +274,22 @@ export function TrainForm({ editing }: TrainFormProps = {}) {
               <TextField
                 value={field.value ?? ''}
                 onChangeText={field.onChange}
-                placeholder="z. B. ICE 73"
+                placeholder={t('add_journey.ph_train_number')}
                 autoCapitalize="characters"
               />
             )}
           />
         </FormField>
 
-        <FormField label="Zugmodell">
+        <FormField label={t('add_journey.label_train_model')}>
           <SelectButton
             value={vehicleLabel}
-            placeholder="z. B. ICE 4"
+            placeholder={t('add_journey.ph_aircraft_example')}
             onPress={() => setModal({ kind: 'vehicle' })}
           />
         </FormField>
 
-        <FormField label="Sitzplatz">
+        <FormField label={t('add_journey.label_seat')}>
           <Controller
             control={control}
             name="seatNumber"
@@ -294,13 +297,13 @@ export function TrainForm({ editing }: TrainFormProps = {}) {
               <TextField
                 value={field.value ?? ''}
                 onChangeText={field.onChange}
-                placeholder="z. B. Wagen 28, Platz 71"
+                placeholder={t('add_journey.ph_seat_train')}
               />
             )}
           />
         </FormField>
 
-        <FormField label="Klasse">
+        <FormField label={t('add_journey.label_train_class')}>
           <Controller
             control={control}
             name="trainClass"
@@ -308,13 +311,13 @@ export function TrainForm({ editing }: TrainFormProps = {}) {
               <Segmented
                 value={field.value}
                 onChange={(v) => field.onChange(trainClassEnum.parse(v))}
-                options={CLASS_OPTIONS}
+                options={classOptions}
               />
             )}
           />
         </FormField>
 
-        <FormField label="Notizen" hint="Max. 500 Zeichen">
+        <FormField label={t('add_journey.label_notes')} hint={t('add_journey.label_notes_hint')}>
           <Controller
             control={control}
             name="notes"
@@ -322,7 +325,7 @@ export function TrainForm({ editing }: TrainFormProps = {}) {
               <TextField
                 value={field.value ?? ''}
                 onChangeText={field.onChange}
-                placeholder="Was war besonders…"
+                placeholder={t('add_journey.ph_notes')}
                 multiline
                 numberOfLines={4}
                 style={{ minHeight: 96, textAlignVertical: 'top' }}
@@ -332,10 +335,10 @@ export function TrainForm({ editing }: TrainFormProps = {}) {
           />
         </FormField>
 
-        <FormField label="Foto">
+        <FormField label={t('add_journey.label_photo')}>
           <Pressable
             onPress={pickPhoto}
-            className="rounded-xl border border-border-dark bg-surface-dark p-4 active:opacity-80"
+            className="rounded-xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark p-4 active:opacity-80"
           >
             {photoUri ? (
               <Image
@@ -352,7 +355,7 @@ export function TrainForm({ editing }: TrainFormProps = {}) {
           </Pressable>
         </FormField>
 
-        <FormField label="Begleitung">
+        <FormField label={t('add_journey.label_companions')}>
           <Controller
             control={control}
             name="companions"
@@ -360,13 +363,13 @@ export function TrainForm({ editing }: TrainFormProps = {}) {
               <TagInput
                 value={field.value}
                 onChange={field.onChange}
-                placeholder="Name hinzufügen…"
+                placeholder={t('add_journey.ph_companion')}
               />
             )}
           />
         </FormField>
 
-        <FormField label="Tags">
+        <FormField label={t('add_journey.label_tags')}>
           <Controller
             control={control}
             name="tags"
@@ -374,7 +377,7 @@ export function TrainForm({ editing }: TrainFormProps = {}) {
               <TagInput
                 value={field.value}
                 onChange={field.onChange}
-                placeholder="Tag hinzufügen…"
+                placeholder={t('add_journey.ph_tag')}
                 suggestions={TAG_SUGGESTIONS}
               />
             )}
@@ -383,7 +386,7 @@ export function TrainForm({ editing }: TrainFormProps = {}) {
       </ScrollView>
 
       <View
-        className="absolute bottom-0 left-0 right-0 border-t border-border-dark bg-background-dark px-4"
+        className="absolute bottom-0 left-0 right-0 border-t border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark px-4"
         style={{ paddingTop: 12, paddingBottom: 12 + insets.bottom }}
       >
         <Pressable
@@ -392,15 +395,15 @@ export function TrainForm({ editing }: TrainFormProps = {}) {
           className={`items-center rounded-full px-4 py-4 ${submitting ? 'bg-secondary/50' : 'bg-secondary active:opacity-80'}`}
         >
           <Text className="text-base font-semibold text-white">
-            {submitting ? 'Speichern…' : isEdit ? 'Änderungen speichern' : 'Reise speichern'}
+            {submitting ? t('add_journey.save_busy') : isEdit ? t('add_journey.save_update') : t('add_journey.save_create')}
           </Text>
         </Pressable>
       </View>
 
       <EntitySearchModal<Location>
         visible={modal.kind === 'from'}
-        title="Abfahrtsbahnhof wählen"
-        placeholder="Bahnhof oder Stadt…"
+        title={t('add_journey.search_station_from')}
+        placeholder={t('add_journey.search_station_placeholder')}
         onClose={closeModal}
         onSelect={(loc) => {
           setValue('fromLocationId', loc.id, { shouldValidate: true });
@@ -416,8 +419,8 @@ export function TrainForm({ editing }: TrainFormProps = {}) {
       />
       <EntitySearchModal<Location>
         visible={modal.kind === 'to'}
-        title="Zielbahnhof wählen"
-        placeholder="Bahnhof oder Stadt…"
+        title={t('add_journey.search_station_to')}
+        placeholder={t('add_journey.search_station_placeholder')}
         onClose={closeModal}
         onSelect={(loc) => {
           setValue('toLocationId', loc.id, { shouldValidate: true });
@@ -433,8 +436,8 @@ export function TrainForm({ editing }: TrainFormProps = {}) {
       />
       <EntitySearchModal<Operator>
         visible={modal.kind === 'operator'}
-        title="Bahnbetreiber wählen"
-        placeholder="Name oder Code…"
+        title={t('add_journey.search_train_operator')}
+        placeholder={t('add_journey.search_operator_placeholder')}
         onClose={closeModal}
         onSelect={(op) => {
           setValue('operatorId', op.id, { shouldValidate: true });
@@ -449,8 +452,8 @@ export function TrainForm({ editing }: TrainFormProps = {}) {
       />
       <EntitySearchModal<Vehicle>
         visible={modal.kind === 'vehicle'}
-        title="Zugmodell wählen"
-        placeholder="z. B. ICE 4, TGV…"
+        title={t('add_journey.search_train_model')}
+        placeholder={t('add_journey.search_train_model_placeholder')}
         onClose={closeModal}
         onSelect={(v) => {
           setValue('vehicleId', v.id, { shouldValidate: true });

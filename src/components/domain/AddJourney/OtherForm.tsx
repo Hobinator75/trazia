@@ -5,6 +5,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -29,12 +30,6 @@ import { colors } from '@/theme/colors';
 import { DateField, TimeField } from '@/components/ui/DateField';
 import { FormField, Segmented, TextField } from '@/components/ui/FormField';
 import { TagInput } from '@/components/ui/TagInput';
-
-const SUBMODE_OPTIONS: readonly { value: OtherSubmode; label: string }[] = [
-  { value: 'walk', label: 'Walk' },
-  { value: 'bike', label: 'Bike' },
-  { value: 'other', label: 'Other' },
-];
 
 const todayIso = (): string => {
   const d = new Date();
@@ -82,8 +77,15 @@ export interface OtherFormProps {
 export function OtherForm({ editing }: OtherFormProps = {}) {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
   const showSnackbar = useSnackbarStore((s) => s.show);
   const isEdit = editing !== undefined;
+
+  const submodeOptions: readonly { value: OtherSubmode; label: string }[] = [
+    { value: 'walk', label: t('add_journey.submode_walk') },
+    { value: 'bike', label: t('add_journey.submode_bike') },
+    { value: 'other', label: t('add_journey.submode_other') },
+  ];
 
   const [submitting, setSubmitting] = useState(false);
 
@@ -135,7 +137,7 @@ export function OtherForm({ editing }: OtherFormProps = {}) {
   const pickPhoto = async () => {
     const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!perm.granted) {
-      showSnackbar('Foto-Zugriff verweigert', { variant: 'error' });
+      showSnackbar(t('add_journey.photo_perm_denied'), { variant: 'error' });
       return;
     }
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -169,13 +171,13 @@ export function OtherForm({ editing }: OtherFormProps = {}) {
         editing ? { editing: true, journeyId: editing.journey.id } : {},
       );
 
-      showSnackbar(editing ? 'Reise aktualisiert' : 'Reise gespeichert', { variant: 'success' });
+      showSnackbar(editing ? t('add_journey.updated') : t('add_journey.saved'), { variant: 'success' });
       router.back();
     } catch (err) {
       showSnackbar(
         err instanceof Error
-          ? `Reise konnte nicht gespeichert werden: ${err.message}`
-          : 'Reise konnte nicht gespeichert werden — deine Änderungen sind unverändert.',
+          ? t('add_journey.save_failed_with_message', { message: err.message })
+          : t('add_journey.save_failed_generic'),
         { variant: 'error' },
       );
     } finally {
@@ -192,7 +194,7 @@ export function OtherForm({ editing }: OtherFormProps = {}) {
         contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 120 + insets.bottom }}
         keyboardShouldPersistTaps="handled"
       >
-        <FormField label="Modus" required>
+        <FormField label={t('add_journey.label_mode')} required>
           <Controller
             control={control}
             name="submode"
@@ -200,13 +202,13 @@ export function OtherForm({ editing }: OtherFormProps = {}) {
               <Segmented
                 value={field.value}
                 onChange={(v) => field.onChange(otherSubmodeEnum.parse(v))}
-                options={SUBMODE_OPTIONS}
+                options={submodeOptions}
               />
             )}
           />
         </FormField>
 
-        <FormField label="Von" required error={errors.fromText?.message}>
+        <FormField label={t('add_journey.label_from')} required error={errors.fromText?.message}>
           <Controller
             control={control}
             name="fromText"
@@ -214,14 +216,14 @@ export function OtherForm({ editing }: OtherFormProps = {}) {
               <TextField
                 value={field.value}
                 onChangeText={field.onChange}
-                placeholder="z. B. Zuhause, Berlin"
+                placeholder={t('add_journey.ph_from_other')}
                 invalid={!!errors.fromText}
               />
             )}
           />
         </FormField>
 
-        <FormField label="Nach" required error={errors.toText?.message}>
+        <FormField label={t('add_journey.label_to')} required error={errors.toText?.message}>
           <Controller
             control={control}
             name="toText"
@@ -229,14 +231,14 @@ export function OtherForm({ editing }: OtherFormProps = {}) {
               <TextField
                 value={field.value}
                 onChangeText={field.onChange}
-                placeholder="z. B. Park, Berlin"
+                placeholder={t('add_journey.ph_to_other')}
                 invalid={!!errors.toText}
               />
             )}
           />
         </FormField>
 
-        <FormField label="Datum" required error={errors.date?.message}>
+        <FormField label={t('add_journey.label_date')} required error={errors.date?.message}>
           <Controller
             control={control}
             name="date"
@@ -248,7 +250,7 @@ export function OtherForm({ editing }: OtherFormProps = {}) {
 
         <View className="flex-row gap-3">
           <View className="flex-1">
-            <FormField label="Startzeit">
+            <FormField label={t('add_journey.label_start_time')}>
               <Controller
                 control={control}
                 name="startTimeLocal"
@@ -257,7 +259,7 @@ export function OtherForm({ editing }: OtherFormProps = {}) {
             </FormField>
           </View>
           <View className="flex-1">
-            <FormField label="Endzeit">
+            <FormField label={t('add_journey.label_end_time')}>
               <Controller
                 control={control}
                 name="endTimeLocal"
@@ -267,7 +269,7 @@ export function OtherForm({ editing }: OtherFormProps = {}) {
           </View>
         </View>
 
-        <FormField label="Distanz (km)" hint="Manuell, da GPS optional ist.">
+        <FormField label={t('add_journey.label_distance_km')} hint={t('add_journey.label_distance_hint')}>
           <Controller
             control={control}
             name="distanceKm"
@@ -275,14 +277,14 @@ export function OtherForm({ editing }: OtherFormProps = {}) {
               <TextField
                 value={field.value ?? ''}
                 onChangeText={field.onChange}
-                placeholder="z. B. 12.5"
+                placeholder={t('add_journey.ph_distance')}
                 keyboardType="decimal-pad"
               />
             )}
           />
         </FormField>
 
-        <FormField label="Notizen" hint="Max. 500 Zeichen">
+        <FormField label={t('add_journey.label_notes')} hint={t('add_journey.label_notes_hint')}>
           <Controller
             control={control}
             name="notes"
@@ -290,7 +292,7 @@ export function OtherForm({ editing }: OtherFormProps = {}) {
               <TextField
                 value={field.value ?? ''}
                 onChangeText={field.onChange}
-                placeholder="Kurze Beschreibung…"
+                placeholder={t('add_journey.ph_notes_short')}
                 multiline
                 numberOfLines={4}
                 style={{ minHeight: 96, textAlignVertical: 'top' }}
@@ -300,10 +302,10 @@ export function OtherForm({ editing }: OtherFormProps = {}) {
           />
         </FormField>
 
-        <FormField label="Foto">
+        <FormField label={t('add_journey.label_photo')}>
           <Pressable
             onPress={pickPhoto}
-            className="rounded-xl border border-border-dark bg-surface-dark p-4 active:opacity-80"
+            className="rounded-xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark p-4 active:opacity-80"
           >
             {photoUri ? (
               <Image
@@ -320,19 +322,19 @@ export function OtherForm({ editing }: OtherFormProps = {}) {
           </Pressable>
         </FormField>
 
-        <FormField label="Tags">
+        <FormField label={t('add_journey.label_tags')}>
           <Controller
             control={control}
             name="tags"
             render={({ field }) => (
-              <TagInput value={field.value} onChange={field.onChange} placeholder="Tag…" />
+              <TagInput value={field.value} onChange={field.onChange} placeholder={t('add_journey.ph_tag')} />
             )}
           />
         </FormField>
       </ScrollView>
 
       <View
-        className="absolute bottom-0 left-0 right-0 border-t border-border-dark bg-background-dark px-4"
+        className="absolute bottom-0 left-0 right-0 border-t border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark px-4"
         style={{ paddingTop: 12, paddingBottom: 12 + insets.bottom }}
       >
         <Pressable
@@ -341,7 +343,7 @@ export function OtherForm({ editing }: OtherFormProps = {}) {
           className={`items-center rounded-full px-4 py-4 ${submitting ? 'bg-primary/50' : 'bg-primary active:opacity-80'}`}
         >
           <Text className="text-base font-semibold text-white">
-            {submitting ? 'Speichern…' : isEdit ? 'Änderungen speichern' : 'Reise speichern'}
+            {submitting ? t('add_journey.save_busy') : isEdit ? t('add_journey.save_update') : t('add_journey.save_create')}
           </Text>
         </Pressable>
       </View>
