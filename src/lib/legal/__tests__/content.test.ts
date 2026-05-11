@@ -41,4 +41,19 @@ describe('legal content (DE)', () => {
     expect(IMPRINT_DE.length).toBeGreaterThan(50);
     expect(TERMS_DE.length).toBeGreaterThan(50);
   });
+
+  it('imprint carries the full HVS contact block § 5 TMG requires', () => {
+    expect(IMPRINT_DE).toContain('HVS - Hobrlant Vertrieb & Service');
+    expect(IMPRINT_DE).toContain('Tim Hobrlant');
+    expect(IMPRINT_DE).toContain('Döllstädtstraße 5');
+    expect(IMPRINT_DE).toContain('99423 Weimar');
+    expect(IMPRINT_DE).toContain('Deutschland');
+  });
+
+  it('legal documents route contact through info@trazia.app, not the private gmail', () => {
+    for (const doc of [IMPRINT_DE, PRIVACY_POLICY_DE]) {
+      expect(doc).toContain('info@trazia.app');
+      expect(doc).not.toContain('tim.hobrlant@gmail.com');
+    }
+  });
 });

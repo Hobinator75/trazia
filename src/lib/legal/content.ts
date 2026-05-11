@@ -81,16 +81,24 @@ Daten verbleiben beim jeweiligen App-Store.
 
 Bei Fragen zu dieser Datenschutzerklärung erreichst du den
 Verantwortlichen unter
-[tim.hobrlant@gmail.com](mailto:tim.hobrlant@gmail.com).
+[info@trazia.app](mailto:info@trazia.app).
 `;
 
 export const IMPRINT_DE = `## Impressum
 
 Angaben gemäß § 5 TMG:
 
-**Tim Hobrlant**
+**HVS - Hobrlant Vertrieb & Service**
 
-Kontakt: [tim.hobrlant@gmail.com](mailto:tim.hobrlant@gmail.com)
+vertreten durch Tim Hobrlant
+
+Döllstädtstraße 5
+99423 Weimar
+Deutschland
+
+## Kontakt
+
+E-Mail: [info@trazia.app](mailto:info@trazia.app)
 
 ## Verantwortlich für den Inhalt
 

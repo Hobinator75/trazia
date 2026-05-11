@@ -148,7 +148,7 @@ const LEGAL_ROWS: NavRowSpec[] = [
   { href: '/profile/terms', label: 'AGB', icon: 'reader-outline' },
 ];
 
-const FEEDBACK_EMAIL = 'tim.hobrlant@gmail.com';
+const FEEDBACK_EMAIL = 'info@trazia.app';
 
 export default function ProfileScreen() {
   const router = useRouter();

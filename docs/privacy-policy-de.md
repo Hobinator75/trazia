@@ -69,4 +69,4 @@ jeweiligen App-Store.
 ## Kontakt
 
 Bei Fragen zu dieser Datenschutzerklärung erreichst du den Verantwortlichen
-unter [tim.hobrlant@gmail.com](mailto:tim.hobrlant@gmail.com).
+unter [info@trazia.app](mailto:info@trazia.app).

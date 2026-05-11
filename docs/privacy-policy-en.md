@@ -66,4 +66,4 @@ respective app store.
 ## Contact
 
 For questions about this privacy policy, please contact the data controller
-at [tim.hobrlant@gmail.com](mailto:tim.hobrlant@gmail.com).
+at [info@trazia.app](mailto:info@trazia.app).
