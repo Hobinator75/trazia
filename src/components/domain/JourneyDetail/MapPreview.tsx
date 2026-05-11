@@ -1,8 +1,10 @@
 import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
 import MapView, { Marker, Polyline, PROVIDER_DEFAULT } from 'react-native-maps';
 
 import type { JourneyWithRefs } from '@/db/repositories/journey.repository';
+import { useResolvedScheme } from '@/hooks/useResolvedScheme';
 import { greatCirclePath, type LatLng } from '@/lib/geo';
 import { colors, modeColors } from '@/theme/colors';
 
@@ -43,14 +45,18 @@ export interface MapPreviewProps {
 
 export function MapPreview({ journey }: MapPreviewProps) {
   const router = useRouter();
+  const { t } = useTranslation();
+  const scheme = useResolvedScheme();
 
   if (!journey.fromLocation || !journey.toLocation) {
     return (
       <View
         style={{ height: HEIGHT }}
-        className="mx-4 my-3 items-center justify-center rounded-2xl border border-border-dark bg-surface-dark"
+        className="mx-4 my-3 items-center justify-center rounded-2xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark"
       >
-        <Text className="text-text-muted">Keine Geo-Daten verfügbar</Text>
+        <Text className="text-text-muted-light dark:text-text-muted">
+          {t('journey.map_no_geo')}
+        </Text>
       </View>
     );
   }
@@ -63,7 +69,7 @@ export function MapPreview({ journey }: MapPreviewProps) {
 
   return (
     <Pressable
-      className="mx-4 my-3 overflow-hidden rounded-2xl border border-border-dark"
+      className="mx-4 my-3 overflow-hidden rounded-2xl border border-border-light dark:border-border-dark"
       style={{ height: HEIGHT }}
       onPress={() => router.push({ pathname: '/map', params: { focus: journey.id } })}
     >
@@ -75,6 +81,7 @@ export function MapPreview({ journey }: MapPreviewProps) {
         zoomEnabled={false}
         rotateEnabled={false}
         pitchEnabled={false}
+        userInterfaceStyle={scheme}
       >
         <Polyline
           coordinates={path}

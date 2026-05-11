@@ -1,8 +1,10 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, Text } from 'react-native';
 
-import { MODES, type AddJourneyMode } from './modePickerConfig';
 import { colors } from '@/theme/colors';
+
+import { MODES, type AddJourneyMode } from './modePickerConfig';
 
 export { MODES };
 export type { AddJourneyMode };
@@ -14,6 +16,7 @@ export interface ModePickerProps {
 }
 
 export function ModePicker({ value, onChange, onLockedTap }: ModePickerProps) {
+  const { t } = useTranslation();
   return (
     <ScrollView
       horizontal
@@ -35,8 +38,8 @@ export function ModePicker({ value, onChange, onLockedTap }: ModePickerProps) {
               isActive
                 ? 'border-primary bg-primary/20'
                 : isDisabled
-                  ? 'border-border-dark bg-surface-dark/40 opacity-50'
-                  : 'border-border-dark bg-surface-dark'
+                  ? 'border-border-light dark:border-border-dark bg-surface-light/60 dark:bg-surface-dark/40 opacity-50'
+                  : 'border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark'
             }`}
           >
             {isDisabled ? (
@@ -48,9 +51,11 @@ export function ModePicker({ value, onChange, onLockedTap }: ModePickerProps) {
               color={isActive ? colors.primary : colors.text.muted}
             />
             <Text
-              className={`text-sm font-medium ${isActive ? 'text-primary' : 'text-text-light'}`}
+              className={`text-sm font-medium ${
+                isActive ? 'text-primary' : 'text-text-dark dark:text-text-light'
+              }`}
             >
-              {mode.label}
+              {t(mode.labelKey)}
             </Text>
           </Pressable>
         );

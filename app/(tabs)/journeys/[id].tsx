@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import * as Sharing from 'expo-sharing';
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Alert, Modal, Pressable, ScrollView, Share, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -34,11 +35,14 @@ interface StatTileProps {
 }
 function StatTile({ label, value }: StatTileProps) {
   return (
-    <View className="flex-1 rounded-2xl border border-border-dark bg-surface-dark p-3">
-      <Text className="text-[10px] font-semibold uppercase tracking-wider text-text-muted">
+    <View className="flex-1 rounded-2xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark p-3">
+      <Text className="text-[10px] font-semibold uppercase tracking-wider text-text-muted-light dark:text-text-muted">
         {label}
       </Text>
-      <Text className="mt-1 text-base font-semibold text-text-light" numberOfLines={1}>
+      <Text
+        className="mt-1 text-base font-semibold text-text-dark dark:text-text-light"
+        numberOfLines={1}
+      >
         {value}
       </Text>
     </View>
@@ -74,23 +78,24 @@ function MoreMenu({
   onSelect: (action: 'duplicate' | 'share' | 'add_to_trip' | 'delete') => void;
 }) {
   const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
   const items: {
     id: 'duplicate' | 'share' | 'add_to_trip' | 'delete';
-    label: string;
+    labelKey: string;
     icon: React.ComponentProps<typeof Ionicons>['name'];
     danger?: boolean;
   }[] = [
-    { id: 'duplicate', label: 'Duplizieren', icon: 'copy-outline' },
-    { id: 'share', label: 'Teilen', icon: 'share-outline' },
-    { id: 'add_to_trip', label: 'Zu Reise hinzufügen', icon: 'folder-open-outline' },
-    { id: 'delete', label: 'Löschen', icon: 'trash-outline', danger: true },
+    { id: 'duplicate', labelKey: 'journey.action_duplicate', icon: 'copy-outline' },
+    { id: 'share', labelKey: 'journey.action_share', icon: 'share-outline' },
+    { id: 'add_to_trip', labelKey: 'journey.action_add_to_trip', icon: 'folder-open-outline' },
+    { id: 'delete', labelKey: 'journey.action_delete', icon: 'trash-outline', danger: true },
   ];
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
       <Pressable className="flex-1 justify-end bg-black/50" onPress={onClose}>
         <Pressable
-          className="rounded-t-3xl bg-surface-dark"
+          className="rounded-t-3xl bg-surface-light dark:bg-surface-dark"
           style={{ paddingBottom: insets.bottom + 8 }}
           onPress={() => {}}
         >
@@ -101,17 +106,21 @@ function MoreMenu({
                 onSelect(item.id);
                 onClose();
               }}
-              className={`flex-row items-center gap-3 px-4 py-4 active:bg-background-dark ${
-                idx > 0 ? 'border-t border-border-dark' : ''
+              className={`flex-row items-center gap-3 px-4 py-4 active:bg-background-light dark:active:bg-background-dark ${
+                idx > 0 ? 'border-t border-border-light dark:border-border-dark' : ''
               }`}
             >
               <Ionicons
                 name={item.icon}
                 size={20}
-                color={item.danger ? colors.danger : colors.text.light}
+                color={item.danger ? colors.danger : colors.text.muted}
               />
-              <Text className={`text-base ${item.danger ? 'text-danger' : 'text-text-light'}`}>
-                {item.label}
+              <Text
+                className={`text-base ${
+                  item.danger ? 'text-danger' : 'text-text-dark dark:text-text-light'
+                }`}
+              >
+                {t(item.labelKey)}
               </Text>
             </Pressable>
           ))}
@@ -124,6 +133,7 @@ function MoreMenu({
 export default function JourneyDetailScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
+  const { t } = useTranslation();
   const showSnackbar = useSnackbarStore((s) => s.show);
   const insets = useSafeAreaInsets();
 
@@ -156,54 +166,56 @@ export default function JourneyDetailScreen() {
         await Share.share({ message });
       }
     } catch (e) {
-      showSnackbar(e instanceof Error ? e.message : 'Teilen fehlgeschlagen', {
+      showSnackbar(e instanceof Error ? e.message : t('journey.share_failed'), {
         variant: 'error',
       });
     }
-  }, [journey, showSnackbar]);
+  }, [journey, showSnackbar, t]);
 
   const handleDelete = useCallback(() => {
     if (!journey) return;
-    Alert.alert('Reise löschen?', 'Diese Aktion kann nicht rückgängig gemacht werden.', [
-      { text: 'Abbrechen', style: 'cancel' },
+    Alert.alert(t('journey.delete_confirm_title'), t('journey.delete_confirm_simple_body'), [
+      { text: t('common.cancel'), style: 'cancel' },
       {
-        text: 'Löschen',
+        text: t('journey.delete_label'),
         style: 'destructive',
         onPress: async () => {
           try {
             await deleteJourney(db, journey.id);
-            showSnackbar('Reise gelöscht', { variant: 'success' });
+            showSnackbar(t('journey.deleted'), { variant: 'success' });
             router.back();
           } catch (e) {
-            showSnackbar(e instanceof Error ? e.message : 'Fehler beim Löschen', {
+            showSnackbar(e instanceof Error ? e.message : t('journey.delete_failed'), {
               variant: 'error',
             });
           }
         },
       },
     ]);
-  }, [journey, router, showSnackbar]);
+  }, [journey, router, showSnackbar, t]);
 
   const handleDuplicate = useCallback(async () => {
     if (!journey) return;
     try {
       const dup = await duplicateJourney(db, journey.id);
-      showSnackbar('Reise dupliziert', { variant: 'success' });
+      showSnackbar(t('journey.duplicated'), { variant: 'success' });
       router.replace({ pathname: '/journeys/[id]', params: { id: dup.id } });
     } catch (e) {
-      showSnackbar(e instanceof Error ? e.message : 'Fehler beim Duplizieren', {
+      showSnackbar(e instanceof Error ? e.message : t('journey.duplicate_failed'), {
         variant: 'error',
       });
     }
-  }, [journey, router, showSnackbar]);
+  }, [journey, router, showSnackbar, t]);
 
   if (loading) {
-    return <LoadingScreen subtitle="Reise wird geladen…" />;
+    return <LoadingScreen subtitle={t('journey.detail_loading')} />;
   }
   if (!journey) {
     return (
-      <View className="flex-1 items-center justify-center bg-background-dark px-6">
-        <Text className="text-lg text-text-muted">Reise nicht gefunden</Text>
+      <View className="flex-1 items-center justify-center bg-background-light dark:bg-background-dark px-6">
+        <Text className="text-lg text-text-muted-light dark:text-text-muted">
+          {t('journey.detail_not_found')}
+        </Text>
       </View>
     );
   }
@@ -216,7 +228,7 @@ export default function JourneyDetailScreen() {
     : null;
 
   return (
-    <View className="flex-1 bg-background-dark">
+    <View className="flex-1 bg-background-light dark:bg-background-dark">
       <Stack.Screen
         options={{
           headerTransparent: true,
@@ -260,32 +272,41 @@ export default function JourneyDetailScreen() {
         <RouteHero journey={journey} {...(photoUri ? { photoUri } : {})} />
 
         <View className="mx-4 mt-3 flex-row gap-2">
-          <StatTile label="Distanz" value={formatDistance(journey.distanceKm)} />
-          <StatTile label="Dauer" value={formatDuration(journey.durationMinutes)} />
-          <StatTile label="Klasse" value={formatCabin(journey.cabinClass)} />
-          <StatTile label="Sitz" value={journey.seatNumber ?? '—'} />
+          <StatTile label={t('journey.stat_distance')} value={formatDistance(journey.distanceKm)} />
+          <StatTile
+            label={t('journey.stat_duration')}
+            value={formatDuration(journey.durationMinutes)}
+          />
+          <StatTile label={t('journey.stat_class')} value={formatCabin(journey.cabinClass)} />
+          <StatTile label={t('journey.stat_seat')} value={journey.seatNumber ?? '—'} />
         </View>
 
         <MapPreview journey={journey} />
 
         {aircraftLabel ? (
-          <View className="mx-4 mb-3 rounded-2xl border border-border-dark bg-surface-dark p-4">
-            <Text className="text-xs font-semibold uppercase tracking-wider text-text-muted">
-              Aircraft
+          <View className="mx-4 mb-3 rounded-2xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark p-4">
+            <Text className="text-xs font-semibold uppercase tracking-wider text-text-muted-light dark:text-text-muted">
+              {t('journey.aircraft_label')}
             </Text>
-            <Text className="mt-1 text-base text-text-light">{aircraftLabel}</Text>
+            <Text className="mt-1 text-base text-text-dark dark:text-text-light">
+              {aircraftLabel}
+            </Text>
             {journey.vehicle?.category ? (
-              <Text className="text-xs text-text-muted">{journey.vehicle.category}</Text>
+              <Text className="text-xs text-text-muted-light dark:text-text-muted">
+                {journey.vehicle.category}
+              </Text>
             ) : null}
           </View>
         ) : null}
 
         {journey.notes ? (
-          <View className="mx-4 mb-3 rounded-2xl border border-border-dark bg-surface-dark p-4">
-            <Text className="text-xs font-semibold uppercase tracking-wider text-text-muted">
-              Notizen
+          <View className="mx-4 mb-3 rounded-2xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark p-4">
+            <Text className="text-xs font-semibold uppercase tracking-wider text-text-muted-light dark:text-text-muted">
+              {t('journey.notes_label')}
             </Text>
-            <Text className="mt-1 text-base text-text-light">{journey.notes}</Text>
+            <Text className="mt-1 text-base text-text-dark dark:text-text-light">
+              {journey.notes}
+            </Text>
           </View>
         ) : null}
 
@@ -293,16 +314,16 @@ export default function JourneyDetailScreen() {
           <View className="mx-4 mb-3 gap-3">
             {extras.tags.length > 0 ? (
               <View>
-                <Text className="mb-2 text-xs font-semibold uppercase tracking-wider text-text-muted">
-                  Tags
+                <Text className="mb-2 text-xs font-semibold uppercase tracking-wider text-text-muted-light dark:text-text-muted">
+                  {t('journey.tags_label')}
                 </Text>
                 <PillRow items={extras.tags} color={colors.primary} />
               </View>
             ) : null}
             {extras.companions.length > 0 ? (
               <View>
-                <Text className="mb-2 text-xs font-semibold uppercase tracking-wider text-text-muted">
-                  Begleitung
+                <Text className="mb-2 text-xs font-semibold uppercase tracking-wider text-text-muted-light dark:text-text-muted">
+                  {t('journey.companions_label')}
                 </Text>
                 <PillRow items={extras.companions} color={colors.secondary} />
               </View>
@@ -311,9 +332,11 @@ export default function JourneyDetailScreen() {
         ) : null}
 
         <View className="mx-4 mt-2">
-          <Text className="text-xs text-text-muted">
-            Erstellt am {formatTimestamp(journey.createdAt)} · Bearbeitet am{' '}
-            {formatTimestamp(journey.updatedAt)}
+          <Text className="text-xs text-text-muted-light dark:text-text-muted">
+            {t('journey.audit_line', {
+              created: formatTimestamp(journey.createdAt),
+              updated: formatTimestamp(journey.updatedAt),
+            })}
           </Text>
         </View>
       </ScrollView>
@@ -326,7 +349,7 @@ export default function JourneyDetailScreen() {
           if (action === 'share') void handleShare();
           if (action === 'delete') handleDelete();
           if (action === 'add_to_trip')
-            showSnackbar('Trips kommen in CC-3.9.', { variant: 'info' });
+            showSnackbar(t('journey.trips_coming_soon'), { variant: 'info' });
         }}
       />
     </View>

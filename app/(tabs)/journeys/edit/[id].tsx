@@ -1,5 +1,6 @@
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
 
 import { db } from '@/db/client';
@@ -24,6 +25,7 @@ interface LoadState {
 export default function EditJourneyScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
+  const { t } = useTranslation();
   const [state, setState] = useState<LoadState>({ journey: null, extras: null, loading: true });
 
   const load = useCallback(async () => {
@@ -44,19 +46,21 @@ export default function EditJourneyScreen() {
   }, [load]);
 
   if (state.loading) {
-    return <LoadingScreen subtitle="Reise wird geladen…" />;
+    return <LoadingScreen subtitle={t('journey.edit_loading')} />;
   }
 
   if (!state.journey || !state.extras) {
     return (
-      <View className="flex-1 items-center justify-center bg-background-dark px-6">
-        <Stack.Screen options={{ title: 'Reise bearbeiten' }} />
-        <Text className="mb-4 text-lg text-text-light">Reise nicht gefunden</Text>
+      <View className="flex-1 items-center justify-center bg-background-light dark:bg-background-dark px-6">
+        <Stack.Screen options={{ title: t('journey.edit_other_title') }} />
+        <Text className="mb-4 text-lg text-text-dark dark:text-text-light">
+          {t('journey.edit_not_found')}
+        </Text>
         <Pressable
           onPress={() => router.back()}
           className="rounded-full bg-primary px-6 py-3 active:opacity-80"
         >
-          <Text className="text-base font-semibold text-white">Zurück</Text>
+          <Text className="text-base font-semibold text-white">{t('common.back')}</Text>
         </Pressable>
       </View>
     );
@@ -66,8 +70,8 @@ export default function EditJourneyScreen() {
 
   if (state.journey.mode === 'flight') {
     return (
-      <View className="flex-1 bg-background-dark">
-        <Stack.Screen options={{ title: 'Flug bearbeiten' }} />
+      <View className="flex-1 bg-background-light dark:bg-background-dark">
+        <Stack.Screen options={{ title: t('journey.edit_flight_title') }} />
         <FlightForm editing={editing} />
       </View>
     );
@@ -75,8 +79,8 @@ export default function EditJourneyScreen() {
 
   if (state.journey.mode === 'train') {
     return (
-      <View className="flex-1 bg-background-dark">
-        <Stack.Screen options={{ title: 'Zug bearbeiten' }} />
+      <View className="flex-1 bg-background-light dark:bg-background-dark">
+        <Stack.Screen options={{ title: t('journey.edit_train_title') }} />
         <TrainForm editing={editing} />
       </View>
     );
@@ -85,8 +89,8 @@ export default function EditJourneyScreen() {
   // car / walk / bike / ship / other → OtherForm. OtherForm reads the original
   // submode from `source` so the segmented control lands on the right value.
   return (
-    <View className="flex-1 bg-background-dark">
-      <Stack.Screen options={{ title: 'Reise bearbeiten' }} />
+    <View className="flex-1 bg-background-light dark:bg-background-dark">
+      <Stack.Screen options={{ title: t('journey.edit_other_title') }} />
       <OtherForm editing={editing} />
     </View>
   );

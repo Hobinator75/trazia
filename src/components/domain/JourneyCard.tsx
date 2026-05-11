@@ -1,19 +1,21 @@
 import { Ionicons } from '@expo/vector-icons';
 import { memo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
 
 import type { JourneyWithRefs } from '@/db/repositories/journey.repository';
+import { formatInt } from '@/lib/i18n/formatNumber';
 import { colors, modeColors } from '@/theme/colors';
 
-const formatDate = (iso: string): string => {
+const formatDate = (iso: string, locale: string): string => {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return iso;
-  return d.toLocaleDateString('de-DE', { day: '2-digit', month: 'short', year: 'numeric' });
+  return d.toLocaleDateString(locale, { day: '2-digit', month: 'short', year: 'numeric' });
 };
 
-const formatDistance = (km: number | null): string => {
+const formatDistance = (km: number | null, locale: string): string => {
   if (km === null || !Number.isFinite(km)) return '—';
-  if (km >= 100) return `${Math.round(km).toLocaleString('de-DE')} km`;
+  if (km >= 100) return `${formatInt(km, locale)} km`;
   return `${km.toFixed(1)} km`;
 };
 
@@ -32,7 +34,13 @@ export interface JourneyCardProps {
   onLongPress?: (journey: JourneyWithRefs) => void;
 }
 
-const FlightCardBody = memo(function FlightCardBody({ journey }: { journey: JourneyWithRefs }) {
+const FlightCardBody = memo(function FlightCardBody({
+  journey,
+  locale,
+}: {
+  journey: JourneyWithRefs;
+  locale: string;
+}) {
   const fromCode = journey.fromLocation?.iata ?? journey.fromLocation?.icao ?? '???';
   const toCode = journey.toLocation?.iata ?? journey.toLocation?.icao ?? '???';
   const operatorCode = journey.operator?.code ?? journey.operator?.name?.slice(0, 2) ?? '??';
@@ -50,15 +58,19 @@ const FlightCardBody = memo(function FlightCardBody({ journey }: { journey: Jour
 
       <View className="flex-1">
         <View className="flex-row items-center gap-2">
-          <Text className="text-lg font-bold tracking-wider text-text-light">{fromCode}</Text>
+          <Text className="text-lg font-bold tracking-wider text-text-dark dark:text-text-light">
+            {fromCode}
+          </Text>
           <Ionicons name="arrow-forward" size={14} color={colors.text.muted} />
-          <Text className="text-lg font-bold tracking-wider text-text-light">{toCode}</Text>
+          <Text className="text-lg font-bold tracking-wider text-text-dark dark:text-text-light">
+            {toCode}
+          </Text>
         </View>
-        <Text className="text-xs text-text-muted">
-          {[journey.serviceNumber, formatDate(journey.date)].filter(Boolean).join(' · ')}
+        <Text className="text-xs text-text-muted-light dark:text-text-muted">
+          {[journey.serviceNumber, formatDate(journey.date, locale)].filter(Boolean).join(' · ')}
         </Text>
-        <Text className="text-xs text-text-muted">
-          {[formatDistance(journey.distanceKm), formatDuration(journey.durationMinutes)]
+        <Text className="text-xs text-text-muted-light dark:text-text-muted">
+          {[formatDistance(journey.distanceKm, locale), formatDuration(journey.durationMinutes)]
             .filter((v) => v !== '—')
             .join(' · ') || '—'}
         </Text>
@@ -67,7 +79,13 @@ const FlightCardBody = memo(function FlightCardBody({ journey }: { journey: Jour
   );
 });
 
-const TrainCardBody = memo(function TrainCardBody({ journey }: { journey: JourneyWithRefs }) {
+const TrainCardBody = memo(function TrainCardBody({
+  journey,
+  locale,
+}: {
+  journey: JourneyWithRefs;
+  locale: string;
+}) {
   const fromName = journey.fromLocation?.city ?? journey.fromLocation?.name ?? '?';
   const toName = journey.toLocation?.city ?? journey.toLocation?.name ?? '?';
   const opCode = journey.operator?.code ?? journey.operator?.name?.slice(0, 2) ?? '🚆';
@@ -84,19 +102,25 @@ const TrainCardBody = memo(function TrainCardBody({ journey }: { journey: Journe
 
       <View className="flex-1">
         <View className="flex-row items-center gap-2">
-          <Text className="text-base font-bold tracking-tight text-text-light" numberOfLines={1}>
+          <Text
+            className="text-base font-bold tracking-tight text-text-dark dark:text-text-light"
+            numberOfLines={1}
+          >
             {fromName}
           </Text>
           <Ionicons name="arrow-forward" size={14} color={colors.text.muted} />
-          <Text className="text-base font-bold tracking-tight text-text-light" numberOfLines={1}>
+          <Text
+            className="text-base font-bold tracking-tight text-text-dark dark:text-text-light"
+            numberOfLines={1}
+          >
             {toName}
           </Text>
         </View>
-        <Text className="text-xs text-text-muted">
-          {[journey.serviceNumber, formatDate(journey.date)].filter(Boolean).join(' · ')}
+        <Text className="text-xs text-text-muted-light dark:text-text-muted">
+          {[journey.serviceNumber, formatDate(journey.date, locale)].filter(Boolean).join(' · ')}
         </Text>
-        <Text className="text-xs text-text-muted">
-          {[formatDistance(journey.distanceKm), formatDuration(journey.durationMinutes)]
+        <Text className="text-xs text-text-muted-light dark:text-text-muted">
+          {[formatDistance(journey.distanceKm, locale), formatDuration(journey.durationMinutes)]
             .filter((v) => v !== '—')
             .join(' · ') || '—'}
         </Text>
@@ -109,10 +133,12 @@ const GenericCardBody = memo(function GenericCardBody({
   journey,
   iconName,
   modeColor,
+  locale,
 }: {
   journey: JourneyWithRefs;
   iconName: React.ComponentProps<typeof Ionicons>['name'];
   modeColor: string;
+  locale: string;
 }) {
   const fromName = journey.fromLocation?.name ?? '?';
   const toName = journey.toLocation?.name ?? '?';
@@ -125,12 +151,17 @@ const GenericCardBody = memo(function GenericCardBody({
         <Ionicons name={iconName} size={20} color={modeColor} />
       </View>
       <View className="flex-1">
-        <Text className="text-base font-semibold text-text-light" numberOfLines={1}>
+        <Text
+          className="text-base font-semibold text-text-dark dark:text-text-light"
+          numberOfLines={1}
+        >
           {fromName} → {toName}
         </Text>
-        <Text className="text-xs text-text-muted">{formatDate(journey.date)}</Text>
-        <Text className="text-xs text-text-muted">
-          {[formatDistance(journey.distanceKm), formatDuration(journey.durationMinutes)]
+        <Text className="text-xs text-text-muted-light dark:text-text-muted">
+          {formatDate(journey.date, locale)}
+        </Text>
+        <Text className="text-xs text-text-muted-light dark:text-text-muted">
+          {[formatDistance(journey.distanceKm, locale), formatDuration(journey.durationMinutes)]
             .filter((v) => v !== '—')
             .join(' · ') || '—'}
         </Text>
@@ -144,33 +175,53 @@ export const JourneyCard = memo(function JourneyCard({
   onPress,
   onLongPress,
 }: JourneyCardProps) {
+  const { i18n } = useTranslation();
+  const locale = i18n.language;
   return (
     <Pressable
       onPress={() => onPress?.(journey)}
       onLongPress={() => onLongPress?.(journey)}
       delayLongPress={400}
-      className="mx-4 my-1.5 flex-row items-center gap-3 rounded-2xl border border-border-dark bg-surface-dark px-3 py-3 active:opacity-80"
+      className="mx-4 my-1.5 flex-row items-center gap-3 rounded-2xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark px-3 py-3 active:opacity-80"
     >
       {journey.mode === 'flight' ? (
-        <FlightCardBody journey={journey} />
+        <FlightCardBody journey={journey} locale={locale} />
       ) : journey.mode === 'train' ? (
-        <TrainCardBody journey={journey} />
+        <TrainCardBody journey={journey} locale={locale} />
       ) : journey.mode === 'car' ? (
-        // TODO Phase 2: replace with shortened address strings + odometer
-        // delta when GPS / vehicle telemetry is wired.
-        <GenericCardBody journey={journey} iconName="car" modeColor={modeColors.car} />
+        <GenericCardBody
+          journey={journey}
+          iconName="car"
+          modeColor={modeColors.car}
+          locale={locale}
+        />
       ) : journey.mode === 'ship' ? (
-        // TODO Phase 2: replace with shipping-line logo + UN/LOCODEs.
-        <GenericCardBody journey={journey} iconName="boat" modeColor={modeColors.ship} />
+        <GenericCardBody
+          journey={journey}
+          iconName="boat"
+          modeColor={modeColors.ship}
+          locale={locale}
+        />
       ) : journey.mode === 'walk' ? (
-        <GenericCardBody journey={journey} iconName="walk" modeColor={modeColors.other} />
+        <GenericCardBody
+          journey={journey}
+          iconName="walk"
+          modeColor={modeColors.other}
+          locale={locale}
+        />
       ) : journey.mode === 'bike' ? (
-        <GenericCardBody journey={journey} iconName="bicycle" modeColor={modeColors.other} />
+        <GenericCardBody
+          journey={journey}
+          iconName="bicycle"
+          modeColor={modeColors.other}
+          locale={locale}
+        />
       ) : (
         <GenericCardBody
           journey={journey}
           iconName="ellipsis-horizontal"
           modeColor={modeColors.other}
+          locale={locale}
         />
       )}
 

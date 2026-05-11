@@ -6,7 +6,7 @@ export type AddJourneyMode = 'flight' | 'train' | 'car' | 'ship' | 'bus' | 'othe
 
 export interface ModeDef {
   value: AddJourneyMode;
-  label: string;
+  labelKey: string;
   icon: React.ComponentProps<typeof Ionicons>['name'];
   enabled: boolean;
   comingIn?: 'Phase 2';
@@ -14,20 +14,21 @@ export interface ModeDef {
 
 // All modes stay defined so existing user-recorded journeys (e.g. train)
 // remain editable without crashing — only the visible list passed to the
-// picker is filtered for Phase 1.
+// picker is filtered for Phase 1. Labels resolve through i18n via labelKey
+// at render time so the picker switches with the active locale.
 export const ALL_MODES: readonly ModeDef[] = [
-  { value: 'flight', label: 'Flug', icon: 'airplane', enabled: true },
+  { value: 'flight', labelKey: 'mode.flight', icon: 'airplane', enabled: true },
   {
     value: 'train',
-    label: 'Zug',
+    labelKey: 'mode.train',
     icon: 'train',
     enabled: FEATURE_FLAGS.PHASE_2_TRAIN_VISIBLE,
     comingIn: 'Phase 2',
   },
-  { value: 'car', label: 'Auto', icon: 'car', enabled: false, comingIn: 'Phase 2' },
-  { value: 'ship', label: 'Schiff', icon: 'boat', enabled: false, comingIn: 'Phase 2' },
-  { value: 'bus', label: 'Bus', icon: 'bus', enabled: false, comingIn: 'Phase 2' },
-  { value: 'other', label: 'Sonstiges', icon: 'ellipsis-horizontal', enabled: true },
+  { value: 'car', labelKey: 'mode.car', icon: 'car', enabled: false, comingIn: 'Phase 2' },
+  { value: 'ship', labelKey: 'mode.ship', icon: 'boat', enabled: false, comingIn: 'Phase 2' },
+  { value: 'bus', labelKey: 'mode.bus', icon: 'bus', enabled: false, comingIn: 'Phase 2' },
+  { value: 'other', labelKey: 'mode.other', icon: 'ellipsis-horizontal', enabled: true },
 ];
 
 // Phase-1 product decision: only Flight + Other are visible in the

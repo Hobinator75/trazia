@@ -1,9 +1,11 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import { Modal, Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { useResolvedScheme } from '@/hooks/useResolvedScheme';
 import type { TransportMode } from '@/types/domain-types';
-import { colors } from '@/theme/colors';
+import { paletteFor } from '@/theme/colors';
 
 export interface JourneyFilters {
   modes: TransportMode[];
@@ -51,10 +53,16 @@ function Pill({
     <Pressable
       onPress={onPress}
       className={`rounded-full border px-3 py-2 ${
-        selected ? 'border-primary bg-primary/20' : 'border-border-dark bg-background-dark'
+        selected
+          ? 'border-primary bg-primary/20'
+          : 'border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark'
       }`}
     >
-      <Text className={`text-sm ${selected ? 'text-primary' : 'text-text-light'}`}>{label}</Text>
+      <Text
+        className={`text-sm ${selected ? 'text-primary' : 'text-text-dark dark:text-text-light'}`}
+      >
+        {label}
+      </Text>
     </Pressable>
   );
 }
@@ -62,7 +70,7 @@ function Pill({
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <View className="mb-5">
-      <Text className="mb-2 text-xs font-semibold uppercase tracking-wider text-text-muted">
+      <Text className="mb-2 text-xs font-semibold uppercase tracking-wider text-text-muted-light dark:text-text-muted">
         {title}
       </Text>
       <View className="flex-row flex-wrap gap-2">{children}</View>
@@ -81,6 +89,9 @@ export function JourneyFilterSheet({
   countryOptions,
 }: JourneyFilterSheetProps) {
   const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
+  const scheme = useResolvedScheme();
+  const palette = paletteFor(scheme);
 
   const toggle = <K extends keyof JourneyFilters>(key: K, value: JourneyFilters[K][number]) => {
     const list = filters[key] as readonly unknown[];
@@ -92,23 +103,25 @@ export function JourneyFilterSheet({
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
       <View className="flex-1 justify-end bg-black/50">
         <View
-          className="rounded-t-3xl bg-surface-dark"
+          className="rounded-t-3xl bg-surface-light dark:bg-surface-dark"
           style={{ paddingBottom: insets.bottom + 12 }}
         >
-          <View className="flex-row items-center justify-between border-b border-border-dark px-4 py-3">
-            <Text className="text-lg font-semibold text-text-light">Filter</Text>
+          <View className="flex-row items-center justify-between border-b border-border-light dark:border-border-dark px-4 py-3">
+            <Text className="text-lg font-semibold text-text-dark dark:text-text-light">
+              {t('journey.filter_aria')}
+            </Text>
             <View className="flex-row gap-3">
               <Pressable onPress={() => onChange(EMPTY_FILTERS)} hitSlop={8}>
-                <Text className="text-sm text-primary">Reset</Text>
+                <Text className="text-sm text-primary">{t('journey.filter_reset')}</Text>
               </Pressable>
               <Pressable onPress={onClose} hitSlop={8}>
-                <Ionicons name="close" size={22} color={colors.text.light} />
+                <Ionicons name="close" size={22} color={palette.text} />
               </Pressable>
             </View>
           </View>
           <ScrollView contentContainerStyle={{ padding: 16 }} className="max-h-[70vh]">
             {modeOptions.length > 0 ? (
-              <Section title="Modus">
+              <Section title={t('journey.filter_modes')}>
                 {modeOptions.map((opt) => (
                   <Pill
                     key={opt.id}
@@ -121,7 +134,7 @@ export function JourneyFilterSheet({
             ) : null}
 
             {yearOptions.length > 0 ? (
-              <Section title="Jahr">
+              <Section title={t('journey.filter_years')}>
                 {yearOptions.map((year) => (
                   <Pill
                     key={year}
@@ -134,7 +147,7 @@ export function JourneyFilterSheet({
             ) : null}
 
             {operatorOptions.length > 0 ? (
-              <Section title="Operator">
+              <Section title={t('journey.filter_operators')}>
                 {operatorOptions.map((opt) => (
                   <Pill
                     key={opt.id}
@@ -147,7 +160,7 @@ export function JourneyFilterSheet({
             ) : null}
 
             {countryOptions.length > 0 ? (
-              <Section title="Land">
+              <Section title={t('journey.filter_countries')}>
                 {countryOptions.map((opt) => (
                   <Pill
                     key={opt.id}
