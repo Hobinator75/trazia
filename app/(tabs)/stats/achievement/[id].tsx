@@ -11,6 +11,7 @@ import { achievementUnlocks } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 
 import { loadAchievements } from '@/lib/achievements/engine';
+import { getLocalizedAchievement } from '@/lib/achievements/localize';
 import { tierStyle } from '@/lib/achievements/tier';
 import type { Achievement } from '@/lib/achievements/types';
 import { formatTimestamp, journeyTitle } from '@/lib/journeys/format';
@@ -85,6 +86,7 @@ export default function AchievementDetailScreen() {
   const tier = tierStyle(achievement.tier);
   const unlocked = unlock !== null;
   const isHidden = achievement.hidden && !unlocked;
+  const localized = getLocalizedAchievement(achievement);
 
   return (
     <View className="flex-1 bg-background-dark">
@@ -137,7 +139,7 @@ export default function AchievementDetailScreen() {
               className="px-6 text-center text-3xl font-bold"
               style={{ color: tier.textOnPrimary }}
             >
-              {isHidden ? '???' : achievement.title}
+              {isHidden ? '???' : localized.title}
             </Text>
             <Text
               className="mt-1 px-8 text-center text-sm"
@@ -145,7 +147,7 @@ export default function AchievementDetailScreen() {
             >
               {isHidden
                 ? 'Dieser Erfolg ist noch versteckt — erfasse mehr Reisen, um ihn zu entdecken.'
-                : achievement.description}
+                : localized.description}
             </Text>
           </View>
         </View>

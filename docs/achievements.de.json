@@ -1,0 +1,250 @@
+{
+  "first_journey": {
+    "title": "Erste Schritte",
+    "description": "Erfasse deine erste Reise."
+  },
+  "ten_journeys": {
+    "title": "Vielreisender",
+    "description": "Erfasse zehn Reisen."
+  },
+  "earth_circumnavigated": {
+    "title": "Einmal um die Erde",
+    "description": "Lege insgesamt 40.075 km zurück — den Erdumfang."
+  },
+  "marathon_12h": {
+    "title": "Marathon",
+    "description": "Eine einzelne Reise von mindestens 12 Stunden."
+  },
+  "equator_crosser": {
+    "title": "Äquator-Überquerer",
+    "description": "Überquere den Äquator."
+  },
+  "birthday_journey": {
+    "title": "Zum Reisen geboren",
+    "description": "Mach eine Reise an deinem Geburtstag."
+  },
+  "regular_route_5": {
+    "title": "Stammgast",
+    "description": "Fahre dieselbe Strecke mindestens fünfmal."
+  },
+  "ten_countries": {
+    "title": "Weltenbummler",
+    "description": "Besuche zehn verschiedene Länder."
+  },
+  "weekly_5_in_7": {
+    "title": "Power-Woche",
+    "description": "Erfasse fünf Reisen innerhalb von sieben Tagen."
+  },
+  "four_seasons": {
+    "title": "Vier Jahreszeiten",
+    "description": "Reise in jeder Jahreszeit des Jahres."
+  },
+  "every_month": {
+    "title": "Jeden Monat",
+    "description": "Reise mindestens einmal in jedem Kalendermonat eines Jahres."
+  },
+  "premium_globetrotter": {
+    "title": "Premium-Globetrotter",
+    "description": "Premium-Achievement — kommt mit der bezahlten Stufe."
+  },
+  "first_flight": {
+    "title": "Startfreigabe",
+    "description": "Erfasse deinen ersten Flug."
+  },
+  "ten_flights": {
+    "title": "Vielflieger",
+    "description": "Mach zehn Flüge."
+  },
+  "fifty_flights": {
+    "title": "Fünfzig Sektoren",
+    "description": "Mach fünfzig Flüge."
+  },
+  "hundred_flights": {
+    "title": "Centurion",
+    "description": "Mach hundert Flüge."
+  },
+  "five_hundred_flights": {
+    "title": "Million Miler",
+    "description": "Mach fünfhundert Flüge."
+  },
+  "flight_distance_50k": {
+    "title": "Himmel-Marathonläufer",
+    "description": "Fliege insgesamt 50.000 km."
+  },
+  "flight_around_world": {
+    "title": "Einmal um die Erde (Luft)",
+    "description": "Fliege 40.075 km — Erdumfang, nur per Flugzeug."
+  },
+  "flight_distance_500k": {
+    "title": "Halbe Million Luft",
+    "description": "Fliege insgesamt 500.000 km."
+  },
+  "long_haul": {
+    "title": "Langstrecke",
+    "description": "Ein einzelner Flug von mindestens sechs Stunden."
+  },
+  "ultra_long_haul": {
+    "title": "Ultra-Langstrecke",
+    "description": "Ein einzelner Flug von mindestens fünfzehn Stunden."
+  },
+  "long_haul_8000": {
+    "title": "8.000-km-Klub",
+    "description": "Ein einzelner Flug von mindestens 8.000 km."
+  },
+  "transatlantic": {
+    "title": "Transatlantik",
+    "description": "Überquere den Atlantik."
+  },
+  "pacific_crosser": {
+    "title": "Pazifik-Überquerer",
+    "description": "Überquere den Pazifik."
+  },
+  "arctic_explorer": {
+    "title": "Arktis-Erkunder",
+    "description": "Überquere den nördlichen Polarkreis."
+  },
+  "antarctic_explorer": {
+    "title": "Antarktis-Erkunder",
+    "description": "Überquere den südlichen Polarkreis."
+  },
+  "antipode_traveler": {
+    "title": "Antipoden-Reisender",
+    "description": "Reise auf die gegenüberliegende Seite der Welt."
+  },
+  "widebody": {
+    "title": "Großraumjet",
+    "description": "Fliege in einem Großraumflugzeug."
+  },
+  "jumbo_jet": {
+    "title": "Jumbo-Jet",
+    "description": "Fliege in einer Boeing 747 oder einem anderen Jumbo."
+  },
+  "narrowbody_traveller": {
+    "title": "Schmalrumpf-Stammflieger",
+    "description": "Fliege in einem Schmalrumpfflugzeug."
+  },
+  "regional_jet": {
+    "title": "Regional-Hopper",
+    "description": "Fliege in einem Regionalflugzeug."
+  },
+  "heritage_aircraft": {
+    "title": "Luftfahrtgeschichte",
+    "description": "Fliege in einem historischen Flugzeug (DC-3, Ju 52 etc.)."
+  },
+  "supersonic": {
+    "title": "Mach Eins",
+    "description": "Fliege in einem Überschallflugzeug."
+  },
+  "first_class": {
+    "title": "First Class",
+    "description": "Reise in der First Class."
+  },
+  "business_class": {
+    "title": "Business Class",
+    "description": "Reise in der Business Class."
+  },
+  "premium_eco": {
+    "title": "Premium Economy",
+    "description": "Reise in der Premium Economy."
+  },
+  "star_alliance": {
+    "title": "Star Alliance",
+    "description": "Fliege mit mindestens einer Star-Alliance-Airline."
+  },
+  "oneworld_alliance": {
+    "title": "Oneworld",
+    "description": "Fliege mit mindestens einer Oneworld-Airline."
+  },
+  "skyteam_alliance": {
+    "title": "SkyTeam",
+    "description": "Fliege mit mindestens einer SkyTeam-Airline."
+  },
+  "middle_east_carrier": {
+    "title": "Golf-Carrier",
+    "description": "Fliege mit einer großen Airline aus dem Nahen Osten."
+  },
+  "lufthansa_loyalty_10": {
+    "title": "Kranich-Club",
+    "description": "Mach zehn Flüge mit Lufthansa."
+  },
+  "lh_loyalty_25": {
+    "title": "Senator-Status",
+    "description": "Mach fünfundzwanzig Flüge mit Lufthansa."
+  },
+  "lh_loyalty_50": {
+    "title": "HON Circle",
+    "description": "Mach fünfzig Flüge mit Lufthansa."
+  },
+  "first_train": {
+    "title": "Erste Zugfahrt",
+    "description": "Erfasse deine erste Zugreise."
+  },
+  "ten_trains": {
+    "title": "Vielbahner",
+    "description": "Mach zehn Zugreisen."
+  },
+  "fifty_trains": {
+    "title": "Fahrplan-Insider",
+    "description": "Mach fünfzig Zugreisen."
+  },
+  "hundred_trains": {
+    "title": "Zug-Centurion",
+    "description": "Mach hundert Zugreisen."
+  },
+  "five_hundred_trains": {
+    "title": "Lebenslange BahnCard",
+    "description": "Mach fünfhundert Zugreisen."
+  },
+  "train_distance_5k": {
+    "title": "Schienen-Marathon",
+    "description": "Lege 5.000 km per Bahn zurück."
+  },
+  "train_distance_50k": {
+    "title": "Eiserne Straße 50k",
+    "description": "Lege 50.000 km per Bahn zurück."
+  },
+  "train_around_world": {
+    "title": "Einmal um die Erde (Bahn)",
+    "description": "Lege 40.075 km per Bahn zurück — Erdumfang, alles auf Schienen."
+  },
+  "train_long_haul": {
+    "title": "Nachtzug-Held",
+    "description": "Eine einzelne Zugfahrt von mindestens sechs Stunden."
+  },
+  "train_marathon": {
+    "title": "Trans-Sib-Geist",
+    "description": "Eine einzelne Zugfahrt von mindestens zwölf Stunden."
+  },
+  "ice_rider": {
+    "title": "ICE-Pilot",
+    "description": "Fahre mit einem ICE 1, 2, 3, 3neo oder 4."
+  },
+  "highspeed_rail": {
+    "title": "Hochgeschwindigkeit",
+    "description": "Fahre mit einem Hochgeschwindigkeitszug."
+  },
+  "intercity_rail": {
+    "title": "Intercity-Stammgast",
+    "description": "Fahre mit einem Intercity-Zug."
+  },
+  "regional_rail": {
+    "title": "Regional-Held",
+    "description": "Fahre mit einem Regionalzug."
+  },
+  "sleeper_train": {
+    "title": "Schlafwagen",
+    "description": "Reise im Schlafwagen."
+  },
+  "first_class_rail": {
+    "title": "Erste Klasse Bahn",
+    "description": "Reise erster Klasse mit der Bahn."
+  },
+  "db_loyalty_25": {
+    "title": "BahnCard-Held",
+    "description": "Mach fünfundzwanzig Fahrten mit der Deutschen Bahn."
+  },
+  "european_rail": {
+    "title": "Europäische Bahn",
+    "description": "Fahre mit mindestens einem großen europäischen Bahnbetreiber."
+  }
+}

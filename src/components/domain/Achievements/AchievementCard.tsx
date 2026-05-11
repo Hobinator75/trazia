@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Pressable, Text, View } from 'react-native';
 
+import { getLocalizedAchievement } from '@/lib/achievements/localize';
 import { tierStyle } from '@/lib/achievements/tier';
 import type { Achievement } from '@/lib/achievements/types';
 import { colors } from '@/theme/colors';
@@ -27,6 +28,7 @@ export function AchievementCard({
   const tier = tierStyle(achievement.tier);
   const isHidden = achievement.hidden && !unlocked;
   const isPremium = !!achievement.premium;
+  const localized = getLocalizedAchievement(achievement);
 
   if (isHidden) {
     return (
@@ -82,7 +84,7 @@ export function AchievementCard({
           numberOfLines={2}
           style={{ color: unlocked ? colors.text.light : colors.text.muted }}
         >
-          {achievement.title}
+          {localized.title}
         </Text>
         {unlocked ? (
           unlockedAt ? (
@@ -94,7 +96,7 @@ export function AchievementCard({
             numberOfLines={2}
             style={{ opacity: 0.5 }}
           >
-            {achievement.description}
+            {localized.description}
           </Text>
         )}
         {isPremium && !unlocked ? (

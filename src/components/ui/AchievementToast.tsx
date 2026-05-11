@@ -11,6 +11,7 @@ import Animated, {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { loadAchievements } from '@/lib/achievements/engine';
+import { getLocalizedAchievement } from '@/lib/achievements/localize';
 import { tierStyle } from '@/lib/achievements/tier';
 import type { Achievement, UnlockResult } from '@/lib/achievements/types';
 import { playUnlockSound } from '@/lib/sound';
@@ -100,7 +101,9 @@ export function AchievementToast() {
 
   const achievement = findAchievement(current.achievementId);
   const tier = tierStyle(achievement?.tier);
-  const title = achievement?.title ?? current.achievementId;
+  const title = achievement
+    ? getLocalizedAchievement(achievement).title
+    : current.achievementId;
 
   return (
     <Animated.View
