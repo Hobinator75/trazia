@@ -24,6 +24,18 @@
     "time_placeholder": "Zeit wählen",
     "tag_placeholder": "Hinzufügen…"
   },
+  "share": {
+    "card_title": "{{name}} hat eine Reise gemacht",
+    "card_title_anon": "Eine Reise auf Trazia",
+    "stat_distance": "Distanz",
+    "stat_duration": "Dauer",
+    "stat_class": "Klasse",
+    "stat_seat": "Sitz",
+    "footer_tagline": "Trace your travels · trazia.app",
+    "dialog_title": "Reise teilen",
+    "failed": "Reise teilen fehlgeschlagen",
+    "unavailable": "Teilen auf diesem Gerät nicht verfügbar"
+  },
   "add_journey": {
     "save_busy": "Speichern…",
     "save_create": "Reise speichern",

@@ -24,6 +24,18 @@
     "time_placeholder": "Pick a time",
     "tag_placeholder": "Add…"
   },
+  "share": {
+    "card_title": "{{name}} took a trip",
+    "card_title_anon": "A journey on Trazia",
+    "stat_distance": "Distance",
+    "stat_duration": "Duration",
+    "stat_class": "Class",
+    "stat_seat": "Seat",
+    "footer_tagline": "Trace your travels · trazia.app",
+    "dialog_title": "Share journey",
+    "failed": "Share failed",
+    "unavailable": "Sharing not available on this device"
+  },
   "add_journey": {
     "save_busy": "Saving…",
     "save_create": "Save journey",

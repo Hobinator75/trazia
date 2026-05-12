@@ -1,9 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import * as Sharing from 'expo-sharing';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, Modal, Pressable, ScrollView, Share, Text, View } from 'react-native';
+import { Alert, Modal, Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { db } from '@/db/client';
@@ -16,6 +15,10 @@ import {
   type JourneyWithRefs,
 } from '@/db/repositories/journey.repository';
 
+import {
+  JourneyShareCard,
+  SHARE_CARD_OFFSCREEN_STYLE,
+} from '@/components/domain/JourneyShareCard';
 import { MapPreview } from '@/components/domain/JourneyDetail/MapPreview';
 import { RouteHero } from '@/components/domain/JourneyDetail/RouteHero';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
@@ -24,8 +27,9 @@ import {
   formatDistance,
   formatDuration,
   formatTimestamp,
-  shareSnippet,
 } from '@/lib/journeys/format';
+import { shareJourneyImage } from '@/lib/journeys/shareJourneyImage';
+import { useSettingsStore } from '@/stores/settings.store';
 import { useSnackbarStore } from '@/stores/snackbarStore';
 import { colors } from '@/theme/colors';
 
@@ -136,11 +140,13 @@ export default function JourneyDetailScreen() {
   const { t } = useTranslation();
   const showSnackbar = useSnackbarStore((s) => s.show);
   const insets = useSafeAreaInsets();
+  const profileName = useSettingsStore((s) => s.profileName);
 
   const [journey, setJourney] = useState<JourneyWithRefs | null>(null);
   const [extras, setExtras] = useState<JourneyExtras | null>(null);
   const [loading, setLoading] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
+  const shareCardRef = useRef<View>(null);
 
   const load = useCallback(async () => {
     if (!id) return;
@@ -157,19 +163,16 @@ export default function JourneyDetailScreen() {
 
   const handleShare = useCallback(async () => {
     if (!journey) return;
-    const message = shareSnippet(journey);
-    try {
-      const canUseExpo = await Sharing.isAvailableAsync();
-      if (canUseExpo) {
-        await Share.share({ message });
-      } else {
-        await Share.share({ message });
-      }
-    } catch (e) {
-      showSnackbar(e instanceof Error ? e.message : t('journey.share_failed'), {
-        variant: 'error',
-      });
+    const result = await shareJourneyImage({
+      ref: shareCardRef,
+      dialogTitle: t('share.dialog_title'),
+    });
+    if (result.ok) return;
+    if (result.reason === 'unavailable') {
+      showSnackbar(t('share.unavailable'), { variant: 'error' });
+      return;
     }
+    showSnackbar(result.message ?? t('share.failed'), { variant: 'error' });
   }, [journey, showSnackbar, t]);
 
   const handleDelete = useCallback(() => {
@@ -352,6 +355,29 @@ export default function JourneyDetailScreen() {
             showSnackbar(t('journey.trips_coming_soon'), { variant: 'info' });
         }}
       />
+
+      {/* Off-screen at 1080×1920 so react-native-view-shot can capture
+          the share card at its declared pixel size regardless of the
+          device's screen DPR. The card stays mounted while the detail
+          screen is alive so the share action can fire instantly. */}
+      <View pointerEvents="none" style={SHARE_CARD_OFFSCREEN_STYLE}>
+        <JourneyShareCard
+          ref={shareCardRef}
+          journey={journey}
+          title={
+            profileName
+              ? t('share.card_title', { name: profileName })
+              : t('share.card_title_anon')
+          }
+          labels={{
+            distance: t('share.stat_distance'),
+            duration: t('share.stat_duration'),
+            class: t('share.stat_class'),
+            seat: t('share.stat_seat'),
+            footer: t('share.footer_tagline'),
+          }}
+        />
+      </View>
     </View>
   );
 }
