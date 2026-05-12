@@ -133,6 +133,16 @@ fi
 
 run "npx expo prebuild --clean"
 
+# Guardrail: a previous build session ended up with ios/Trazia.xcodeproj
+# present but ios/Trazia/ (AppDelegate.swift, Info.plist, …) missing, so
+# xcodebuild reported "file not found" deep in the archive step. Catch
+# that transient state here — it's much cheaper to abort before pod
+# install than to debug a 20-minute archive failure. See
+# docs/diagnostics/trazia-inventory.md for the post-mortem.
+if [[ "$DRY_RUN" == "false" ]] && [[ ! -f ios/Trazia/AppDelegate.swift ]]; then
+  fail "prebuild left ios/Trazia/ incomplete (no AppDelegate.swift). Re-run the script or 'npx expo prebuild --clean' manually."
+fi
+
 # ---------------------------------------------------------------- pods
 
 run "(cd ios && pod install)"
