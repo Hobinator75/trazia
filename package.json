@@ -21,7 +21,8 @@
     "bump:patch": "node scripts/bump.ts patch",
     "bump:minor": "node scripts/bump.ts minor",
     "bump:major": "node scripts/bump.ts major",
-    "bump:build": "node scripts/bump.ts build"
+    "bump:build": "node scripts/bump.ts build",
+    "submit": "./scripts/build-testflight.sh"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
