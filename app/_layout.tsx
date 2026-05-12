@@ -7,6 +7,9 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import '../global.css';
+// Must precede any three / @react-three/fiber import: stubs globalThis.document
+// so Hermes Release builds don't crash inside three's ImageUtils paths.
+import '@/lib/three/three-dom-shim';
 
 import { AchievementToast } from '@/components/ui/AchievementToast';
 import { ConfettiLayer } from '@/components/ui/ConfettiLayer';

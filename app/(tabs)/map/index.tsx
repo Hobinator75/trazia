@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Globe3D } from '@/components/domain/Globe3D';
+import { Globe3DContainer } from '@/components/domain/Globe3DContainer';
 import { MapView2D } from '@/components/domain/MapView2D';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { useJourneys } from '@/hooks/useJourneys';
@@ -26,7 +26,11 @@ export default function MapScreen() {
 
   return (
     <View className="flex-1 bg-background-light dark:bg-background-dark">
-      {mode === '3d' ? <Globe3D journeys={journeys} /> : <MapView2D journeys={journeys} />}
+      {mode === '3d' ? (
+        <Globe3DContainer journeys={journeys} />
+      ) : (
+        <MapView2D journeys={journeys} />
+      )}
 
       {isEmpty ? (
         <View
