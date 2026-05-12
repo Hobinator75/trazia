@@ -151,4 +151,62 @@ $ ./scripts/build-testflight.sh --dry-run --dirty --no-upload --skip-checks
 ```
 
 And a real archive build runs to completion without "file not found".
-See the verification section in this doc for the recorded output.
+
+### Recorded verification run (2026-05-12)
+
+```text
+$ npx expo prebuild --clean --no-install
+✔ Cleared android, ios code
+✔ Created native directories
+✔ Finished prebuild
+
+$ ls ios/Trazia
+AppDelegate.swift       Info.plist
+Images.xcassets         PrivacyInfo.xcprivacy
+SplashScreen.storyboard Supporting
+Trazia-Bridging-Header.h Trazia.entitlements
+
+$ (cd ios && pod install)
+[Pods installed cleanly; the three "script phase" warnings on
+React-Core-prebuilt / ReactNativeDependencies / hermes-engine are
+benign — those phases are signed off by upstream.]
+
+$ NODE_OPTIONS=--max-old-space-size=8192 \
+  xcodebuild -workspace ios/Trazia.xcworkspace -scheme Trazia \
+    -configuration Release \
+    -destination 'generic/platform=iOS' \
+    -archivePath build/Trazia.xcarchive \
+    -allowProvisioningUpdates archive
+…
+    Signing Identity:     "Apple Development: tim.hobrlant@gmail.com (UKHP2M3NQ2)"
+    Provisioning Profile: "iOS Team Provisioning Profile: com.trazia.app"
+                          (bc980a40-4e9e-4c9b-8ce8-969cd55ee848)
+…
+** ARCHIVE SUCCEEDED **
+
+$ xcodebuild -exportArchive \
+    -archivePath build/Trazia.xcarchive \
+    -exportPath build/Trazia-export \
+    -exportOptionsPlist scripts/build/ExportOptions.plist \
+    -allowProvisioningUpdates
+Exported Trazia to: …/build/Trazia-export
+** EXPORT SUCCEEDED **
+
+$ ls -la build/Trazia-export/Trazia.ipa
+-rw-r--r-- … 27 MB Trazia.ipa
+```
+
+Only step left in the pipeline is `xcrun altool --upload-app`, gated on
+the `AC_PASSWORD` keychain item (see `scripts/README.md` for setup).
+
+### Prevention summary
+
+1. `plugins/with-trazia-build.js` re-applies sandbox / signing /
+   NODE_OPTIONS at every prebuild — confirmed idempotent, no
+   destructive side effects.
+2. `scripts/build-testflight.sh` asserts `ios/Trazia/AppDelegate.swift`
+   exists immediately after prebuild. If a future prebuild ever leaves
+   the tree incomplete the script aborts with an actionable error
+   instead of letting the archive fail 20 minutes in.
+3. Manual workaround if it happens again outside the script:
+   `rm -rf ios && npx expo prebuild --clean`.
