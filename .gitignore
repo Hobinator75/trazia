@@ -45,3 +45,6 @@ app-example
 # generated native folders
 /ios
 /android
+
+# TestFlight build artifacts (Trazia.xcarchive, Trazia-export/*.ipa)
+/build
