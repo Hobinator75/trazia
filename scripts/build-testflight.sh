@@ -143,6 +143,33 @@ if [[ "$DRY_RUN" == "false" ]] && [[ ! -f ios/Trazia/AppDelegate.swift ]]; then
   fail "prebuild left ios/Trazia/ incomplete (no AppDelegate.swift). Re-run the script or 'npx expo prebuild --clean' manually."
 fi
 
+# AppIcon catalog guardrail: App Store validation rejects archives that
+# are missing the 120×120 (iPhone), 152×152 (iPad), 167×167 (iPad Pro),
+# or 1024×1024 (marketing) icons, or CFBundleIconName in Info.plist.
+# `plugins/with-trazia-build.js` renders the explicit-size catalog from
+# `assets/images/icon.png` and stamps CFBundleIconName=AppIcon during
+# prebuild — confirm both before the 20-minute xcodebuild step.
+if [[ "$DRY_RUN" == "false" ]]; then
+  ICON_CATALOG="ios/Trazia/Images.xcassets/AppIcon.appiconset"
+  REQUIRED_ICONS=(
+    "Icon-iphone-60x60@2x.png"        # 120 — iPhone app
+    "Icon-ipad-76x76@2x.png"          # 152 — iPad app
+    "Icon-ipad-83.5x83.5@2x.png"      # 167 — iPad Pro app
+    "Icon-ios-marketing-1024x1024@1x.png"
+  )
+  if [[ ! -f "$ICON_CATALOG/Contents.json" ]]; then
+    fail "AppIcon catalog is incomplete — Contents.json missing in $ICON_CATALOG. The config plugin renders it during prebuild; confirm ./plugins/with-trazia-build.js is listed in app.json:plugins."
+  fi
+  for icon in "${REQUIRED_ICONS[@]}"; do
+    if [[ ! -f "$ICON_CATALOG/$icon" ]]; then
+      fail "AppIcon catalog is missing $icon (one of the four App-Store-required renditions). Re-run 'npx expo prebuild --clean' to regenerate."
+    fi
+  done
+  if ! /usr/libexec/PlistBuddy -c 'Print :CFBundleIconName' ios/Trazia/Info.plist >/dev/null 2>&1; then
+    fail "CFBundleIconName missing from ios/Trazia/Info.plist. The config plugin stamps it during prebuild — confirm ./plugins/with-trazia-build.js is listed in app.json:plugins."
+  fi
+fi
+
 # ---------------------------------------------------------------- pods
 
 run "(cd ios && pod install)"

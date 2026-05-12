@@ -29,12 +29,14 @@
  * Keep the team ID + NODE_OPTIONS value in lock-step with `scripts/build-testflight.sh`.
  */
 
+const { execFileSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 
 const {
   withPodfile,
   withDangerousMod,
+  withInfoPlist,
   withXcodeProject,
 } = require('@expo/config-plugins');
 
@@ -151,9 +153,131 @@ const withTraziaXcodeProject = (config) =>
     return cfg;
   });
 
+// App Store validation rejects archives whose Info.plist does not name an
+// AppIcon asset, even when the asset catalog itself is present and the
+// matching ASSETCATALOG_COMPILER_APPICON_NAME build setting is correct.
+// Expo's prebuild ships the single-universal-1024 catalog + the build
+// setting but does not write `CFBundleIconName`, so Xcode skips icon
+// compilation and the resulting .ipa is missing all required sizes
+// (120/152/167/1024 px). Stamping the key here keeps the prebuild output
+// submittable without a manual Xcode tweak after every iteration.
+const withTraziaIconName = (config) =>
+  withInfoPlist(config, (cfg) => {
+    cfg.modResults.CFBundleIconName = 'AppIcon';
+    return cfg;
+  });
+
+// Apple's TestFlight validation rejects archives that are missing the
+// 120×120 iPhone, 152×152 iPad, or 167×167 iPad Pro icons. Xcode 14's
+// single-universal-1024 approach is supposed to generate those at
+// archive time, but our Assets.car only ever picked up 120 + 152 and
+// silently skipped 167 — the resulting .ipa came back rejected.
+//
+// Switch to the explicit-size catalog: a Contents.json that lists every
+// idiom × scale Apple expects, plus one PNG per entry rendered from the
+// 1024×1024 master by `sips` (macOS built-in, no ImageMagick required).
+// `sips` strips transparency and resamples at archive-quality, matching
+// what Apple's own asset compiler would produce.
+const ICON_RENDITIONS = [
+  // iPhone
+  { idiom: 'iphone', size: '20x20', scale: '2x', px: 40 },
+  { idiom: 'iphone', size: '20x20', scale: '3x', px: 60 },
+  { idiom: 'iphone', size: '29x29', scale: '2x', px: 58 },
+  { idiom: 'iphone', size: '29x29', scale: '3x', px: 87 },
+  { idiom: 'iphone', size: '40x40', scale: '2x', px: 80 },
+  { idiom: 'iphone', size: '40x40', scale: '3x', px: 120 },
+  { idiom: 'iphone', size: '60x60', scale: '2x', px: 120 },
+  { idiom: 'iphone', size: '60x60', scale: '3x', px: 180 },
+  // iPad
+  { idiom: 'ipad', size: '20x20', scale: '1x', px: 20 },
+  { idiom: 'ipad', size: '20x20', scale: '2x', px: 40 },
+  { idiom: 'ipad', size: '29x29', scale: '1x', px: 29 },
+  { idiom: 'ipad', size: '29x29', scale: '2x', px: 58 },
+  { idiom: 'ipad', size: '40x40', scale: '1x', px: 40 },
+  { idiom: 'ipad', size: '40x40', scale: '2x', px: 80 },
+  { idiom: 'ipad', size: '76x76', scale: '2x', px: 152 },
+  { idiom: 'ipad', size: '83.5x83.5', scale: '2x', px: 167 },
+  // App Store marketing
+  { idiom: 'ios-marketing', size: '1024x1024', scale: '1x', px: 1024 },
+];
+
+const withTraziaAppIcon = (config) =>
+  withDangerousMod(config, [
+    'ios',
+    async (cfg) => {
+      const projectRoot = cfg.modRequest.projectRoot;
+      const iosNamedRoot = path.join(cfg.modRequest.platformProjectRoot, 'Trazia');
+      const catalogDir = path.join(iosNamedRoot, 'Images.xcassets', 'AppIcon.appiconset');
+      const masterIcon = path.join(projectRoot, 'assets', 'images', 'icon.png');
+
+      if (!fs.existsSync(masterIcon)) {
+        // No master icon — leave Expo's single-universal output untouched
+        // so subsequent prebuilds still complete. App Store will reject
+        // again, which is the right signal to put the asset in place.
+        return cfg;
+      }
+
+      fs.mkdirSync(catalogDir, { recursive: true });
+
+      // Wipe any previous renditions (single-universal, partial runs)
+      // before regenerating so stale entries can't leak into the
+      // archived catalog.
+      for (const file of fs.readdirSync(catalogDir)) {
+        if (file.endsWith('.png') || file === 'Contents.json') {
+          fs.rmSync(path.join(catalogDir, file));
+        }
+      }
+
+      const images = [];
+      for (const rendition of ICON_RENDITIONS) {
+        const filename = `Icon-${rendition.idiom}-${rendition.size}@${rendition.scale}.png`;
+        const target = path.join(catalogDir, filename);
+        // sips resamples to an exact square (`-z H W`) while preserving
+        // the source's colour space. The master icon is already RGB-only
+        // (no alpha) per Apple's submission requirements, so we don't
+        // need to strip transparency — sips's `-s hasAlpha NO` errors on
+        // alphaless PNGs anyway.
+        execFileSync(
+          'sips',
+          [
+            '-s',
+            'format',
+            'png',
+            '-z',
+            String(rendition.px),
+            String(rendition.px),
+            masterIcon,
+            '--out',
+            target,
+          ],
+          { stdio: 'ignore' },
+        );
+        images.push({
+          idiom: rendition.idiom,
+          size: rendition.size,
+          scale: rendition.scale,
+          filename,
+        });
+      }
+
+      const contents = {
+        images,
+        info: { version: 1, author: 'trazia-build-automation' },
+      };
+      fs.writeFileSync(
+        path.join(catalogDir, 'Contents.json'),
+        `${JSON.stringify(contents, null, 2)}\n`,
+        'utf8',
+      );
+      return cfg;
+    },
+  ]);
+
 module.exports = function withTraziaBuild(config) {
   config = withTraziaPodfile(config);
   config = withTraziaXcodeEnvLocal(config);
   config = withTraziaXcodeProject(config);
+  config = withTraziaIconName(config);
+  config = withTraziaAppIcon(config);
   return config;
 };
